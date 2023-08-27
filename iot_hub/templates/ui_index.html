@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>IoT Hub | Dashboard</title>
+  <script src="{{ url_for('static', filename='houses_dashboard.js') }}"></script>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .green {
+      color: white;
+      background-color: green;
+    }
+
+    .yellow {
+      color: black;
+      background-color: yellow;
+    }
+
+    .red {
+      color: white;
+      background-color: red;
+    }
+
+
+    th {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+    }
+
+    th.center {
+      text-align: center;
+    }
+
+    td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    td.status {
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    th.sortable::after {
+      content: "";
+      float: right;
+      margin-top: 7px;
+      border-width: 0 4px 4px 0;
+      border-style: solid;
+      border-color: #666666 transparent transparent transparent;
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+    }
+
+    th.sortable.asc::after {
+      transform: rotate(-135deg);
+      -webkit-transform: rotate(-135deg);
+    }
+
+    .add-btn,
+    .upd-btn,
+    .edit-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      margin: 4px 2px;
+      cursor: pointer;
+    }
+
+    .sort-options {
+      margin-top: 16px;
+    }
+  </style>
+</head>
+
+
+<!-- <body onload="fetchHouses();"> -->
+
+<body onload="fetchHouses();setInterval(fetchHouses, 1000);">
+  <h2>Smart Houses</h2>
+  <table>
+    <thead>
+      <tr>
+        <th class="sortable">Unique ID</th>
+        <th class="sortable">IP Address</th>
+        <th class="sortable center">Status</th>
+        <th class="sortable center">Alarm</th>
+        <th class="sortable center">Buzzer</th>
+        <th class="sortable center">Fan</th>
+        <th class="sortable center">LED</th>
+        <th class="sortable center">Motion</th>
+        <th class="sortable center">Last Seen</th>
+        <th class="sortable center">Time Created</th>
+        <th class="sortable center">Time Modified</th>
+        <th class="sortable center">Time Deleted</th>
+        <th class="sortable center">Wall Message</th>
+      </tr>
+    </thead>
+
+    <tbody id="house_container">
+      {% for house_id, house_data in houses.items() %}
+      <tr id="{{ house_id }}">
+        <td>{{ house_id }}</td>
+        <td>{{ house_data["ip_address"] }}</td>
+        <td>{{ house_data["status"] }}</td>
+        <td>{{ "On" if house_data["state"]["alarm"] else "Off"}}</td>
+        <td>{{ "On" if house_data["state"]["fan"]["active"] else "Off" }}</td>
+        <td>{{ "On" if house_data["state"]["led"]["active"] else "Off" }}</td>
+        <td>{{ "Yes" if house_data["state"]["motion"]["motion_detected"] else "No" }}</td>
+        <td>{{ house_data["timestamp_keepalive"] }}</td>
+        <td>{{ house_data["timestamp_created"] }}</td>
+        <td>{{ house_data["timestamp_modified"] }}</td>
+        <td>{{ house_data["timestamp_deleted"] }}</td>
+        <td>{{ house_data["state"]["wall_msg"] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+
+</html>

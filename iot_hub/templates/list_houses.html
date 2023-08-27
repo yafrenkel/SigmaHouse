@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>IoT Hub | List of Houses</title>
+</head>
+
+<body>
+    <table>
+        <thead>
+            <th>Unique ID</th>
+            <th>IP Address</th>
+            <th>Status</th>
+            <th>Alarm</th>
+            <th>Buzzer</th>
+            <th>Fan</th>
+            <th>LED</th>
+            <th>Motion</th>
+            <th>Last Seen</th>
+            <th>Created</th>
+            <th>Modified</th>
+            <th>Deleted</th>
+            <th>Wall Message</th>
+        </thead>
+
+        <tbody>
+            {% for house_id, house_data in houses.items() %}
+            <tr id="{{ house_id }}">
+                <td>{{ house_id }}</td>
+                <td>{{ house_data["ip_address"] }}</td>
+                <td>{{ house_data["status"] }}</td>
+                {% if house_data["state"]["alarm"]["armed"] %}
+                {% if house_data["state"]["alarm"]["triggered"] %}
+                <td>Triggered</td>
+                {% else %}
+                <td>Armed</td>
+                {% endif %}
+                {% else %}
+                <td>Disarmed</td>
+                {% endif %}
+                <td>{{ "On" if house_data["state"]["buzzer"]["active"] else "Off" }}</td>
+                <td>{{ "On" if house_data["state"]["fan"]["active"] else "Off" }}</td>
+                <td>{{ "On" if house_data["state"]["led"]["active"] else "Off" }}</td>
+                <td>{{ "On" if house_data["state"]["motion"]["motion_detected"] else "Off" }}</td>
+                <td>{{ house_data["timestamp_keepalive"] }}</td>
+                <td>{{ house_data["timestamp_created"] }}</td>
+                <td>{{ house_data["timestamp_modified"] }}</td>
+                <td>{{ house_data["timestamp_deleted"] }}</td>
+                <td>{{ house_data["state"]["wall_msg"] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>

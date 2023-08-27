@@ -1,0 +1,300 @@
+openapi: 3.0.0
+info:
+  title: "Sigma Camp 2023 - IoT REST API"
+  description: "An API to manage Smart House models for Sigma Camp 2023 Semilab on IoT"
+  version: "1.0.0"
+
+servers:
+  - url: "/smarthouse/v1"
+
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      required:
+        - message        
+        - unique_id
+      properties:
+        message:
+          type: string
+        unique_id:
+          $ref: "#/components/schemas/UniqueId"
+
+    UniqueId:
+      type: string
+      pattern: '^[A-F0-9]{12}$'
+    
+    Device:
+      type: string
+      enum: [buzzer, fan, led]
+
+    House:
+      type: object
+      required:
+        - unique_id
+        - ip_address
+      properties:
+        unique_id:
+          $ref: "#/components/schemas/UniqueId"
+        ip_address:
+          type: string
+          pattern: '^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$'
+        status:
+          type: string
+        state:
+          $ref: "#/components/schemas/HouseState"
+
+    HouseState:
+      type: object
+      properties:
+        alarm:
+          $ref: "#/components/schemas/AlarmState"
+        buzzer:
+          $ref: "#/components/schemas/BuzzerState"
+        fan:
+          $ref: "#/components/schemas/FanState"
+        led:
+          $ref: "#/components/schemas/LedState"
+        motion:
+          $ref: "#/components/schemas/MotionState"
+        wall_msg:
+          type: string
+
+    AlarmState:
+      type: object
+      properties:
+        triggered:
+          type: boolean
+        armed:
+          type: boolean
+        mode:
+          type: integer
+          minimum: 0
+          maximum: 3
+        armed_timestamp:
+          type: integer
+          minimum: 0
+        triggered_timestamp:
+          type: integer
+          minimum: 0
+        disarmed_timestamp:
+          type: integer
+          minimum: 0
+
+    BuzzerState:
+      type: object
+      properties:
+        active:
+          type: boolean
+        timestamp:
+          type: integer
+          minimum: 0
+
+    FanState:
+      type: object
+      properties:
+        active:
+          type: boolean
+        clockwise:
+          type: boolean
+        timestamp:
+          type: integer
+          minimum: 0
+
+    LedState:
+      type: object
+      properties:
+        active:
+          type: boolean
+        timestamp:
+          type: integer
+          minimum: 0
+
+    MotionState:
+      type: object
+      properties:
+        motion_detected:
+          type: boolean
+        triggered_timestamp:
+          type: integer
+          minimum: 0
+        released_timestamp:
+          type: integer
+          minimum: 0
+
+  parameters:
+    unique_id:
+      name: unique_id
+      description: "Unique ID of a house"
+      in: path
+      required: True
+      schema:
+        $ref: "#/components/schemas/UniqueId"
+
+    device:
+      name: device
+      description: "Name of a device to operate"
+      in: path
+      required: True
+      schema:
+        $ref: "#/components/schemas/Device"
+
+paths:
+  /houses:
+    get:
+      operationId: "houses.read_all"
+      summary: "Get the list of registered houses"
+      responses:
+        "200":
+          description: "Successfully provided the list of registered houses"
+    post:
+      operationId: "houses.create"
+      summary: "Register a new house with the IoT hub"
+      requestBody:
+          description: "House to register"
+          required: True
+          content:
+            application/json:
+              schema:
+                x-body-name: "house"
+                $ref: "#/components/schemas/House"
+      responses:
+        "201":
+          description: "House registered successfully"
+
+  /houses/{unique_id}:
+    delete:
+      operationId: "houses.delete"
+      summary: "Mark a house as de-registered from the IoT hub"
+      parameters:
+        - $ref: "#/components/parameters/unique_id"
+      responses:
+        "200":
+          description: "House de-activated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "404":
+          description: "House not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+
+  /houses/{unique_id}/keepalive:
+    put:
+      operationId: "houses.keepalive"
+      summary: "Update keepalive timestamp and status of a house in IoT hub records"
+      parameters:
+        - $ref: "#/components/parameters/unique_id"
+      requestBody:
+          description: "House to update"
+          required: True
+          content:
+            application/json:
+              schema:
+                x-body-name: "house"
+                $ref: "#/components/schemas/House"
+      responses:
+        "200":
+          description: "Keepalive received, no state update to report"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "202":
+          description: "Keepalive received, activate alarm now"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "205":
+          description: "Keepalive received, state update available"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "404":
+          description: "House not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+
+  /houses/{unique_id}/toggle_device/{device}:
+    put:
+      operationId: "houses.toggle_device"
+      summary: "Toggle device state for a house"
+      parameters:
+        - $ref: "#/components/parameters/unique_id"
+        - $ref: "#/components/parameters/device"
+      responses:
+        "200":
+          description: "Device toggled successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "404":
+          description: "House not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+
+  /houses/{unique_id}/report_alarm:
+    put:
+      operationId: "houses.report_alarm"
+      summary: "Receive alarm report for a house and trigger other global alarms"
+      parameters:
+        - $ref: "#/components/parameters/unique_id"
+      responses:
+        "200":
+          description: "Alarm report processed successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "404":
+          description: "House not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+
+  /houses/{unique_id}/state:
+    get:
+      operationId: "houses.get_state"
+      summary: "Provide current state of a house from IoT hub records"
+      parameters:
+        - $ref: "#/components/parameters/unique_id"
+      responses:
+        "200":
+          description: "House state provided"
+    put:
+      operationId: "houses.set_state"
+      summary: "Update state of a house in IoT hub records"
+      parameters:
+        - $ref: "#/components/parameters/unique_id"
+      requestBody:
+          description: "House to be updated"
+          required: True
+          content:
+            application/json:
+              schema:
+                x-body-name: "house"
+                $ref: "#/components/schemas/House"
+      responses:
+        "200":
+          description: "House state updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "404":
+          description: "House not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
