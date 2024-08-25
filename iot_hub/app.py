@@ -89,7 +89,7 @@ if __name__ == "__main__":
     scheduler.start()
 
     app.run(
-        host="0.0.0.0", port=8080, debug=True, use_reloader=False  # noqa: S201, S104
+        host="0.0.0.0", port=80, debug=True, use_reloader=False  # noqa: S201, S104
     )
 
     scheduler.shutdown()
