@@ -206,7 +206,7 @@ CS8 = 4435
 D8 = 4699
 DS8 = 4978
 
-buzzer = Buzzer(23, -1)
+buzzer = Buzzer(4, -1)
 buzzer.start_melody()
 
 play_cycles = 3

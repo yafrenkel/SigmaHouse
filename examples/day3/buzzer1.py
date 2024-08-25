@@ -5,7 +5,7 @@ from time import sleep
 from machine import PWM, Pin
 
 # initialize PWM on a pin
-buzzer_pin_pwm = PWM(Pin(23))
+buzzer_pin_pwm = PWM(Pin(4))
 buzzer_pin_pwm.freq(0)
 buzzer_pin_pwm.duty(1000)
 

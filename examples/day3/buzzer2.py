@@ -153,15 +153,14 @@ def play_melody(buzzer, tones, rhythm, tempo):
 
 
 # initialize PWM on a pin
-buzzer_pin_pwm = PWM(Pin(23))
+buzzer_pin_pwm = PWM(Pin(4))
 buzzer_pin_pwm.freq(0)
 buzzer_pin_pwm.duty(512)
 
-play_melody(buzzer_pin_pwm, melody_tones, melody_rhythm, 1200)
-
-time_start = ticks_ms()
-
 try:
+    play_melody(buzzer_pin_pwm, melody_tones, melody_rhythm, 1200)
+    time_start = ticks_ms()
+
     while True:
         # calculate uptime in seconds
         uptime_sec = ticks_diff(ticks_ms(), time_start) // 1000

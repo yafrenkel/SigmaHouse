@@ -7,6 +7,7 @@ from machine import PWM, Pin
 
 led_pin = Pin(12, Pin.OUT, value=0)
 led_pwm = PWM(led_pin, 5000, 0)
+print(led_pwm.duty())
 
 
 while True:

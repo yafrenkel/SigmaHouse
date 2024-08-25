@@ -125,7 +125,7 @@ melody_rhythm = [
 # fmt: on
 
 global_note_index = 0
-global_tempo = 1200
+global_tempo = 1200 #1200
 
 
 def play_tone(buzzer, tone, active_duty=512):
@@ -157,7 +157,7 @@ def play_note_callback(timer):
 
 
 # initialize PWM on a pin
-global_buzzer = PWM(Pin(23))
+global_buzzer = PWM(Pin(4))
 global_buzzer.freq(0)
 global_buzzer.duty(512)
 
