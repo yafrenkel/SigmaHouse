@@ -1,0 +1,106 @@
+<mxfile host="Electron">
+  <diagram name="IoT Hub" id="iot_hub">
+    <mxGraphModel dx="1201" dy="828" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" value="&lt;b&gt;The IoT Hub&lt;/b&gt;&lt;br&gt;What happens on the server" vertex="1">
+          <mxGeometry height="60" width="400" x="350" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=center;" value="🌐 &lt;b&gt;Browser&lt;/b&gt;&#xa;(Dashboard at http://laptop-ip:8080)" vertex="1">
+          <mxGeometry height="80" width="240" x="60" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="browserNote" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;" value="Polls every 1 second:&#xa;• GET /api/houses&#xa;&#xa;On click:&#xa;• POST .../toggle/&lt;led|fan|buzzer&gt;&#xa;• POST .../arm" vertex="1">
+          <mxGeometry height="100" width="240" x="60" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="flask" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=top;" value="" vertex="1">
+          <mxGeometry height="380" width="280" x="420" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="flaskHeader" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=14;" value="🐍 &lt;b&gt;Flask app.py&lt;/b&gt;&#xa;the server" vertex="1">
+          <mxGeometry height="40" width="260" x="430" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="route1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Courier New;fontSize=11;align=left;" value="GET    /api/houses" vertex="1">
+          <mxGeometry height="22" width="240" x="440" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="route2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Courier New;fontSize=11;align=left;" value="POST   /api/houses               (register)" vertex="1">
+          <mxGeometry height="22" width="240" x="440" y="204" as="geometry" />
+        </mxCell>
+        <mxCell id="route3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Courier New;fontSize=11;align=left;" value="PUT    .../keepalive            (heartbeat)" vertex="1">
+          <mxGeometry height="22" width="240" x="440" y="228" as="geometry" />
+        </mxCell>
+        <mxCell id="route4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Courier New;fontSize=11;align=left;" value="GET    .../state                (pull cmd)" vertex="1">
+          <mxGeometry height="22" width="240" x="440" y="252" as="geometry" />
+        </mxCell>
+        <mxCell id="route5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Courier New;fontSize=11;align=left;" value="PUT    .../state                (push cmd)" vertex="1">
+          <mxGeometry height="22" width="240" x="440" y="276" as="geometry" />
+        </mxCell>
+        <mxCell id="route6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Courier New;fontSize=11;align=left;" value="POST   .../toggle/&lt;device&gt;" vertex="1">
+          <mxGeometry height="22" width="240" x="440" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="route7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Courier New;fontSize=11;align=left;" value="POST   .../arm" vertex="1">
+          <mxGeometry height="22" width="240" x="440" y="324" as="geometry" />
+        </mxCell>
+        <mxCell id="route8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Courier New;fontSize=11;align=left;" value="POST   .../report_motion" vertex="1">
+          <mxGeometry height="22" width="240" x="440" y="348" as="geometry" />
+        </mxCell>
+        <mxCell id="route9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Courier New;fontSize=11;align=left;" value="DELETE .../&lt;uid&gt;                (unregister)" vertex="1">
+          <mxGeometry height="22" width="240" x="440" y="372" as="geometry" />
+        </mxCell>
+        <mxCell id="flaskNote" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=2" value="Each route is just a function&#xa;that reads or writes HOUSES." vertex="1">
+          <mxGeometry height="40" width="260" x="430" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="houses" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;align=center;" value="🗂 &lt;b&gt;HOUSES&lt;/b&gt; dict&#xa;(houses.py — in memory)" vertex="1">
+          <mxGeometry height="180" width="240" x="800" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="housesNote" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontFamily=Courier New;" value="{&#xa;  &quot;AABBCC...&quot;: {&#xa;    status, last_seen,&#xa;    alarm_armed,&#xa;    alarm_triggered,&#xa;    state: { led, fan,&#xa;             buzzer, motion }&#xa;  }, ...&#xa;}" vertex="1">
+          <mxGeometry height="140" width="240" x="800" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="watchdog" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;align=center;" value="⏰ &lt;b&gt;Watchdog Timer&lt;/b&gt;&#xa;Every 20 sec, marks houses &#39;Lost&#39;&#xa;if their last keepalive was &gt; 60s ago" vertex="1">
+          <mxGeometry height="80" width="240" x="800" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="esp1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;" value="🏠 &lt;b&gt;House A&lt;/b&gt;&#xa;ESP32 board" vertex="1">
+          <mxGeometry height="80" width="140" x="100" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="esp2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;" value="🏠 &lt;b&gt;House B&lt;/b&gt;&#xa;ESP32 board" vertex="1">
+          <mxGeometry height="80" width="140" x="280" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="esp3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;" value="🏠 &lt;b&gt;House C&lt;/b&gt;&#xa;ESP32 board" vertex="1">
+          <mxGeometry height="80" width="140" x="460" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="espdots" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=30;" value="…" vertex="1">
+          <mxGeometry height="60" width="60" x="620" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_browser_flask" edge="1" parent="1" source="browser" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;strokeColor=#0066cc;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;" target="flask">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_browser_label" parent="1" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=1;fontColor=#0066cc;" value="HTTP (poll + click)" vertex="1">
+          <mxGeometry height="20" width="110" x="310" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_flask_houses" edge="1" parent="1" source="flask" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;strokeColor=#82b366;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;" target="houses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_houses_label" parent="1" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=1;fontColor=#82b366;" value="read / write" vertex="1">
+          <mxGeometry height="20" width="80" x="710" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_watchdog" edge="1" parent="1" source="watchdog" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#d79b00;strokeWidth=2;endArrow=classicThin;" target="houses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_esp1_flask" edge="1" parent="1" source="esp1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.2;entryY=1;entryDx=0;entryDy=0;strokeColor=#b85450;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;" target="flask">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_esp2_flask" edge="1" parent="1" source="esp2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#b85450;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;" target="flask">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_esp3_flask" edge="1" parent="1" source="esp3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.8;entryY=1;entryDx=0;entryDy=0;strokeColor=#b85450;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;" target="flask">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="esp_label" parent="1" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=1;fontColor=#b85450;" value="HTTP over WiFi&#xa;keepalive every 1s&#xa;reply: {alarm, state_update}" vertex="1">
+          <mxGeometry height="60" width="200" x="330" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;" value="&lt;b&gt;Big idea&lt;/b&gt;&#xa;The hub is a memory + a bunch of HTTP routes.&#xa;Everything else (browser, ESP32s) just sends and receives JSON." vertex="1">
+          <mxGeometry height="60" width="640" x="60" y="720" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

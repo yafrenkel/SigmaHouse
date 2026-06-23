@@ -1,81 +1,27 @@
-# Sensitive configuration
-instance/
+# Real WiFi credentials — never commit (copy secrets_example.py -> secrets.py locally)
 secrets.py
 
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
-*.py[cod]
-*$py.class
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-coverage.xml
-*.cover
-.pytest_cache/
-
-# Sphinx documentation
-docs/_build
-docs/doctrees
-docs/_static
-
-# pyenv
-.python-version
-
-# Environments
-.env
-.venv
-env/
+*.pyc
+*.pyo
+.venv/
 venv/
-ENV/
-env.bak/
-venv.bak/
+.Python
 
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+# Pre-downloaded offline install bundle (large, machine-specific)
+wheels/
 
-# IDEs
+# MicroPython firmware binaries (large; downloaded per-camp)
+*.bin
+firmware/
+
+# Editor / OS noise
+.idea/
 .vscode/
-*.code-workspace
+.DS_Store
+Thumbs.db
 
-# pytest-benchmark output
-.benchmarks/
-
-# Work in progress
-*.wip
-wip/
-
-# Logs
-*.log
+# draw.io backups
+*.bkp
+*.dtmp
