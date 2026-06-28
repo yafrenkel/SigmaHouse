@@ -4,6 +4,14 @@
 
 **Time:** ~2 hours.
 
+## The big picture
+
+Here's the whole system you're building. Today is the green box in the middle — the **hub** — plus the browser dashboard. The ESP32 "houses" join later in the week.
+
+<p align="center">
+  <img src="diagrams/01_iot_hub.drawio.svg" alt="IoT hub architecture: a browser dashboard talks to the Flask app.py and its routes, which read and write the in-memory HOUSES dict; a watchdog marks silent houses Lost; several ESP32 houses connect over WiFi." style="max-width:100%;">
+</p>
+
 ---
 
 ## Part 1 — Setup (15 min)
@@ -66,6 +74,18 @@ You *could* build this whole API with `POST` for everything — it would work. B
 - Re-sending a **`POST` toggle** → dangerous (might flip the LED back).
 
 So the verb is a *warning label*: `PUT`/`GET`/`DELETE` mean "safe to retry"; `POST` means "think before you retry." That's why keepalive (safe to repeat) is `PUT`, and toggle/register/report_motion (actions with side-effects) are `POST`.
+</details>
+
+<details>
+<summary>🤔 <b>Why can't I just register a house with GET (by typing a URL)?</b></summary>
+
+It would be convenient — a browser address bar can only do `GET`, so "register by visiting a link" sounds handy. But there's an iron rule: **`GET` must be *safe* — it reads, it never changes anything.** Registering *creates* a house (a side-effect), so it must be a `POST`.
+
+This isn't pedantry. Lots of things follow `GET` links **automatically**, without a human clicking: browser prefetchers, link-preview bots (Slack/Discord unfurling a pasted URL), search-engine crawlers, antivirus URL scanners. If `GET` registered a house, any of them could spawn phantom houses just by *looking* at a link.
+
+> 💥 **True story (2005):** Google's "Web Accelerator" pre-fetched every link on a page to feel faster. Many web apps used `GET` links like `/delete?id=5` for their buttons. The accelerator dutifully pre-fetched them all — and **silently deleted users' data across the internet.** The lesson the whole industry learned: *never put an action behind a `GET`.*
+
+So to register, you `POST` — with `curl`, the DevTools console, or the ESP32's code. Not by typing a URL.
 </details>
 
 ### What is `curl`?
@@ -138,6 +158,16 @@ curl -X POST http://localhost:8080/api/houses \
 Response: `{"ok": true, "unique_id": "FAKE001"}`.
 
 Now refresh the browser. **A row appears!** Status: `Active`.
+
+> 🧪 **No terminal? Use the browser console instead.** Open the dashboard (`http://localhost:8080/`), press **F12** → **Console** tab, and paste:
+> ```javascript
+> await fetch("/api/houses", {
+>   method: "POST",
+>   headers: { "Content-Type": "application/json" },
+>   body: JSON.stringify({ unique_id: "FAKE001", ip_address: "127.0.0.1" })
+> }).then(r => r.json())
+> ```
+> Same result — `{ok: true, unique_id: "FAKE001"}` — no `curl`, no quoting headaches. This works because the page came from the hub, so the relative path `/api/houses` points straight at it. It's also *exactly* what `dashboard.js` does when a button is clicked.
 
 🛠 **Try this**: send a "keepalive" — this is what real boards do every second to prove they're alive:
 

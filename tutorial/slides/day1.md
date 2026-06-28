@@ -22,6 +22,14 @@ A web server you control with `curl`.
 
 ---
 
+## The system you're building
+
+<img src="../diagrams/01_iot_hub.drawio.svg" alt="IoT hub architecture" style="max-height:480px; display:block; margin:0 auto;">
+
+Today = the **hub** (green) + the **browser**. Houses join later.
+
+---
+
 ## The big idea today
 
 A **server** sits and waits.

@@ -22,6 +22,7 @@ from devices.motion import Motion
 from devices.fan import Fan
 from devices.buzzer import Buzzer
 from devices.lcd import LCD
+from devices.safe import safe
 
 MENU = ("led", "fan", "buzzer")
 
@@ -36,7 +37,7 @@ def _connect_wifi(lcd):
         wlan.connect(config.WIFI_SSID, config.WIFI_PASS)
         deadline = time.time() + config.WIFI_TIMEOUT_S
         while not wlan.isconnected() and time.time() < deadline:
-            time.sleep(0.2)
+            time.sleep_ms(200)
     if not wlan.isconnected():
         lcd.show("WiFi FAILED")
         raise RuntimeError("WiFi connect failed")
@@ -77,14 +78,18 @@ def _toggle(name, led, fan, buzzer):
 # ---------- main ----------
 
 def run():
-    lcd = LCD(config.PIN_I2C_SCL, config.PIN_I2C_SDA,
-              config.LCD_I2C_ADDR, config.LCD_ROWS, config.LCD_COLS)
-    led      = LED(config.PIN_LED)
-    button_a = Button(config.PIN_BUTTON_A)
-    button_b = Button(config.PIN_BUTTON_B)
-    motion   = Motion(config.PIN_PIR)
-    fan      = Fan(config.PIN_FAN_A, config.PIN_FAN_B)
-    buzzer   = Buzzer(config.PIN_BUZZER)
+    # Each device is built "safely": if a part isn't wired, you get a
+    # warning + a harmless stub instead of a crash. Watch the REPL for
+    # any "WARNING: X not available" lines to see what's missing.
+    lcd      = safe(lambda: LCD(config.PIN_I2C_SCL, config.PIN_I2C_SDA,
+                                config.LCD_I2C_ADDR, config.LCD_ROWS,
+                                config.LCD_COLS), "LCD")
+    led      = safe(lambda: LED(config.PIN_LED), "LED")
+    button_a = safe(lambda: Button(config.PIN_BUTTON_A), "Button A")
+    button_b = safe(lambda: Button(config.PIN_BUTTON_B), "Button B")
+    motion   = safe(lambda: Motion(config.PIN_PIR), "Motion")
+    fan      = safe(lambda: Fan(config.PIN_FAN_A, config.PIN_FAN_B), "Fan")
+    buzzer   = safe(lambda: Buzzer(config.PIN_BUZZER), "Buzzer")
 
     ip = _connect_wifi(lcd)
     uid = ubinascii.hexlify(unique_id()).decode().upper()
@@ -100,11 +105,13 @@ def run():
             # --- button A: rotate menu ---
             if button_a.was_pressed():
                 menu_index = (menu_index + 1) % len(MENU)
+                print("Button A -> selected:", MENU[menu_index])
                 lcd.show("Select:", MENU[menu_index])
 
             # --- button B: toggle selected device ---
             if button_b.was_pressed():
                 _toggle(MENU[menu_index], led, fan, buzzer)
+                print("Button B -> toggled:", MENU[menu_index])
                 hub.push_state(_build_state(led, fan, buzzer, motion))
 
             # --- motion -> tell the hub ---

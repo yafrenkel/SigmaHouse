@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counsellor's Guide — Day 5: Async + Final Project</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.6em; }
+h3 { font-size: 1.25em; margin-top: 1.4em; }
+h4 { font-size: 1.05em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  border-left: 4px solid #d0d7de; margin: 1em 0; padding: .4em 1em;
+  color: #57606a; background: #f6f8fa; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: .4em 0; }
+details {
+  border: 1px solid #d0d7de; border-radius: 8px; padding: .6em 1em; margin: 1em 0;
+  background: #fbfcfd;
+}
+summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .6em; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2em 0; }
+img { max-width: 100%; }
+@media print {
+  .topbar { display: none; }
+  body { max-width: none; font-size: 12pt; }
+  details { page-break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }  /* print expands details */
+}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="../INDEX.html">⌂ Tutorial Index</a></div>
+<article>
+<h1 id="counsellors-guide-day-5-async-final-project">Counsellor's Guide — Day 5: Async + Final Project</h1>
+<p><strong>Lab time:</strong> ~2 hours. <strong>Hands-on:</strong> ~110 min.</p>
+<p>The first 50 minutes are tightly scripted (sync vs async). The last 60 are open-ended (final project). Your role flips: from "lecturer" in the first half to "consultant" in the second.</p>
+<h2 id="pacing">Pacing</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Min</th>
+<th>Activity</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0–10</td>
+<td>Opener slide + day 5 milestones</td>
+<td>—</td>
+</tr>
+<tr>
+<td style="text-align: right;">10–25</td>
+<td>Switch USE_ASYNC=True, observe identical behavior</td>
+<td>Saving <code>config.py</code> to PC instead of board (again)</td>
+</tr>
+<tr>
+<td style="text-align: right;">25–50</td>
+<td>Side-by-side compare in PyCharm</td>
+<td>"Compare Files" hides in right-click menu — show once</td>
+</tr>
+<tr>
+<td style="text-align: right;">50–60</td>
+<td>Discussion: when sync vs async</td>
+<td>Don't over-lecture — keep momentum</td>
+</tr>
+<tr>
+<td style="text-align: right;">60–110</td>
+<td>Final project (5 options)</td>
+<td>The role of staff: ask "what's your next step?", not "here's how"</td>
+</tr>
+<tr>
+<td style="text-align: right;">110–120</td>
+<td>Project demos</td>
+<td>Each pair gets 2 minutes</td>
+</tr>
+</tbody>
+</table>
+<h2 id="where-theyll-get-stuck">Where they'll get stuck</h2>
+<h3 id="first-half-sync-vs-async">First half (sync vs async)</h3>
+<ol>
+<li>
+<p><strong><code>config.py</code> change doesn't take effect</strong> — saved to PC. Same Day 2 lesson, different file. Hint: "Right-click in board pane → Save here? Where does Thonny say it's editing the file?"</p>
+</li>
+<li>
+<p><strong>Async version doesn't start</strong> — they typoed something while exploring. If a board boots and silently does nothing, swap back to sync first to confirm the board itself is OK, then debug the async file.</p>
+</li>
+<li>
+<p><strong>They believe async is "faster"</strong> — common misconception. Both versions take the same time per HTTP call (since <code>urequests</code> is blocking either way). The difference is responsiveness — buttons are checked more often in async because the keepalive task isn't blocking the button task. Set up the experiment: with sync, count how many button presses register during a 1-sec keepalive (zero, because the loop sleeps). With async, multiple register because <code>task_buttons</code> has its own clock.</p>
+</li>
+</ol>
+<h3 id="second-half-final-project">Second half (final project)</h3>
+<p>Each option has its own gotchas:</p>
+<p><strong>Option A — Doorbell:</strong>
+- They forget to turn LEDs back OFF after 2 sec. Hint: <code>threading.Timer</code> in the route handler.
+- They iterate <code>HOUSES</code> outside the lock. Hint: same pattern as <code>arm_all</code>.</p>
+<p><strong>Option B — Fan party:</strong>
+- The fan's <code>on()</code> method takes <code>clockwise=True/False</code>. They miss this — point them at <code>devices/fan.py</code>.
+- They want to alternate per click → store state in <code>app_sync.py</code> (a module-level boolean works).</p>
+<p><strong>Option C — Statistics page:</strong>
+- Jinja syntax bites them: <code>{{ var }}</code> for variables. Show one example.
+- They forget to add a <code>last_alarm_time</code> global to <code>houses.py</code>.</p>
+<p><strong>Option D — Soft alarm escalation:</strong>
+- Buzzer's PWM <code>duty()</code> parameter is 0–1023, not 0–1. They'll often write <code>set_level(0.5)</code> — show that 0.5 truncates to 0.
+- They want to use <code>time.sleep</code> in the main loop. That blocks keepalives. Show them the timestamp pattern: store <code>alarm_started_at</code>, recompute level each loop iteration based on <code>ticks_diff</code>.</p>
+<p><strong>Option E — Two-house Morse chat:</strong>
+- Long-press detection: easiest pattern is to NOT use IRQ_FALLING+IRQ_RISING; use IRQ_FALLING (start), record <code>ticks_ms()</code>, then poll for release in the main loop. Subtle.
+- They need to know the partner's uid. Easiest: hardcode in <code>secrets.py</code> as <code>PARTNER_UID = "AABBCC..."</code>. (Adds a line that students who picked other options don't have — that's fine.)</p>
+<h2 id="ready-to-paste-hints">Ready-to-paste hints</h2>
+<p><strong>Hint H1</strong> — They claim "async is broken":</p>
+<blockquote>
+<p>Switch back to USE_ASYNC=False, reset, verify behavior. If sync works, the async file has a bug. Show me your async file's <code>task_buttons</code>. Most async bugs in this project are forgetting <code>await</code> somewhere.</p>
+</blockquote>
+<p><strong>Hint H2</strong> — Doorbell LEDs don't turn off:</p>
+<blockquote>
+<p>Look up <code>threading.Timer(seconds, function)</code>. In the route, after turning all LEDs on, schedule a function to run in 2 sec that turns them off and clears <code>pending_state_update</code>.</p>
+</blockquote>
+<p><strong>Hint H3</strong> — Stats page Jinja syntax:</p>
+<blockquote>
+<p><code>html
+&lt;p&gt;Total: {{ total }}&lt;/p&gt;
+&lt;p&gt;Active: {{ active }} / {{ total }}&lt;/p&gt;</code>
+In the route:
+<code>python
+return render_template("stats.html", total=len(HOUSES), active=...)</code></p>
+</blockquote>
+<p><strong>Hint H4</strong> — Buzzer escalation: where to track time:</p>
+<blockquote>
+<p>In <code>app_sync.py</code>, near the top:
+<code>python
+alarm_started_at = None</code>
+When <code>resp["alarm"]</code> becomes True, set <code>alarm_started_at = time.ticks_ms()</code> IF it was None. When alarm goes False, set it to None. Each tick of the loop, compute <code>elapsed = ticks_diff(now, alarm_started_at)</code> and pick a duty level.</p>
+</blockquote>
+<p><strong>Hint H5</strong> — Long press detection:</p>
+<blockquote>
+<p>Don't fight the interrupt. Use IRQ_FALLING to record the start, then in the main loop poll the pin's value. When it goes back to 1, compute the duration:
+<code>python
+if button._pin.value() == 1 and button._press_started:
+    duration = ticks_diff(ticks_ms(), button._press_started)
+    button._press_started = None
+    send_dot() if duration &lt; 200 else send_dash()</code></p>
+</blockquote>
+<h2 id="what-done-looks-like">What "done" looks like</h2>
+<ul>
+<li><strong>Milestone 5.1</strong> — <code>USE_ASYNC=True</code> runs identically to sync.</li>
+<li><strong>Milestone 5.2</strong> — Their final project runs end-to-end at the demo.</li>
+<li><strong>Milestone 5.3</strong> — Each pair speaks for 2 minutes about what they built.</li>
+</ul>
+<h2 id="demo-session-structure-last-10-min">Demo session structure (last 10 min)</h2>
+<ul>
+<li>90 sec setup per team (camera on their dashboard, board in the corner of the frame)</li>
+<li>60 sec demo</li>
+<li>30 sec Q&amp;A</li>
+</ul>
+<p>Suggested order:
+1. Easiest projects first (B — Fan party) to build confidence.
+2. Most visual ones in the middle (A — Doorbell, D — Soft alarm).
+3. Most impressive last (E — Morse chat between two teams) for a finale.</p>
+<h2 id="things-to-be-ready-for">Things to be ready for</h2>
+<ul>
+<li><strong>A team will want to keep going past time.</strong> That's a great problem. Note their idea, send them home with the project link, encourage them to pick it up.</li>
+<li><strong>A team will produce something you didn't predict.</strong> Lean into it — ask them to explain it to the room.</li>
+<li><strong>A team's project will fail at demo.</strong> Have a backup: their previous milestone (Day 4) still works. Demo that.</li>
+</ul>
+<h2 id="closing-the-camp">Closing the camp</h2>
+<ul>
+<li>Show the original <code>SigmaHouse-master/</code> for 2 minutes — students can see what the "messy production version" of their work looks like, and the connection between camp and real software.</li>
+<li>Mention the Day 5 "where to go next" list. The keenest will follow up.</li>
+<li>Hand out USB sticks with the full project so they can keep tinkering at home.</li>
+</ul>
+</article>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 4 — Sensors and the Global Alarm</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.6em; }
+h3 { font-size: 1.25em; margin-top: 1.4em; }
+h4 { font-size: 1.05em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  border-left: 4px solid #d0d7de; margin: 1em 0; padding: .4em 1em;
+  color: #57606a; background: #f6f8fa; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: .4em 0; }
+details {
+  border: 1px solid #d0d7de; border-radius: 8px; padding: .6em 1em; margin: 1em 0;
+  background: #fbfcfd;
+}
+summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .6em; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2em 0; }
+img { max-width: 100%; }
+@media print {
+  .topbar { display: none; }
+  body { max-width: none; font-size: 12pt; }
+  details { page-break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }  /* print expands details */
+}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="INDEX.html">⌂ Tutorial Index</a></div>
+<article>
+<h1 id="day-4-sensors-and-the-global-alarm">Day 4 — Sensors and the Global Alarm</h1>
+<p><strong>Goal:</strong> Understand how the PIR motion sensor works, trace exactly how the global alarm fires across all houses, and add your own twist.</p>
+<p><strong>Time:</strong> ~2 hours.</p>
+<p><strong>Prereqs:</strong> Day 3 — your house is in the dashboard, dashboard toggles work both ways.</p>
+<hr>
+<h2 id="part-1-how-the-pir-sensor-works-15-min">Part 1 — How the PIR sensor works (15 min)</h2>
+<p>A <strong>PIR</strong> (Passive Infrared) sensor sees the heat that bodies give off. When something warm moves through its view, the output pin goes from <code>0</code> to <code>1</code> for about a second.</p>
+<p>🛠 <strong>Try this</strong> at the Thonny REPL (your firmware is running in the background — that's fine, just open the shell):</p>
+<pre><code class="language-python">&gt;&gt;&gt; from machine import Pin
+&gt;&gt;&gt; pir = Pin(13, Pin.IN)
+&gt;&gt;&gt; pir.value()
+0
+&gt;&gt;&gt; # wave a hand in front of the sensor
+&gt;&gt;&gt; pir.value()
+1
+</code></pre>
+<p>💡 <strong>Why <code>Pin.IN</code> with no pull-up?</strong> The PIR has its own driver chip that pushes the line either low or high — it doesn't need our help.</p>
+<h3 id="why-interrupts-again">Why interrupts again?</h3>
+<p>We <em>could</em> poll <code>pir.value()</code> in the main loop. But the loop also has to send keepalives, read buttons, write to the LCD… If motion happens during a 200 ms keepalive HTTP call, we'd miss it. Interrupts catch it regardless.</p>
+<p>🛠 <strong>Try this</strong>: read <code>claude/implementation/smart_house/devices/motion.py</code>. Find the IRQ trigger.</p>
+<pre><code class="language-python">self._pin.irq(trigger=Pin.IRQ_RISING, handler=self._on_irq)
+</code></pre>
+<p><code>IRQ_RISING</code> because the PIR pulls the line FROM 0 TO 1 when it sees you. The handler just sets <code>self._triggered = True</code>. The main loop calls <code>was_triggered()</code> which returns <em>and clears</em> the flag.</p>
+<p>This <em>return-and-clear</em> pattern (also called "edge-consume") is exactly what <code>was_pressed()</code> does for buttons. Same idea, same implementation.</p>
+<p>✅ <strong>Milestone 4.1</strong>: Wave at the sensor — <code>pir.value()</code> returns <code>1</code>.</p>
+<hr>
+<h2 id="part-2-trace-the-alarm-flow-on-paper-20-min">Part 2 — Trace the alarm flow on paper (20 min)</h2>
+<p>Before code, let's draw the flow. Imagine TWO houses (A and B), both armed. You wave at house A's sensor.</p>
+<p>🛠 <strong>Try this</strong>: write down on paper or whiteboard, in order, what happens. Don't peek.</p>
+<details>
+<summary>▶ Solution</summary>
+<ol>
+<li>PIR pin on house A goes LOW→HIGH.</li>
+<li>Hardware fires the IRQ. <code>motion._triggered = True</code>.</li>
+<li>House A's main loop tick: sees <code>motion.was_triggered()</code> returns True.</li>
+<li>House A calls <code>hub.report_motion()</code> → <code>POST /api/houses/A/report_motion</code>.</li>
+<li>Hub's <code>houses.report_motion("A")</code>:
+   - House A is armed → set <code>alarm_triggered = True</code> on EVERY armed house (A and B).</li>
+<li>~0.5 sec later, house A's keepalive: <code>PUT /api/houses/A/keepalive</code>. Hub returns <code>{"alarm": true, "state_update": false}</code> and <strong>clears A's <code>alarm_triggered</code></strong> (one-shot).</li>
+<li>House A: <code>if resp.get("alarm"): buzzer.on()</code>.</li>
+<li>~0.5 sec later, house B's keepalive. Hub returns <code>{"alarm": true, ...}</code> and clears B's flag.</li>
+<li>House B: <code>buzzer.on()</code>.</li>
+<li>Both buzzers are now on until disarmed.</li>
+</ol>
+<p>So the <em>worst-case</em> delay between motion and the <em>farthest</em> buzzer is <strong>(A's report) + (B's keepalive interval)</strong> ≈ 1.0 second. Not bad.</p>
+</details>
+<p>💡 <strong>Why one-shot?</strong> If <code>alarm_triggered</code> stayed <code>true</code> forever, the buzzer would re-fire on every keepalive even after the user pressed <code>disarm</code>. Clearing on read means "you got the message".</p>
+<hr>
+<h2 id="part-3-test-it-for-real-20-min">Part 3 — Test it for real (20 min)</h2>
+<p>Two teams pair up. You need TWO houses both armed.</p>
+<p>🛠 <strong>Try this</strong>:</p>
+<ol>
+<li>In the dashboard, find both houses. Click <strong>Disarmed (arm)</strong> on each. Both should turn yellow with <strong>Armed</strong>.</li>
+<li>Wave a hand in front of the PIR sensor of either house.</li>
+<li>Within ~1 second, <strong>both buzzers</strong> start beeping. Both rows turn red with <strong>TRIGGERED</strong>.</li>
+<li>Click <strong>TRIGGERED (disarm)</strong> on either row. That house's buzzer stops AND its row goes back to neutral.</li>
+<li>The other house still buzzes — disarm it too.</li>
+</ol>
+<p>✅ <strong>Milestone 4.2</strong>: Motion on one house fires the buzzer on another.</p>
+<p>🛠 <strong>Try this</strong>: with both houses <em>Disarmed</em>, wave at one PIR. Nothing should happen — the alarm doesn't fire because no one is armed.</p>
+<p>🛠 <strong>Try this</strong>: arm only ONE house. Wave at the <em>disarmed</em> house's PIR. What happens?</p>
+<details>
+<summary>▶ Answer</summary>
+<p>Nothing fires. Look at <code>houses.report_motion</code>: the <strong>reporter</strong> has to be armed for propagation to start. If the disarmed house sees motion, it just records <code>state.motion.detected = True</code> and stops. (The "Motion!" badge briefly flashes in the dashboard, which is a nice tell.)</p>
+<p>This is intentional: it lets a counsellor unplug a malfunctioning sensor without killing the alarm system.</p>
+</details>
+<hr>
+<h2 id="part-4-read-housesreport_motion-10-min">Part 4 — Read <code>houses.report_motion</code> (10 min)</h2>
+<p>🛠 <strong>Try this</strong>: Open <code>implementation/iot_hub/houses.py</code> and find <code>report_motion</code>. It's 11 lines.</p>
+<pre><code class="language-python">def report_motion(unique_id: str) -&gt; bool:
+    with _LOCK:
+        reporter = HOUSES.get(unique_id)
+        if reporter is None:
+            return False
+        reporter[&quot;state&quot;][&quot;motion&quot;][&quot;detected&quot;] = True
+        if not reporter[&quot;alarm_armed&quot;]:
+            return True
+        for house in HOUSES.values():
+            if house[&quot;alarm_armed&quot;]:
+                house[&quot;alarm_triggered&quot;] = True
+        return True
+</code></pre>
+<p>Questions:</p>
+<ol>
+<li>Why <code>with _LOCK:</code>?</li>
+<li>Why does the reporter house also get <code>alarm_triggered</code> set?</li>
+<li>What if a house is <code>Lost</code> — would it get the alarm flag?</li>
+</ol>
+<details>
+<summary>▶ Answers</summary>
+<ol>
+<li>The Flask dev server is multi-threaded. Two requests could call <code>report_motion</code> at the same time. The lock makes the dict update atomic — no half-applied changes. (Try removing the lock and pounding the endpoint with 100 parallel requests; you'll see weird state.)</li>
+<li>The for loop walks EVERY armed house. The reporter is in <code>HOUSES.values()</code>, so it gets caught too — its own buzzer fires.</li>
+<li>Yes, <em>if</em> it's still marked <code>alarm_armed</code>. But look at <code>mark_lost_if_stale()</code>: it sets <code>alarm_armed = False</code> when a house goes Lost. So in practice, Lost houses are never in the armed set.</li>
+</ol>
+</details>
+<hr>
+<h2 id="part-5-write-a-feature-panic-mode-30-min">Part 5 — Write a feature: "panic mode" (30 min)</h2>
+<p>Right now, the dashboard has <code>arm</code> per house. Let's add <strong>arm all</strong> — single click arms every house at once, like setting an alarm system before everyone leaves.</p>
+<h3 id="step-1-data-layer">Step 1 — data layer</h3>
+<p>Add to <code>houses.py</code>:</p>
+<pre><code class="language-python">def arm_all() -&gt; int:
+    &quot;&quot;&quot;Arm every active house. Returns how many were armed.&quot;&quot;&quot;
+    count = 0
+    with _LOCK:
+        for house in HOUSES.values():
+            # TODO: only arm if status is &quot;Active&quot;
+            # TODO: set alarm_armed = True
+            # TODO: increment count
+            pass
+    return count
+</code></pre>
+<details>
+<summary>▶ Solution</summary>
+<pre><code class="language-python">def arm_all() -&gt; int:
+    &quot;&quot;&quot;Arm every active house. Returns how many were armed.&quot;&quot;&quot;
+    count = 0
+    with _LOCK:
+        for house in HOUSES.values():
+            if house[&quot;status&quot;] == &quot;Active&quot;:
+                house[&quot;alarm_armed&quot;] = True
+                count += 1
+    return count
+</code></pre>
+</details>
+<h3 id="step-2-route">Step 2 — route</h3>
+<p>Add to <code>app.py</code>:</p>
+<pre><code class="language-python">@app.route(&quot;/api/arm_all&quot;, methods=[&quot;POST&quot;])
+def arm_all():
+    n = houses.arm_all()
+    return jsonify({&quot;ok&quot;: True, &quot;count&quot;: n})
+</code></pre>
+<h3 id="step-3-dashboard-button">Step 3 — dashboard button</h3>
+<p>Open <code>templates/index.html</code>. Above the table, add:</p>
+<pre><code class="language-html">&lt;p&gt;
+  &lt;button id=&quot;arm-all&quot;&gt;Arm all&lt;/button&gt;
+  &lt;button id=&quot;disarm-all&quot;&gt;Disarm all&lt;/button&gt;
+&lt;/p&gt;
+</code></pre>
+<p>Open <code>static/dashboard.js</code>. At the top, after <code>const REFRESH_MS</code>:</p>
+<pre><code class="language-javascript">document.getElementById(&quot;arm-all&quot;).onclick = async () =&gt; {
+  await fetch(&quot;/api/arm_all&quot;, { method: &quot;POST&quot; });
+  refresh();
+};
+document.getElementById(&quot;disarm-all&quot;).onclick = async () =&gt; {
+  await fetch(&quot;/api/disarm_all&quot;, { method: &quot;POST&quot; });
+  refresh();
+};
+</code></pre>
+<p>(Day 1 added <code>disarm_all</code> already. If your team didn't, the solution from Day 1 has it.)</p>
+<h3 id="step-4-try-it">Step 4 — try it</h3>
+<p>Restart the hub. Refresh the dashboard hard (Ctrl-Shift-R) so the new HTML loads. Click <strong>Arm all</strong> — every house turns yellow. Wave at one PIR — every house's buzzer fires. Click <strong>Disarm all</strong> — silence.</p>
+<p>✅ <strong>Milestone 4.3</strong>: One click arms/disarms all houses.</p>
+<hr>
+<h2 id="part-6-stretch-10-min">Part 6 — Stretch (10 min)</h2>
+<p>⚡ <strong>Easy</strong>: Add a counter on the dashboard: "Houses armed: X / Y".</p>
+<p>⚡ <strong>Medium</strong>: Make <code>arm_all</code> skip houses that have been silent for &gt;30 seconds (define "silent" by checking <code>last_seen</code>). Reduces false alarms from flaky boards.</p>
+<p>⚡ <strong>Hard</strong>: Add a "delayed arm" feature: clicking arm waits 10 seconds before actually setting <code>alarm_armed</code>, displayed as a countdown on the LCD of each house. Lets people leave the room before the alarm goes live. Real alarm panels do exactly this.</p>
+<hr>
+<h2 id="what-you-learned-today">What you learned today</h2>
+<ul>
+<li>PIR sensors output a digital pulse on motion.</li>
+<li>The <code>was_triggered()</code> flag pattern keeps interrupts fast and the main loop in control.</li>
+<li>The global alarm has TWO conditions: the <em>reporter</em> must be armed, AND each <em>receiver</em> must be armed.</li>
+<li>The "one-shot" alarm flag avoids re-firing on every keepalive.</li>
+<li>A multi-house feature usually needs: one new function in <code>houses.py</code>, one route in <code>app.py</code>, and (sometimes) one button in the dashboard.</li>
+</ul>
+<p><strong>Tomorrow:</strong> the async version of the firmware, and a final project of your choice. → <a href="day5.html">day5.md</a></p>
+</article>
+</body>
+</html>

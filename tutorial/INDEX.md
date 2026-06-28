@@ -107,6 +107,12 @@ The whole project is small (~1500 lines including blank lines). You can read it 
 - **[counsellor/](counsellor/README.md)** — pacing, common mistakes, ready-to-paste hints (one page per day).
 - **[slides/](slides/README.md)** — opening slide deck per day in Marp markdown. Render to PDF once before camp.
 
+## Built with AI, on purpose 🤖
+
+This tutorial was designed and optimized with an AI agent (Claude) to make the path to understanding as clear and fast as possible.
+
+---
+
 ## Ready?
 
 Open [day1.md](day1.md) and let's go.

@@ -5,15 +5,20 @@ It has no Flask imports on purpose: app.py handles HTTP, this file
 handles data. That makes it easy to test in a Python REPL.
 """
 
+import time
 from datetime import datetime, timedelta
 from threading import Lock
 
-from constants import LOST_AFTER_S, VALID_DEVICES
+from constants import LOST_AFTER_S, MOTION_HOLD_S, VALID_DEVICES
 
 # {unique_id: house_record}. Lost on server restart -- devices re-register
 # automatically on their next keepalive (which will get a 404 and trigger
 # them to POST /api/houses again from the firmware).
 HOUSES: dict[str, dict] = {}
+
+# {unique_id: monotonic seconds of last motion report}. Kept OUT of the
+# house record so the records stay JSON-clean for jsonify().
+_MOTION_TS: dict[str, float] = {}
 
 # One coarse lock around the whole dict. Flask's dev server can serve
 # requests from multiple threads, so we need this to keep updates atomic.
@@ -34,9 +39,20 @@ def _default_state() -> dict:
     }
 
 
+def _expire_motion(house: dict) -> None:
+    """Clear a house's 'Motion!' once MOTION_HOLD_S has passed since the report."""
+    if not house["state"]["motion"]["detected"]:
+        return
+    ts = _MOTION_TS.get(house["unique_id"])
+    if ts is not None and time.monotonic() - ts >= MOTION_HOLD_S:
+        house["state"]["motion"]["detected"] = False
+
+
 def list_all() -> list[dict]:
     """Return a snapshot of every house, for the dashboard."""
     with _LOCK:
+        for house in HOUSES.values():
+            _expire_motion(house)
         return list(HOUSES.values())
 
 
@@ -128,6 +144,7 @@ def report_motion(unique_id: str) -> bool:
         if reporter is None:
             return False
         reporter["state"]["motion"]["detected"] = True
+        _MOTION_TS[unique_id] = time.monotonic()
         if not reporter["alarm_armed"]:
             return True
         for house in HOUSES.values():
@@ -138,6 +155,7 @@ def report_motion(unique_id: str) -> bool:
 
 def delete(unique_id: str) -> bool:
     with _LOCK:
+        _MOTION_TS.pop(unique_id, None)
         return HOUSES.pop(unique_id, None) is not None
 
 

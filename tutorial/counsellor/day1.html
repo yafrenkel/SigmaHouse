@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counsellor's Guide — Day 1: The Hub</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.6em; }
+h3 { font-size: 1.25em; margin-top: 1.4em; }
+h4 { font-size: 1.05em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  border-left: 4px solid #d0d7de; margin: 1em 0; padding: .4em 1em;
+  color: #57606a; background: #f6f8fa; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: .4em 0; }
+details {
+  border: 1px solid #d0d7de; border-radius: 8px; padding: .6em 1em; margin: 1em 0;
+  background: #fbfcfd;
+}
+summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .6em; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2em 0; }
+img { max-width: 100%; }
+@media print {
+  .topbar { display: none; }
+  body { max-width: none; font-size: 12pt; }
+  details { page-break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }  /* print expands details */
+}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="../INDEX.html">⌂ Tutorial Index</a></div>
+<article>
+<h1 id="counsellors-guide-day-1-the-hub">Counsellor's Guide — Day 1: The Hub</h1>
+<p><strong>Lab time:</strong> ~2 hours (120 min). Subtract 10 min for the opener slide deck. <strong>~110 min hands-on.</strong></p>
+<blockquote>
+<p>🎲 <strong>Optional opener:</strong> run the <a href="../icebreaker.html">ice-breaker game</a> ("You Are the Internet", ~20 min) <em>before</em> the slides. Campers physically act out HTTP, keepalives, and the alarm — so the code lands faster. If you do this, either start Day 1 earlier or trim Part 5 (the <code>disarm_all</code> endpoint) and set it as homework. Worth it on day one of camp when nobody knows each other yet.</p>
+</blockquote>
+<h2 id="pacing">Pacing</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Min</th>
+<th>Activity</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0–10</td>
+<td>Opener slides + demo dashboard</td>
+<td>Students trying to follow along on their laptops; ask them to just watch first</td>
+</tr>
+<tr>
+<td style="text-align: right;">10–25</td>
+<td>Setup PyCharm + offline pip install</td>
+<td>Microsoft Store Python stub. Wheels path wrong. Firewall prompt on first run.</td>
+</tr>
+<tr>
+<td style="text-align: right;">25–40</td>
+<td>HTTP concepts + first <code>curl</code></td>
+<td>Students typing "curl" in Windows cmd vs. PyCharm terminal — both work</td>
+</tr>
+<tr>
+<td style="text-align: right;">40–60</td>
+<td>Register fake house + keepalive</td>
+<td>Forgetting <code>Content-Type</code> header → <code>silent=True</code> returns <code>{}</code> and they think nothing broke</td>
+</tr>
+<tr>
+<td style="text-align: right;">60–80</td>
+<td>Read existing routes</td>
+<td>Quietest stretch; circulate and ask "what does this line do?"</td>
+</tr>
+<tr>
+<td style="text-align: right;">80–110</td>
+<td>Build <code>/api/disarm_all</code> endpoint</td>
+<td>Forgetting to restart the hub after editing. PyCharm's auto-restart is OFF (<code>use_reloader=False</code> in <code>app.py</code>).</td>
+</tr>
+<tr>
+<td style="text-align: right;">110–120</td>
+<td>Show milestones, brief stretch supervision</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h2 id="where-theyll-get-stuck">Where they'll get stuck</h2>
+<ol>
+<li>
+<p><strong><code>pip install</code> fails</strong> — they didn't <code>cd</code> into <code>implementation/iot_hub</code> first, so <code>requirements.txt</code> and <code>wheels/</code> aren't found. Hint: "look at where your terminal is".</p>
+</li>
+<li>
+<p><strong><code>curl</code> not found on Windows</strong> — Git Bash or PowerShell 7+ has it; old <code>cmd.exe</code> may not. Just direct them to PyCharm's bottom Terminal panel — it inherits Git Bash if Git is installed (which it is on every camp laptop).</p>
+</li>
+<li>
+<p><strong><code>{}</code> response when registering</strong> — they sent JSON but forgot <code>-H "Content-Type: application/json"</code>. Flask's <code>request.get_json(silent=True)</code> returns <code>None</code> → falls back to <code>{}</code> → <code>unique_id</code> is missing → 400. Hint: paste this exact line:
+   <code>bash
+   curl -X POST http://localhost:8080/api/houses -H "Content-Type: application/json" -d '{"unique_id":"FAKE001","ip_address":"127.0.0.1"}'</code></p>
+</li>
+<li>
+<p><strong>Quoting hell on Windows</strong> — single quotes around JSON don't work in <code>cmd.exe</code>. They DO work in Git Bash (PyCharm's default terminal). If they're using PowerShell, the JSON needs different escaping. Push them to PyCharm Terminal.</p>
+</li>
+<li>
+<p><strong>"My endpoint returns 404"</strong> — they edited the file but the running hub is the old code. PyCharm doesn't auto-restart Flask in this project (intentional — see <code>use_reloader=False</code> so the watchdog doesn't double up). Tell them to <strong>stop and re-run</strong> every code change.</p>
+</li>
+<li>
+<p><strong><code>disarm_all()</code> shadows <code>houses.disarm_all</code></strong> — when they name the route handler the same as the module function (<code>def disarm_all():</code> in <code>app.py</code>), Python finds the local function first. Hint:
+   <code>python
+   @app.route("/api/disarm_all", methods=["POST"])
+   def disarm_all():
+       n = houses.disarm_all()   # &lt;-- module name first!
+       return jsonify({"ok": True, "count": n})</code></p>
+</li>
+</ol>
+<h2 id="ready-to-paste-hints">Ready-to-paste hints</h2>
+<p><strong>Hint H1</strong> — Student is staring at a blank <code>disarm_all()</code> data-layer function:</p>
+<blockquote>
+<p>Look at <code>arm_alarm()</code> right above. When <code>armed=False</code>, what three things does it clear? Do those three things, but for every house in the loop, not just one.</p>
+</blockquote>
+<p><strong>Hint H2</strong> — Endpoint registered but <code>curl</code> returns 404:</p>
+<blockquote>
+<p>Did you save the file (Ctrl+S)? Did you stop and restart the hub? Top-right red square, then green play.</p>
+</blockquote>
+<p><strong>Hint H3</strong> — <code>count</code> always returns 0:</p>
+<blockquote>
+<p>You're checking <code>if house["alarm_armed"]:</code> AFTER setting it to False. Increment <code>count</code> BEFORE you change <code>alarm_armed</code>.</p>
+</blockquote>
+<p><strong>Hint H4</strong> — They want to test without typing 4 curl commands:</p>
+<blockquote>
+<p>In PyCharm terminal, paste this all at once:
+<code>bash
+for id in FAKE001 FAKE002 FAKE003; do
+  curl -X POST http://localhost:8080/api/houses -H "Content-Type: application/json" -d "{\"unique_id\":\"$id\",\"ip_address\":\"127.0.0.1\"}" &gt;/dev/null
+  curl -X POST http://localhost:8080/api/houses/$id/arm -H "Content-Type: application/json" -d '{"armed":true}' &gt;/dev/null
+done</code></p>
+</blockquote>
+<h2 id="what-done-looks-like">What "done" looks like</h2>
+<ul>
+<li><strong>Milestone 1.1</strong> — <code>http://localhost:8080/</code> shows "Waiting for houses to register…" in their browser.</li>
+<li><strong>Milestone 1.2</strong> — Their <code>curl -X POST http://localhost:8080/api/disarm_all</code> returns <code>{"ok": true, "count": N}</code> with <code>N &gt;= 2</code>, and the dashboard shows previously armed houses now disarmed.</li>
+</ul>
+<h2 id="stretch-supervision">Stretch supervision</h2>
+<p>The Day 1 stretches are the gentlest of the week:
+- <strong><code>/api/stats</code></strong> — 10-minute task; encourage everyone who finishes early.
+- <strong>Dashboard button</strong> — needs editing JS; help them find <code>dashboard.js</code> and add to the existing button setup pattern.
+- <strong><code>restart_requested</code> flag</strong> — touches three places (<code>houses.py</code>, <code>app.py</code>, the keepalive return value). Only push this on a clearly fast pair.</p>
+<h2 id="things-to-look-for-in-walkarounds">Things to look for in walkarounds</h2>
+<ul>
+<li><strong>Are they reading errors?</strong> If yes, they're learning. If no, sit next to them and read it together.</li>
+<li><strong>Is the dashboard refreshing?</strong> If it's stuck on "Waiting…" but they know they registered houses, they're hitting a different hub (different port? different host?). Check their URL.</li>
+<li><strong>Are they comfortable in PyCharm?</strong> If they don't know how to open the terminal, lost 30 minutes is real. Show once, they remember.</li>
+</ul>
+</article>
+</body>
+</html>

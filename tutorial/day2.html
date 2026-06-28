@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 2 — ESP32 First Steps</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.6em; }
+h3 { font-size: 1.25em; margin-top: 1.4em; }
+h4 { font-size: 1.05em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  border-left: 4px solid #d0d7de; margin: 1em 0; padding: .4em 1em;
+  color: #57606a; background: #f6f8fa; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: .4em 0; }
+details {
+  border: 1px solid #d0d7de; border-radius: 8px; padding: .6em 1em; margin: 1em 0;
+  background: #fbfcfd;
+}
+summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .6em; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2em 0; }
+img { max-width: 100%; }
+@media print {
+  .topbar { display: none; }
+  body { max-width: none; font-size: 12pt; }
+  details { page-break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }  /* print expands details */
+}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="INDEX.html">⌂ Tutorial Index</a></div>
+<article>
+<h1 id="day-2-esp32-first-steps">Day 2 — ESP32 First Steps</h1>
+<p><strong>Goal:</strong> Forget the hub for a day. Get your ESP32 to blink an LED, then read a button, then make the button toggle the LED — all running ON the board, no WiFi.</p>
+<p><strong>Time:</strong> ~2 hours.</p>
+<hr>
+<h2 id="part-1-meet-micropython-on-the-esp32-20-min">Part 1 — Meet MicroPython on the ESP32 (20 min)</h2>
+<p>Your laptop runs <strong>CPython</strong> (regular Python). Your ESP32 runs <strong>MicroPython</strong> — almost the same language but smaller, with extra modules (<code>machine</code>, <code>network</code>) for talking to hardware.</p>
+<h3 id="setup-thonny">Setup Thonny</h3>
+<p>🛠 <strong>Try this</strong>:</p>
+<ol>
+<li>Plug the ESP32 into USB.</li>
+<li>Open <strong>Thonny</strong>.</li>
+<li><strong>Tools → Options → Interpreter</strong> → MicroPython (ESP32) → Port: pick the COM port (e.g. <code>COM5</code>). If you don't see one, check that the cable is a <em>data</em> cable, not just a charging cable.</li>
+<li><strong>OK</strong>. The bottom <strong>Shell</strong> panel should now show:
+   ```
+   MicroPython v1.23.0 on 2024-... ; ESP32 module
+   Type "help()" for more information.<blockquote>
+<blockquote>
+<blockquote>
+<p>```</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</li>
+</ol>
+<p>This is a Python REPL running ON YOUR ESP32 over the USB cable. Anything you type runs on the board.</p>
+<p>🛠 <strong>Try this</strong>:</p>
+<pre><code class="language-python">&gt;&gt;&gt; 2 + 2
+4
+&gt;&gt;&gt; import os
+&gt;&gt;&gt; os.uname()
+</code></pre>
+<p>✅ <strong>Milestone 2.1</strong>: You can talk to the board's REPL.</p>
+<hr>
+<h2 id="part-2-blink-an-led-20-min">Part 2 — Blink an LED (20 min)</h2>
+<p>The Keyestudio board has an LED on <strong>GPIO 12</strong>.</p>
+<p>🛠 <strong>Try this</strong> (type each line at the <code>&gt;&gt;&gt;</code> prompt and press Enter):</p>
+<pre><code class="language-python">&gt;&gt;&gt; from machine import Pin
+&gt;&gt;&gt; led = Pin(12, Pin.OUT)
+&gt;&gt;&gt; led.value(1)        # LED on
+&gt;&gt;&gt; led.value(0)        # LED off
+</code></pre>
+<p>💡 <strong>Why?</strong>
+- <code>Pin(12, Pin.OUT)</code> says "treat GPIO 12 as an output". The ESP32 has a tiny switch on each pin; <code>OUT</code> mode lets us control whether the pin sends 0V or 3.3V.
+- <code>led.value(1)</code> puts 3.3V on the pin → current flows → LED lights up.</p>
+<h3 id="make-it-blink">Make it blink</h3>
+<p>🛠 <strong>Try this</strong>: in Thonny's editor (top panel), make a new file <code>blink.py</code>:</p>
+<pre><code class="language-python">from machine import Pin
+import time
+
+led = Pin(12, Pin.OUT)
+while True:
+    led.value(1)
+    time.sleep(0.5)
+    led.value(0)
+    time.sleep(0.5)
+</code></pre>
+<p>Save it on the board: <strong>File → Save as… → MicroPython device → blink.py</strong>.</p>
+<p>Press <strong>F5</strong> (Run). The LED blinks every half second. <strong>Press Ctrl-C</strong> in the shell to stop.</p>
+<p>⚡ <strong>Stretch</strong>: Make it blink "SOS" in Morse code (3 short, 3 long, 3 short).</p>
+<p>✅ <strong>Milestone 2.2</strong>: Your LED blinks.</p>
+<hr>
+<h2 id="part-3-read-a-button-25-min">Part 3 — Read a button (25 min)</h2>
+<p>Buttons are <em>inputs</em>. The Keyestudio board has two: <strong>Button A on GPIO 26</strong>, <strong>Button B on GPIO 25</strong>.</p>
+<p>These buttons are wired with a <em>pull-up</em>: when you DON'T press them, the pin reads <code>1</code>. When you press, it reads <code>0</code>. Yes, that's backwards from what feels natural — a 14-yo who notices that has actually understood the hardware.</p>
+<p>🛠 <strong>Try this</strong> at the REPL:</p>
+<pre><code class="language-python">&gt;&gt;&gt; from machine import Pin
+&gt;&gt;&gt; button = Pin(26, Pin.IN, Pin.PULL_UP)
+&gt;&gt;&gt; button.value()   # before pressing
+1
+&gt;&gt;&gt; button.value()   # press and hold while pressing Enter
+0
+</code></pre>
+<h3 id="polling-ask-the-button-are-you-pressed-over-and-over">Polling: ask the button "are you pressed?" over and over</h3>
+<p>🛠 <strong>Try this</strong> in <code>button_test.py</code>:</p>
+<pre><code class="language-python">from machine import Pin
+import time
+
+button = Pin(26, Pin.IN, Pin.PULL_UP)
+
+while True:
+    if button.value() == 0:
+        print(&quot;Pressed!&quot;)
+    time.sleep(0.1)
+</code></pre>
+<p>Run it. Press the button — you'll get a flood of "Pressed!" messages because you can hold it for hundreds of milliseconds.</p>
+<p>💡 <strong>Why so many messages?</strong> The loop runs 10 times per second. You hold the button for ~200ms → ~2 messages per press. We need a better approach.</p>
+<h3 id="the-interrupt-approach">The interrupt approach</h3>
+<p>An <em>interrupt</em> (IRQ) is the hardware saying: "hey CPU, this pin just changed — drop what you're doing and run this function." We don't have to keep asking.</p>
+<p>🛠 <strong>Try this</strong>:</p>
+<pre><code class="language-python">from machine import Pin
+import time
+
+button = Pin(26, Pin.IN, Pin.PULL_UP)
+
+def on_press(pin):
+    print(&quot;Button pressed!&quot;)
+
+button.irq(trigger=Pin.IRQ_FALLING, handler=on_press)
+
+# Just sit here and wait
+while True:
+    time.sleep(1)
+</code></pre>
+<p>Press the button. ONE message per press. (You may sometimes get 2 or 3 because the metal contact "bounces" — that's a real-world hardware thing.)</p>
+<p>💡 <strong><code>Pin.IRQ_FALLING</code></strong> = trigger on the moment the pin goes from 1 to 0 (the press). <code>Pin.IRQ_RISING</code> = trigger on release.</p>
+<p>✅ <strong>Milestone 2.3</strong>: One IRQ message per press.</p>
+<hr>
+<h2 id="part-4-button-toggles-led-30-min">Part 4 — Button toggles LED (30 min)</h2>
+<p>Now combine them. Press button A → LED toggles.</p>
+<h3 id="try-it-yourself-first">Try it yourself first</h3>
+<p>Write <code>button_led.py</code>. Use an IRQ. Don't peek at the solution for 5 minutes.</p>
+<details>
+<summary>▶ Solution</summary>
+<pre><code class="language-python">from machine import Pin
+import time
+
+led = Pin(12, Pin.OUT)
+button = Pin(26, Pin.IN, Pin.PULL_UP)
+
+def on_press(pin):
+    led.value(not led.value())   # flip 0-&gt;1 or 1-&gt;0
+
+button.irq(trigger=Pin.IRQ_FALLING, handler=on_press)
+
+while True:
+    time.sleep(1)
+</code></pre>
+<p>⚠️ <strong>Subtlety</strong>: We do <code>led.value(not led.value())</code> inside the IRQ. That's OK because it's very fast. NEVER do slow things (like <code>time.sleep</code>, <code>print</code>, or HTTP calls) inside an IRQ — the board will crash. The pattern we use in the real project (see <code>devices/button.py</code>) is to set a <em>flag</em> in the IRQ and read it from the main loop. We'll do that on Day 3.</p>
+</details>
+<p>✅ <strong>Milestone 2.4</strong>: Press button → LED toggles.</p>
+<hr>
+<h2 id="part-5-read-the-projects-device-code-15-min">Part 5 — Read the project's device code (15 min)</h2>
+<p>You just learned what's behind <code>devices/led.py</code> and <code>devices/button.py</code>.</p>
+<p>🛠 <strong>Try this</strong>: Open <code>claude/implementation/smart_house/devices/led.py</code> in PyCharm and read it. It's 21 lines.</p>
+<pre><code class="language-python">class LED:
+    def __init__(self, pin_num):
+        self._pin = Pin(pin_num, Pin.OUT)
+        self._pin.value(0)
+
+    def on(self):
+        self._pin.value(1)
+
+    def off(self):
+        self._pin.value(0)
+
+    def is_on(self):
+        return self._pin.value() == 1
+
+    def state(self):
+        return {&quot;active&quot;: self.is_on()}
+</code></pre>
+<p>Same <code>Pin(12, Pin.OUT)</code> you used at the REPL — wrapped in a class so the rest of the firmware can write <code>led.on()</code> instead of <code>led.value(1)</code>.</p>
+<p>🛠 <strong>Try this</strong>: Open <code>devices/button.py</code> and find the IRQ handler. Notice how <code>_on_irq</code> just sets <code>self._pressed = True</code> — it doesn't toggle anything itself. The main loop calls <code>was_pressed()</code> to consume the flag.</p>
+<p>💡 <strong>Why this pattern?</strong> The IRQ is fast (just a flag set). The main loop, which has plenty of time, does the real work (toggle, send HTTP, update LCD). This is THE rule of embedded programming: <em>interrupts should do almost nothing</em>.</p>
+<hr>
+<h2 id="part-6-stretch-challenges-10-min">Part 6 — Stretch challenges (10 min)</h2>
+<p>⚡ <strong>Easy</strong>: Make button A turn the LED on and button B turn it off.</p>
+<p>⚡ <strong>Medium</strong>: Press button A → LED stays on for 2 seconds, then auto-off. (Hint: keep a <code>turn_off_at</code> timestamp in the main loop, no <code>sleep</code> in the IRQ.)</p>
+<p>⚡ <strong>Hard</strong>: Implement <em>debouncing</em> — ignore button presses that come within 50 ms of the previous one. Look up "switch debounce" if you need a hint.</p>
+<hr>
+<h2 id="what-you-learned-today">What you learned today</h2>
+<ul>
+<li>The ESP32 runs MicroPython; you can REPL into it.</li>
+<li><code>Pin(n, Pin.OUT)</code> controls outputs; <code>Pin(n, Pin.IN, Pin.PULL_UP)</code> reads inputs.</li>
+<li>Polling = check repeatedly in a loop. Interrupts = the pin tells you when it changed.</li>
+<li>IRQ handlers must be FAST — set a flag, do the work elsewhere.</li>
+<li>The project's <code>devices/*.py</code> files are thin wrappers around what you just did.</li>
+</ul>
+<p><strong>Tomorrow:</strong> WiFi, HTTP from the board, and your physical house appears in the dashboard. → <a href="day3.html">day3.md</a></p>
+</article>
+</body>
+</html>

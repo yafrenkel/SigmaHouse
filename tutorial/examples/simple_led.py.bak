@@ -27,10 +27,10 @@ import urequests
 from machine import Pin, unique_id
 
 # ----- EDIT THESE -----
-WIFI_SSID = "NETGEAR03"
-WIFI_PASS = "crispygiant525"
-HUB_URL   = "http://192.168.1.8:8080"
-LED_PIN   = 12 # check the hub 5x/second. Lower = snappier LED, more WiFi traffic. // try 1000, etc
+WIFI_SSID = "YOUR_WIFI_NAME"
+WIFI_PASS = "YOUR_WIFI_PASSWORD"
+HUB_URL   = "http://192.168.1.10:8080"   # your laptop's IP + port 8080
+LED_PIN   = 12
 # ----------------------
 
 

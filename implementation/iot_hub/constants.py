@@ -8,3 +8,8 @@ LOST_AFTER_S = 60
 
 # Devices the dashboard is allowed to toggle.
 VALID_DEVICES = ("led", "fan", "buzzer")
+
+# How long the dashboard keeps showing "Motion!" after a report, before it
+# auto-clears back to "No motion". Motion is an event (a pulse), so we hold
+# the display for a few seconds rather than leaving it stuck on.
+MOTION_HOLD_S = 3

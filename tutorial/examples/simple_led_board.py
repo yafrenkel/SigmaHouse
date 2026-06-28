@@ -30,7 +30,7 @@ from machine import Pin, unique_id
 WIFI_SSID = "NETGEAR03"
 WIFI_PASS = "crispygiant525"
 HUB_URL   = "http://192.168.1.8:8080"
-LED_PIN   = 12 # check the hub 5x/second. Lower = snappier LED, more WiFi traffic. // try 1000, etc
+LED_PIN   = 12
 # ----------------------
 
 
@@ -95,33 +95,24 @@ def main():
     hub_call("POST", "/api/houses", {"unique_id": uid, "ip_address": ip})
     print("Registered with hub.")
 
-    POLL_MS = 200    # check the hub 5x/second. Lower = snappier LED, more WiFi traffic.
-
     try:
         while True:
-            try:
-                resp = hub_call(
-                    "PUT", "/api/houses/" + uid + "/keepalive",
-                    {"ip_address": ip},
-                )
-                if resp and resp.get("state_update"):
-                    state = hub_call("GET", "/api/houses/" + uid + "/state")
-                    if state:
-                        apply_led_state(state)
-            except KeyboardInterrupt:
-                raise                       # let the outer handler stop us cleanly
-            except Exception as e:
-                print("loop hiccup (ignored):", e)   # one bad request won't crash us
-            time.sleep_ms(POLL_MS)
+            resp = hub_call(
+                "PUT", "/api/houses/" + uid + "/keepalive",
+                {"ip_address": ip},
+            )
+            if resp and resp.get("state_update"):
+                state = hub_call("GET", "/api/houses/" + uid + "/state")
+                if state:
+                    apply_led_state(state)
+            time.sleep(0.2) //0.2 or 1
     except KeyboardInterrupt:
         print("Stopping...")
     finally:
-        try:
-            hub_call("DELETE", "/api/houses/" + uid)
-        except Exception:
-            pass
+        hub_call("DELETE", "/api/houses/" + uid)
         led.value(0)
         print("Unregistered. Goodbye.")
 
 
 main()
+
