@@ -85,6 +85,18 @@ img { max-width: 100%; }
 <td><a href="03_http_and_server.drawio">03_http_and_server.drawio</a></td>
 <td>The concept: anatomy of an HTTP request/response, status codes, and the server's listen→match→run→respond loop</td>
 </tr>
+<tr>
+<td><a href="04_house_lifecycle.drawio">04_house_lifecycle.drawio</a></td>
+<td>The timeline: a house registers (201 + JSON), then keepalives every second (200 + JSON), and pulls new state with a GET when <code>state_update</code> is true. (Embedded in Day 3 — matches <code>examples/day3_wifi_hub/simple_led.py</code>.)</td>
+</tr>
+<tr>
+<td><a href="05_polling_vs_interrupt.drawio">05_polling_vs_interrupt.drawio</a></td>
+<td>Day 2 examples: polling (keep asking) vs interrupt (get told) + the flag pattern. (Embedded in Day 2.)</td>
+</tr>
+<tr>
+<td><a href="06_sync_vs_async.drawio">06_sync_vs_async.drawio</a></td>
+<td>Day 5 example: the heartbeat timeline — sync freezes during the slow job, async stays smooth. (Embedded in Day 5.)</td>
+</tr>
 </tbody>
 </table>
 <h2 id="how-to-open-edit">How to open / edit</h2>
@@ -109,11 +121,10 @@ img { max-width: 100%; }
 <li><strong>Days 3-4</strong> — leave the matching diagram visible while they code. Students who get lost can look up at the picture instead of asking.</li>
 <li><strong>Day 5</strong> — both diagrams up; ask the room "where in this picture does your final-project feature live?"</li>
 </ul>
-<h2 id="exporting-to-pngpdf-for-printing-or-slides">Exporting to PNG/PDF for printing or slides</h2>
+<h2 id="exporting-to-pngpdf-for-printing-or-projecting">Exporting to PNG/PDF for printing or projecting</h2>
 <p>In any of the three options above:
-- <strong>File → Export as → PNG</strong> for slides (use 2x scale for crispness).
+- <strong>File → Export as → PNG</strong> for projecting on screen (use 2x scale for crispness).
 - <strong>File → Export as → PDF</strong> for printing as A4 reference sheets.</p>
-<p>Recommended: export both diagrams as PDF, drop them into <code>tutorial/slides/</code> so the printable versions live next to the slide decks.</p>
 <h2 id="customising">Customising</h2>
 <p>Free game. Common tweaks:
 - <strong>Replace the laptop's IP</strong> in <code>01_iot_hub.drawio</code> with your camp's real IP.

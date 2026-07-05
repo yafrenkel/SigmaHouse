@@ -6,6 +6,14 @@
 
 **Prereqs:** Day 1 hub running on a counsellor's laptop. Day 2 — you can blink an LED and read a button.
 
+> 🔬 **The whole thing in one file:** [examples/day3_wifi_hub/simple_led.py](examples/day3_wifi_hub/simple_led.py) is a complete, readable "smart house" (WiFi → register → keepalive → LED) in ~120 lines. It's a gentle stepping stone before the full multi-device firmware — run it once you've got WiFi working below.
+
+This is exactly the conversation `simple_led.py` has with the hub:
+
+<p align="center">
+  <img src="diagrams/04_house_lifecycle.drawio.svg" alt="Timeline: the house registers (201), then keepalives every second (200 with alarm/state_update flags), and pulls new state with a GET when state_update is true." style="max-width:100%;">
+</p>
+
 ---
 
 ## Part 1 — Find the hub (10 min)

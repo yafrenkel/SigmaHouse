@@ -67,6 +67,9 @@ img { max-width: 100%; }
 <p><strong>Goal:</strong> Understand how the PIR motion sensor works, trace exactly how the global alarm fires across all houses, and add your own twist.</p>
 <p><strong>Time:</strong> ~2 hours.</p>
 <p><strong>Prereqs:</strong> Day 3 — your house is in the dashboard, dashboard toggles work both ways.</p>
+<blockquote>
+<p>🔬 <strong>Runnable example:</strong> <a href="examples/day4_sensors/motion_test.py">examples/day4_sensors/motion_test.py</a> reads the PIR on its own (no WiFi, no hub) — the quickest way to <em>see</em> the sensor fire and learn its quirks before wiring it into the alarm.</p>
+</blockquote>
 <hr>
 <h2 id="part-1-how-the-pir-sensor-works-15-min">Part 1 — How the PIR sensor works (15 min)</h2>
 <p>A <strong>PIR</strong> (Passive Infrared) sensor sees the heat that bodies give off. When something warm moves through its view, the output pin goes from <code>0</code> to <code>1</code> for about a second.</p>

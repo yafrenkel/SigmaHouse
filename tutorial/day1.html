@@ -88,6 +88,11 @@ img { max-width: 100%; }
 <p>✅ <strong>Milestone 1.1</strong>: You see the dashboard with the message "Waiting for houses to register…".</p>
 <hr>
 <h2 id="part-2-how-http-works-20-min">Part 2 — How HTTP works (20 min)</h2>
+<p>The big idea in one picture — a request goes out, a response comes back, and the server is just a loop that waits, matches, runs, and replies:</p>
+<p align="center">
+  <img src="diagrams/03_http_and_server.drawio.svg" alt="Anatomy of an HTTP request and response, common status codes (200/201/400/404), and the server's listen → receive → match route → run → respond loop." style="max-width:100%;">
+</p>
+
 <p>When the browser asks for a web page, it sends an <strong>HTTP request</strong> like:</p>
 <pre><code>GET /api/houses HTTP/1.1
 Host: localhost:8080

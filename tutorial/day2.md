@@ -4,6 +4,20 @@
 
 **Time:** ~2 hours.
 
+## Meet your board
+
+Here's the ESP32 "smart house" and everything wired to it — the LED, buttons, and sensors you'll drive today, with their GPIO pin numbers. Keep this handy; the pin numbers live in `config.py`.
+
+<p align="center">
+  <img src="diagrams/02_smart_house.drawio.svg" alt="The ESP32 board and its peripherals with GPIO pin numbers: LED (12), buttons (26/25), PIR motion (13), fan (18/19), buzzer (4), LCD over I2C (22/21), and the software stack inside the board." style="max-width:100%;">
+</p>
+
+> 🔬 **Runnable examples:** the code you'll write today is ready to open and run in [examples/day2_esp32_basics/](examples/day2_esp32_basics/) — `1_blink.py`, `2_button_poll.py`, `3_button_irq.py`, `4_button_led.py`. Try typing them yourself first; use the files if you get stuck or want to compare.
+
+<p align="center">
+  <img src="diagrams/05_polling_vs_interrupt.drawio.svg" alt="Polling keeps asking the button in a loop; an interrupt fires a tiny handler that just sets a flag, and the main loop does the real work (the flag pattern)." style="max-width:100%;">
+</p>
+
 ---
 
 ## Part 1 — Meet MicroPython on the ESP32 (20 min)

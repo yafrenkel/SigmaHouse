@@ -7,6 +7,9 @@ Two draw.io diagrams that explain the project visually. Camper-friendly — desi
 | [01_iot_hub.drawio](01_iot_hub.drawio) | The server side: browser, Flask routes, HOUSES dict, watchdog, multiple ESP32 boards |
 | [02_smart_house.drawio](02_smart_house.drawio) | The board side: physical peripherals with GPIO pins, software stack inside the ESP32, IRQ rule |
 | [03_http_and_server.drawio](03_http_and_server.drawio) | The concept: anatomy of an HTTP request/response, status codes, and the server's listen→match→run→respond loop |
+| [04_house_lifecycle.drawio](04_house_lifecycle.drawio) | The timeline: a house registers (201 + JSON), then keepalives every second (200 + JSON), and pulls new state with a GET when `state_update` is true. (Embedded in Day 3 — matches `examples/day3_wifi_hub/simple_led.py`.) |
+| [05_polling_vs_interrupt.drawio](05_polling_vs_interrupt.drawio) | Day 2 examples: polling (keep asking) vs interrupt (get told) + the flag pattern. (Embedded in Day 2.) |
+| [06_sync_vs_async.drawio](06_sync_vs_async.drawio) | Day 5 example: the heartbeat timeline — sync freezes during the slow job, async stays smooth. (Embedded in Day 5.) |
 
 ## How to open / edit
 
@@ -30,13 +33,11 @@ Install the **Draw.io Integration** extension; `.drawio` files render natively. 
 - **Days 3-4** — leave the matching diagram visible while they code. Students who get lost can look up at the picture instead of asking.
 - **Day 5** — both diagrams up; ask the room "where in this picture does your final-project feature live?"
 
-## Exporting to PNG/PDF for printing or slides
+## Exporting to PNG/PDF for printing or projecting
 
 In any of the three options above:
-- **File → Export as → PNG** for slides (use 2x scale for crispness).
+- **File → Export as → PNG** for projecting on screen (use 2x scale for crispness).
 - **File → Export as → PDF** for printing as A4 reference sheets.
-
-Recommended: export both diagrams as PDF, drop them into `tutorial/slides/` so the printable versions live next to the slide decks.
 
 ## Customising
 

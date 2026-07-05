@@ -67,6 +67,13 @@ img { max-width: 100%; }
 <p><strong>Goal:</strong> Compare the synchronous and async versions of the firmware to see what <code>async/await</code> actually changes, then build a feature of your choice.</p>
 <p><strong>Time:</strong> ~2 hours.</p>
 <p><strong>Prereqs:</strong> Day 4 — global alarm working, you can add data-layer functions and routes.</p>
+<blockquote>
+<p>🔬 <strong>See async for real:</strong> <a href="examples/day5_async/async_demo.py">examples/day5_async/async_demo.py</a> blinks a heartbeat LED while a fake "slow job" runs. Flip <code>USE_ASYNC</code> and watch the LED <strong>freeze</strong> (sync) vs <strong>stay smooth</strong> (async) — the difference the real firmware can't show you.</p>
+</blockquote>
+<p align="center">
+  <img src="diagrams/06_sync_vs_async.drawio.svg" alt="Timeline: in sync the 2-second slow job blocks the loop so the heartbeat freezes; in async the slow job yields with await so the heartbeat keeps beating." style="max-width:100%;">
+</p>
+
 <hr>
 <h2 id="part-1-same-behavior-two-shapes-20-min">Part 1 — Same behavior, two shapes (20 min)</h2>
 <p>You already know <code>app_sync.py</code>. Today's surprise: <code>app_async.py</code> does the <strong>exact same thing</strong> with the <strong>same hardware drivers</strong> and the <strong>same <code>hub_client.py</code></strong>. Only the loop structure is different.</p>

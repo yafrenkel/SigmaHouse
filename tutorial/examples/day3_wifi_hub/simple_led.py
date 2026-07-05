@@ -1,23 +1,21 @@
-"""Simplest possible smart house — LED only.
+"""Day 3 - The simplest possible smart house (LED only).
 
-This is the smallest meaningful firmware that talks to the hub:
+This is the smallest firmware that talks to the hub:
   1. Connects to WiFi
   2. Registers with the hub
-  3. Loops forever:
-       - Sends keepalive every 1 second
-       - If hub says "state_update", pulls new state and turns LED on/off
+  3. Loops: sends a keepalive; if the hub says "state_update", pulls the
+     new state and switches the LED
   4. On Ctrl-C, unregisters cleanly
 
-Compare this to implementation/smart_house/app_sync.py (~130 lines).
-Same protocol, just stripped to one device. Once this works, the full
-firmware is the same idea with more devices.
+Compare it to implementation/smart_house/app_sync.py (~130 lines). Same
+protocol, stripped to one device. Once this works, the full firmware is
+the same idea with more devices.
 
 To use:
-  1. Edit the four lines under "EDIT THESE" below.
+  1. Edit the four lines under "EDIT THESE" (your WiFi + your laptop's IP).
   2. In Thonny: File -> Save as -> MicroPython device -> simple_led.py
-  3. Press F5 to run. Watch the REPL output.
-  4. Click the LED button in the dashboard -> LED lights up within 1 sec.
-  5. Ctrl-C to stop.
+  3. Press F5. Watch the shell.
+  4. Click the LED button in the dashboard -> the LED switches. Ctrl-C to stop.
 """
 
 import network
@@ -44,7 +42,7 @@ def connect_wifi():
     if not wlan.isconnected():
         print("Connecting to WiFi...")
         wlan.connect(WIFI_SSID, WIFI_PASS)
-        for _ in range(30):                # up to 15 seconds
+        for _ in range(40):                # up to ~20 seconds
             if wlan.isconnected():
                 break
             time.sleep(0.5)
@@ -76,7 +74,7 @@ def hub_call(method, path, body=None):
 
 
 def apply_led_state(state):
-    """Compare hub's desired LED state to actual and switch if needed."""
+    """Compare the hub's desired LED state to the real one and switch if needed."""
     want_on = bool(state["led"]["active"])
     is_on   = bool(led.value())
     if want_on and not is_on:

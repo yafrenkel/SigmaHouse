@@ -105,7 +105,10 @@ The whole project is small (~1500 lines including blank lines). You can read it 
 ## For staff (counsellors)
 
 - **[counsellor/](counsellor/README.md)** — pacing, common mistakes, ready-to-paste hints (one page per day).
-- **[slides/](slides/README.md)** — opening slide deck per day in Marp markdown. Render to PDF once before camp.
+
+## Runnable examples
+
+- **[examples/](examples/README.md)** — per-day code you can open and run on the board (blink, buttons, the one-file smart house, PIR test, the async demo).
 
 ## Built with AI, on purpose 🤖
 

@@ -18,7 +18,7 @@ Each day includes:
 
 ## General running tips
 
-- **Start with a 5-minute opener slide** ([../slides/](../slides/)) before campers touch keyboards. Sets the goal for the day.
+- **Start with a 5-minute framing** before campers touch keyboards — state the day's goal and show the finished result. (Project the top of that day's tutorial page if you like.)
 - **Demo the milestone first.** If you show the working result, students know what they're aiming at.
 - **Pair students.** Two campers per ESP32 is the sweet spot — one types, one looks up reference. Swap halfway.
 - **Hint, don't solve.** When a student is stuck, ask "what does the error message say?" before offering hints. The fastest learners are the ones who read the error first.

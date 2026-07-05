@@ -34,6 +34,12 @@ Here's the whole system you're building. Today is the green box in the middle �
 
 ## Part 2 — How HTTP works (20 min)
 
+The big idea in one picture — a request goes out, a response comes back, and the server is just a loop that waits, matches, runs, and replies:
+
+<p align="center">
+  <img src="diagrams/03_http_and_server.drawio.svg" alt="Anatomy of an HTTP request and response, common status codes (200/201/400/404), and the server's listen → receive → match route → run → respond loop." style="max-width:100%;">
+</p>
+
 When the browser asks for a web page, it sends an **HTTP request** like:
 
 ```

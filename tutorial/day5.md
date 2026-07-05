@@ -6,6 +6,12 @@
 
 **Prereqs:** Day 4 — global alarm working, you can add data-layer functions and routes.
 
+> 🔬 **See async for real:** [examples/day5_async/async_demo.py](examples/day5_async/async_demo.py) blinks a heartbeat LED while a fake "slow job" runs. Flip `USE_ASYNC` and watch the LED **freeze** (sync) vs **stay smooth** (async) — the difference the real firmware can't show you.
+
+<p align="center">
+  <img src="diagrams/06_sync_vs_async.drawio.svg" alt="Timeline: in sync the 2-second slow job blocks the loop so the heartbeat freezes; in async the slow job yields with await so the heartbeat keeps beating." style="max-width:100%;">
+</p>
+
 ---
 
 ## Part 1 — Same behavior, two shapes (20 min)

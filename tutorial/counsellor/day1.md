@@ -1,14 +1,14 @@
 # Counsellor's Guide — Day 1: The Hub
 
-**Lab time:** ~2 hours (120 min). Subtract 10 min for the opener slide deck. **~110 min hands-on.**
+**Lab time:** ~2 hours (120 min). Subtract ~10 min for a framing intro. **~110 min hands-on.**
 
-> 🎲 **Optional opener:** run the [ice-breaker game](../icebreaker.md) ("You Are the Internet", ~20 min) *before* the slides. Campers physically act out HTTP, keepalives, and the alarm — so the code lands faster. If you do this, either start Day 1 earlier or trim Part 5 (the `disarm_all` endpoint) and set it as homework. Worth it on day one of camp when nobody knows each other yet.
+> 🎲 **Optional opener:** run the [ice-breaker game](../icebreaker.md) ("You Are the Internet", ~20 min) *before* any code. Campers physically act out HTTP, keepalives, and the alarm — so the code lands faster. If you do this, either start Day 1 earlier or trim Part 5 (the `disarm_all` endpoint) and set it as homework. Worth it on day one of camp when nobody knows each other yet.
 
 ## Pacing
 
 | Min | Activity | Watch out for |
 |---:|---|---|
-| 0–10 | Opener slides + demo dashboard | Students trying to follow along on their laptops; ask them to just watch first |
+| 0–10 | Framing + demo dashboard | Students trying to follow along on their laptops; ask them to just watch first |
 | 10–25 | Setup PyCharm + offline pip install | Microsoft Store Python stub. Wheels path wrong. Firewall prompt on first run. |
 | 25–40 | HTTP concepts + first `curl` | Students typing "curl" in Windows cmd vs. PyCharm terminal — both work |
 | 40–60 | Register fake house + keepalive | Forgetting `Content-Type` header → `silent=True` returns `{}` and they think nothing broke |

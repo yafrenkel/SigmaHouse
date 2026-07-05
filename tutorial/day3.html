@@ -67,6 +67,14 @@ img { max-width: 100%; }
 <p><strong>Goal:</strong> Make your ESP32 join the camp WiFi, send an HTTP request to the hub, and appear in the dashboard. By the end, clicking a button in the dashboard will switch your real LED.</p>
 <p><strong>Time:</strong> ~2 hours.</p>
 <p><strong>Prereqs:</strong> Day 1 hub running on a counsellor's laptop. Day 2 — you can blink an LED and read a button.</p>
+<blockquote>
+<p>🔬 <strong>The whole thing in one file:</strong> <a href="examples/day3_wifi_hub/simple_led.py">examples/day3_wifi_hub/simple_led.py</a> is a complete, readable "smart house" (WiFi → register → keepalive → LED) in ~120 lines. It's a gentle stepping stone before the full multi-device firmware — run it once you've got WiFi working below.</p>
+</blockquote>
+<p>This is exactly the conversation <code>simple_led.py</code> has with the hub:</p>
+<p align="center">
+  <img src="diagrams/04_house_lifecycle.drawio.svg" alt="Timeline: the house registers (201), then keepalives every second (200 with alarm/state_update flags), and pulls new state with a GET when state_update is true." style="max-width:100%;">
+</p>
+
 <hr>
 <h2 id="part-1-find-the-hub-10-min">Part 1 — Find the hub (10 min)</h2>
 <p>The hub is a web server on the camp network. To talk to it you need its IP address and port.</p>

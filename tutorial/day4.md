@@ -6,6 +6,8 @@
 
 **Prereqs:** Day 3 — your house is in the dashboard, dashboard toggles work both ways.
 
+> 🔬 **Runnable example:** [examples/day4_sensors/motion_test.py](examples/day4_sensors/motion_test.py) reads the PIR on its own (no WiFi, no hub) — the quickest way to *see* the sensor fire and learn its quirks before wiring it into the alarm.
+
 ---
 
 ## Part 1 — How the PIR sensor works (15 min)
