@@ -1,0 +1,43 @@
+<svg viewBox="0 0 780 515" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<defs><marker id="ax" markerWidth="9" markerHeight="9" refX="4.5" refY="4.5" orient="auto"><path d="M1,1 L8,4.5 L1,8 Z" fill="#57606a"/></marker></defs>
+<rect x="0" y="0" width="780" height="515" fill="#ffffff"/>
+<text x="390.0" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1f2328">Buzzer loudness vs. duty cycle</text>
+<text x="390.0" y="56" text-anchor="middle" font-size="13" fill="#57606a">how loud the same note is, as you change the ON-fraction of each cycle</text>
+<path d="M 120.0,370.00 L 125.8,361.36 L 131.6,352.73 L 137.4,344.12 L 143.2,335.53 L 149.0,326.98 L 154.8,318.47 L 160.6,310.01 L 166.4,301.61 L 172.2,293.28 L 178.0,285.02 L 183.8,276.85 L 189.6,268.77 L 195.4,260.78 L 201.2,252.91 L 207.0,245.15 L 212.8,237.52 L 218.6,230.01 L 224.4,222.65 L 230.2,215.43 L 236.0,208.36 L 241.8,201.45 L 247.6,194.71 L 253.4,188.14 L 259.2,181.75 L 265.0,175.55 L 270.8,169.53 L 276.6,163.72 L 282.4,158.11 L 288.2,152.71 L 294.0,147.52 L 299.8,142.55 L 305.6,137.81 L 311.4,133.30 L 317.2,129.02 L 323.0,124.97 L 328.8,121.17 L 334.6,117.62 L 340.4,114.31 L 346.2,111.26 L 352.0,108.46 L 357.8,105.92 L 363.6,103.64 L 369.4,101.62 L 375.2,99.87 L 381.0,98.39 L 386.8,97.17 L 392.6,96.22 L 398.4,95.54 L 404.2,95.14 L 410.0,95.00 L 415.8,95.14 L 421.6,95.54 L 427.4,96.22 L 433.2,97.17 L 439.0,98.39 L 444.8,99.87 L 450.6,101.62 L 456.4,103.64 L 462.2,105.92 L 468.0,108.46 L 473.8,111.26 L 479.6,114.31 L 485.4,117.62 L 491.2,121.17 L 497.0,124.97 L 502.8,129.02 L 508.6,133.30 L 514.4,137.81 L 520.2,142.55 L 526.0,147.52 L 531.8,152.71 L 537.6,158.11 L 543.4,163.72 L 549.2,169.53 L 555.0,175.55 L 560.8,181.75 L 566.6,188.14 L 572.4,194.71 L 578.2,201.45 L 584.0,208.36 L 589.8,215.43 L 595.6,222.65 L 601.4,230.01 L 607.2,237.52 L 613.0,245.15 L 618.8,252.91 L 624.6,260.78 L 630.4,268.77 L 636.2,276.85 L 642.0,285.02 L 647.8,293.28 L 653.6,301.61 L 659.4,310.01 L 665.2,318.47 L 671.0,326.98 L 676.8,335.53 L 682.6,344.12 L 688.4,352.73 L 694.2,361.36 L 700.0,370.00 L 700.0,370 L 120.0,370 Z" fill="#e5534b" fill-opacity="0.10"/>
+<line x1="120.0" y1="370" x2="120.0" y2="95" stroke="#b0b6bd" stroke-width="1" stroke-dasharray="3 5" opacity="0.5"/>
+<text x="120.0" y="392" text-anchor="middle" font-size="12" fill="#57606a">0%</text>
+<text x="120.0" y="410" text-anchor="middle" font-size="11.5" font-weight="400" fill="#57606a">0</text>
+<line x1="265.0" y1="370" x2="265.0" y2="95" stroke="#b0b6bd" stroke-width="1" stroke-dasharray="3 5" opacity="0.5"/>
+<text x="265.0" y="392" text-anchor="middle" font-size="12" fill="#57606a">25%</text>
+<text x="265.0" y="410" text-anchor="middle" font-size="11.5" font-weight="400" fill="#57606a">256</text>
+<line x1="410.0" y1="370" x2="410.0" y2="95" stroke="#b0b6bd" stroke-width="1" stroke-dasharray="3 5" opacity="0.5"/>
+<text x="410.0" y="392" text-anchor="middle" font-size="12" fill="#57606a">50%</text>
+<text x="410.0" y="410" text-anchor="middle" font-size="11.5" font-weight="700" fill="#e5534b">512</text>
+<line x1="555.0" y1="370" x2="555.0" y2="95" stroke="#b0b6bd" stroke-width="1" stroke-dasharray="3 5" opacity="0.5"/>
+<text x="555.0" y="392" text-anchor="middle" font-size="12" fill="#57606a">75%</text>
+<text x="555.0" y="410" text-anchor="middle" font-size="11.5" font-weight="400" fill="#57606a">768</text>
+<line x1="700.0" y1="370" x2="700.0" y2="95" stroke="#b0b6bd" stroke-width="1" stroke-dasharray="3 5" opacity="0.5"/>
+<text x="700.0" y="392" text-anchor="middle" font-size="12" fill="#57606a">100%</text>
+<text x="700.0" y="410" text-anchor="middle" font-size="11.5" font-weight="400" fill="#57606a">1023</text>
+<text x="110" y="410" text-anchor="end" font-size="10.5" font-style="italic" fill="#57606a">duty():</text>
+<line x1="120" y1="370" x2="714" y2="370" stroke="#57606a" stroke-width="1.6" marker-end="url(#ax)"/>
+<line x1="120" y1="370" x2="120" y2="81" stroke="#57606a" stroke-width="1.6" marker-end="url(#ax)"/>
+<text x="410.0" y="436" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2328">Duty cycle  (top: % of each cycle ON  &#183;  bottom: raw buzzer.duty() value, 0&#8211;1023)</text>
+<text x="34" y="232.5" transform="rotate(-90 34 232.5)" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2328">Relative loudness  (0 = silent &#8230; 1 = max)</text>
+<text x="110" y="374" text-anchor="end" font-size="11" fill="#57606a">silent</text>
+<text x="110" y="99" text-anchor="end" font-size="11" fill="#57606a">loudest</text>
+<path d="M 120.0,370.00 L 125.8,361.36 L 131.6,352.73 L 137.4,344.12 L 143.2,335.53 L 149.0,326.98 L 154.8,318.47 L 160.6,310.01 L 166.4,301.61 L 172.2,293.28 L 178.0,285.02 L 183.8,276.85 L 189.6,268.77 L 195.4,260.78 L 201.2,252.91 L 207.0,245.15 L 212.8,237.52 L 218.6,230.01 L 224.4,222.65 L 230.2,215.43 L 236.0,208.36 L 241.8,201.45 L 247.6,194.71 L 253.4,188.14 L 259.2,181.75 L 265.0,175.55 L 270.8,169.53 L 276.6,163.72 L 282.4,158.11 L 288.2,152.71 L 294.0,147.52 L 299.8,142.55 L 305.6,137.81 L 311.4,133.30 L 317.2,129.02 L 323.0,124.97 L 328.8,121.17 L 334.6,117.62 L 340.4,114.31 L 346.2,111.26 L 352.0,108.46 L 357.8,105.92 L 363.6,103.64 L 369.4,101.62 L 375.2,99.87 L 381.0,98.39 L 386.8,97.17 L 392.6,96.22 L 398.4,95.54 L 404.2,95.14 L 410.0,95.00 L 415.8,95.14 L 421.6,95.54 L 427.4,96.22 L 433.2,97.17 L 439.0,98.39 L 444.8,99.87 L 450.6,101.62 L 456.4,103.64 L 462.2,105.92 L 468.0,108.46 L 473.8,111.26 L 479.6,114.31 L 485.4,117.62 L 491.2,121.17 L 497.0,124.97 L 502.8,129.02 L 508.6,133.30 L 514.4,137.81 L 520.2,142.55 L 526.0,147.52 L 531.8,152.71 L 537.6,158.11 L 543.4,163.72 L 549.2,169.53 L 555.0,175.55 L 560.8,181.75 L 566.6,188.14 L 572.4,194.71 L 578.2,201.45 L 584.0,208.36 L 589.8,215.43 L 595.6,222.65 L 601.4,230.01 L 607.2,237.52 L 613.0,245.15 L 618.8,252.91 L 624.6,260.78 L 630.4,268.77 L 636.2,276.85 L 642.0,285.02 L 647.8,293.28 L 653.6,301.61 L 659.4,310.01 L 665.2,318.47 L 671.0,326.98 L 676.8,335.53 L 682.6,344.12 L 688.4,352.73 L 694.2,361.36 L 700.0,370.00" fill="none" stroke="#e5534b" stroke-width="3" stroke-linecap="round"/>
+<line x1="410.0" y1="370" x2="410.0" y2="95.0" stroke="#e5534b" stroke-width="1.4" stroke-dasharray="5 4"/>
+<line x1="120" y1="95.0" x2="410.0" y2="95.0" stroke="#e5534b" stroke-width="1.4" stroke-dasharray="5 4"/>
+<circle cx="410.0" cy="95.0" r="6" fill="#e5534b"/>
+<text x="410.0" y="81.0" text-anchor="middle" font-size="14" font-weight="700" fill="#e5534b">50% = loudest 🔊</text>
+<text x="410.0" y="63.0" text-anchor="middle" font-size="11.5" fill="#e5534b">code parks it here: duty(512) = 512/1023 ≈ 50%</text>
+<circle cx="120.0" cy="370" r="5" fill="#ffffff" stroke="#e5534b" stroke-width="2"/>
+<circle cx="700.0" cy="370" r="5" fill="#ffffff" stroke="#e5534b" stroke-width="2"/>
+<text x="130.0" y="358" font-size="11.5" fill="#57606a">0% ON &#8594; barely swings = silent</text>
+<text x="690.0" y="358" text-anchor="end" font-size="11.5" fill="#57606a">100% ON &#8594; barely swings = silent</text>
+<text x="265.0" y="159.54563517369942" text-anchor="middle" font-size="11.5" font-style="italic" fill="#57606a">quieter</text>
+<text x="555.0" y="159.54563517369942" text-anchor="middle" font-size="11.5" font-style="italic" fill="#57606a">quieter</text>
+<rect x="20" y="477" width="740" height="30" rx="8" fill="#fff2f1" stroke="#e5534b"/>
+<text x="390.0" y="497" text-anchor="middle" font-size="12.5" fill="#1f2328">Volume peaks at <tspan font-weight="700" fill="#e5534b">50%</tspan> and falls toward silence at either 0% or 100% &#8212; because only the disc&#8217;s back-and-forth <tspan font-style="italic">swing</tspan> makes sound.</text>
+</svg>

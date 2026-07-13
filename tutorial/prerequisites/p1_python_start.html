@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon — Python Boot-Up</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:18px;line-height:1.65;color:#1f2328;max-width:860px;margin:0 auto;padding:0 22px 80px;background:#fffdf9}
+h1{font-size:1.9em;border-bottom:3px solid #ffd23f;padding-bottom:.2em;margin-top:.6em}
+h2{font-size:1.35em;margin-top:1.5em;color:#0b6b4f}
+a{color:#0969da}
+code{font-family:Consolas,monospace;font-size:.9em;background:#f0f1f2;padding:.12em .4em;border-radius:4px}
+pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}
+pre code{background:none;padding:0}
+.card{background:#fff;border:1px solid #eadfc5;border-left:6px solid #4cc9f0;border-radius:10px;padding:.6em 1em;margin:1em 0;background:#f2fbff}
+.win{border-left:6px solid #57cc99;background:#f1fff6;border-radius:10px;padding:.6em 1em;margin:1em 0}
+details{border:1px solid #d0d7de;border-radius:8px;padding:.5em 1em;margin:.7em 0;background:#fbfcfd}
+summary{cursor:pointer;font-weight:600}
+.topbar{position:sticky;top:0;background:#fffdf9ee;backdrop-filter:blur(4px);border-bottom:1px solid #eadfc5;padding:8px 0;margin-bottom:16px;font-size:.85em}
+.topbar a{font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="index.html">🏠 Code Week home</a></div>
+
+<h1>Monday — Python Boot-Up 🐍</h1>
+<p><strong>Today:</strong> make the computer talk, remember things, ask you questions, and do math. By lunch you'll write your first real programs.</p>
+<p><strong>Setup:</strong> open <strong>Thonny</strong>. Type your code in the big top area, press <strong>F5</strong> (or the green Run button) to run it. It'll ask you to save — save to a folder called <code>codeweek</code> on your Desktop. The bottom "Shell" is where output appears.</p>
+
+<h2>🐙 First: meet GitHub (where this came from)</h2>
+<p>You're reading this because it was shared on <strong>GitHub</strong> — a website where programmers store and share their code. Think of it like Google Drive, but for code projects. (The real smart-house camp project lives on GitHub too!)</p>
+<p><strong>How to grab a project from GitHub</strong> — a real skill you'll use again and again:</p>
+<ol>
+<li>Open the project's GitHub page in your browser (your manager will give you the link).</li>
+<li>Click the green <strong>&lt;&gt; Code</strong> button near the top-right.</li>
+<li>Click <strong>Download ZIP</strong>.</li>
+<li>Find the downloaded ZIP (usually in your <em>Downloads</em> folder), right-click it → <strong>Extract All…</strong> to unzip it.</li>
+<li>Open the unzipped folder and double-click <code>index.html</code> — that's your Code Week home page. 🎉</li>
+</ol>
+<p>That's it — you now know how to download almost any open project on the internet. Real coders do this every day. 🌍 <em>(Already reading this? Then you've basically done it — nice work! 😊)</em></p>
+
+<h2>🎯 Mission 1 — Make the computer talk</h2>
+<p><code>print(...)</code> shows something on the screen.</p>
+<p>🛠 <strong>Try it</strong> — type this, press F5:</p>
+<pre><code>print("Hello! I'm learning to code.")
+print("This is my first program.")
+print(3 + 4)</code></pre>
+<p>See how text goes in <strong>quotes</strong>, but numbers don't? Try changing the words and running again.</p>
+<div class="win">✅ <strong>Win:</strong> you made the computer print your own message.</div>
+
+<h2>🎯 Mission 2 — Remember things (variables)</h2>
+<p>A <strong>variable</strong> is a labeled box that stores a value so you can use it later.</p>
+<pre><code>name = "Ada"
+age = 13
+print("Hi", name)
+print("Next year you'll be", age + 1)</code></pre>
+<p>Even cleaner — an <strong>f-string</strong> lets you drop variables right into text with <code>{ }</code>:</p>
+<pre><code>print(f"Hi {name}, you are {age} years old.")</code></pre>
+<p>🛠 <strong>Try it:</strong> make variables for your <code>name</code>, <code>age</code>, and <code>favorite_food</code>, then print one sentence using all three with an f-string.</p>
+<details><summary>▶ Peek</summary>
+<pre><code>name = "Junior Developer"
+age = 13
+favorite_food = "sushi"
+print(f"I'm {name}, I'm {age}, and I love {favorite_food}.")</code></pre></details>
+<div class="win">✅ <strong>Win:</strong> you stored and used your own info.</div>
+
+<h2>🎯 Mission 3 — Ask the human (input)</h2>
+<p><code>input(...)</code> stops and waits for you to type an answer, then hands it back.</p>
+<pre><code>name = input("What's your name? ")
+print(f"Nice to meet you, {name}!")</code></pre>
+<p>🛠 <strong>Try it:</strong> ask for the person's name AND their favorite animal, then print a fun sentence with both.</p>
+<div class="win">✅ <strong>Win:</strong> your program has a conversation now.</div>
+
+<h2>🎯 Mission 4 — Numbers vs. text (a sneaky gotcha)</h2>
+<p>Big rule: <code>input()</code> always gives you <strong>text</strong>, even if you type a number. Text can't do math! To do math, convert it with <code>int()</code> (whole number) first.</p>
+<pre><code>age = input("How old are you? ")
+age = int(age)                 # turn the text "13" into the number 13
+print(f"In 10 years you'll be {age + 10}.")</code></pre>
+<p>🛠 <strong>Try it:</strong> run it. Then <em>delete</em> the <code>int()</code> line and run again — you'll get a red error, because text + number doesn't work. That error is a normal part of coding! Put the line back.</p>
+<details><summary>▶ Why did it break?</summary>
+<p>Without <code>int()</code>, <code>age</code> is the text <code>"13"</code>, and Python won't add the number <code>10</code> to text. <code>int()</code> converts it to a real number. (Reading error messages is a superpower — the last line usually names the problem.)</p></details>
+<div class="win">✅ <strong>Win:</strong> you learned the #1 beginner gotcha before it ever confused you.</div>
+
+<h2>👑 Boss Build — Mad-Libs story generator</h2>
+<p>Mad Libs: ask for a few random words, then drop them into a silly story. Ask for at least a <strong>name</strong>, an <strong>adjective</strong> (describing word, like "smelly"), a <strong>verb</strong> (action, like "danced"), and an <strong>animal</strong>. Then print a funny 2–3 sentence story using all of them.</p>
+<p>🛠 <strong>Build it</strong> — start from this and finish the story your way:</p>
+<pre><code>name = input("A name: ")
+adjective = input("A describing word: ")
+verb = input("An action word (past tense): ")
+animal = input("An animal: ")
+
+print()
+print(f"One day, {name} met a {adjective} {animal}.")
+print(f"Together they {verb} all the way to the moon!")
+# add 1-2 more silly lines of your own</code></pre>
+<details><summary>▶ Peek (one full version)</summary>
+<pre><code>name = input("A name: ")
+adjective = input("A describing word: ")
+verb = input("An action word (past tense): ")
+animal = input("An animal: ")
+place = input("A place: ")
+
+print()
+print(f"One sunny morning, {name} woke up next to a {adjective} {animal}.")
+print(f"They {verb} together all the way to {place}.")
+print(f"And that is how {name} became famous. The end. 🎉")</code></pre></details>
+<div class="win">✅ <strong>👑 Boss done!</strong> Run it for a family member with their words — get a laugh. Log it and collect your Boss bonus. 💵</div>
+
+<h2>⚡ Stretch (optional bonus)</h2>
+<p>Make a mini calculator: ask for two numbers, then print their <strong>sum</strong>, <strong>difference</strong>, and <strong>product</strong>. (Remember <code>int()</code>!)</p>
+<details><summary>▶ Peek</summary>
+<pre><code>a = int(input("First number: "))
+b = int(input("Second number: "))
+print(f"{a} + {b} = {a + b}")
+print(f"{a} - {b} = {a - b}")
+print(f"{a} × {b} = {a * b}")</code></pre></details>
+
+<hr>
+<p>🎉 That's Monday! You can already make programs that talk, remember, ask, and calculate. Tomorrow they'll start making <em>decisions</em>.</p>
+<p>👉 Next: <a href="p2_logic_and_loops.html"><strong>Tuesday — Decisions &amp; Loops</strong></a></p>
+</body>
+</html>

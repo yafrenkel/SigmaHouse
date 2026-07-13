@@ -10,6 +10,7 @@ in Thonny and run it on the board (or run the hub for Day 1).
 | 3 | [day3_wifi_hub/](day3_wifi_hub/) | `simple_led.py` — the whole "smart house" in one small file (WiFi + hub + LED) |
 | 4 | [day4_sensors/](day4_sensors/) | `motion_test.py` — read the PIR sensor on its own |
 | 5 | [day5_async/](day5_async/) | `async_demo.py` — *see* the difference between sync and async |
+| 🎵 bonus | [bonus_music/](bonus_music/) | `play_melody.py` — a little music theory + make the buzzer play a tune (no WiFi/hub) |
 
 ## Day 2 — run these in order
 1. `1_blink.py` — blink the LED

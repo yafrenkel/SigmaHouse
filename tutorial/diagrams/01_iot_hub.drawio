@@ -1,11 +1,11 @@
 <mxfile host="Electron">
   <diagram name="IoT Hub" id="iot_hub">
-    <mxGraphModel dx="1201" dy="828" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+    <mxGraphModel dx="1188" dy="815" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" value="&lt;b&gt;The IoT Hub&lt;/b&gt;&lt;br&gt;What happens on the server" vertex="1">
-          <mxGeometry height="60" width="400" x="350" y="20" as="geometry" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" value="&lt;b&gt;The IoT Hub&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="400" x="350" y="20" as="geometry" />
         </mxCell>
         <mxCell id="browser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=center;" value="🌐 &lt;b&gt;Browser&lt;/b&gt;&#xa;(Dashboard at http://laptop-ip:8080)" vertex="1">
           <mxGeometry height="80" width="240" x="60" y="120" as="geometry" />

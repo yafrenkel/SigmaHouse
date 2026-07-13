@@ -61,11 +61,10 @@ img { max-width: 100%; }
 </style>
 </head>
 <body>
-<div class="topbar"><a href="INDEX.html">⌂ Tutorial Index</a></div>
+<div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
 <article>
 <h1 id="day-1-the-hub">Day 1 — The Hub</h1>
 <p><strong>Goal:</strong> Get the Flask hub running and learn how the dashboard talks to houses over HTTP. By the end you'll register a fake "house" with a single command and watch it appear in your browser.</p>
-<p><strong>Time:</strong> ~2 hours.</p>
 <h2 id="the-big-picture">The big picture</h2>
 <p>Here's the whole system you're building. Today is the green box in the middle — the <strong>hub</strong> — plus the browser dashboard. The ESP32 "houses" join later in the week.</p>
 <p align="center">
@@ -77,13 +76,13 @@ img { max-width: 100%; }
 <p>🛠 <strong>Try this</strong>(diagrams/01_iot_hub.drawio)</p>
 <ol>
 <li>Open <strong>PyCharm Community</strong>.</li>
-<li><strong>File → Open</strong> → navigate to <code>C:\Projects\sigma\claude\implementation\iot_hub</code> → Open.</li>
+<li><strong>File → Open</strong> → navigate to <code>C:\Projects\sigma\implementation\iot_hub</code> → Open.</li>
 <li>PyCharm sees <code>requirements.txt</code> and offers to create a venv. Click <strong>Create</strong>.</li>
 <li>PyCharm tries to install <code>Flask==3.0.3</code> from the internet — it'll fail because we're offline. Open the <strong>Terminal</strong> tab at the bottom and run:
    <code>bash
    pip install --no-index --find-links wheels -r requirements.txt</code></li>
 <li>Right-click <code>app.py</code> in the project tree → <strong>Run 'app'</strong>.</li>
-<li>Open <a href="http://localhost:8080/">http://localhost:8080/</a> in your browser.</li>
+<li>Open <a href="http://localhost:8080/" target="_blank" rel="noopener">http://localhost:8080/</a> in your browser.</li>
 </ol>
 <p>✅ <strong>Milestone 1.1</strong>: You see the dashboard with the message "Waiting for houses to register…".</p>
 <hr>
@@ -369,7 +368,7 @@ curl -X POST http://localhost:8080/api/disarm_all
 <li>The hub stores everything in a Python dict (<code>HOUSES</code>).</li>
 <li><strong>Keepalive = the heartbeat:</strong> the board waves every second so the watchdog knows it's alive, and it's the hub's <em>only</em> chance to send instructions back (polling).</li>
 </ul>
-<p><strong>Tomorrow:</strong> we leave the hub running and start coding on the actual ESP32. → <a href="day2.html">day2.md</a></p>
+<p><strong>Tomorrow:</strong> we leave the hub running and start coding on the actual ESP32. → <a href="day2.html" target="_blank" rel="noopener">day2.md</a></p>
 </article>
 </body>
 </html>

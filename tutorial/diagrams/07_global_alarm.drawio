@@ -1,0 +1,98 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Global Alarm" id="global_alarm">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="920" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TITLE -->
+        <mxCell id="title" value="&lt;b&gt;The Global Alarm&lt;/b&gt;&#10;wave at House A's sensor → BOTH armed houses buzz" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=17;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="200" y="8" width="520" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ACTOR HEADERS -->
+        <mxCell id="hA" value="🏠 &lt;b&gt;House A&lt;/b&gt; (ESP32)&#10;🔒 alarm armed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;" vertex="1" parent="1">
+          <mxGeometry x="50" y="62" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hub" value="🐍 &lt;b&gt;Hub&lt;/b&gt; (Flask)&#10;houses.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;" vertex="1" parent="1">
+          <mxGeometry x="370" y="62" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hB" value="🏠 &lt;b&gt;House B&lt;/b&gt; (ESP32)&#10;🔒 alarm armed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;" vertex="1" parent="1">
+          <mxGeometry x="690" y="62" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- LIFELINES -->
+        <mxCell id="llA" style="html=1;endArrow=none;dashed=1;strokeColor=#b85450;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="140" y="112" as="sourcePoint" /><mxPoint x="140" y="600" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="llHub" style="html=1;endArrow=none;dashed=1;strokeColor=#82b366;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="460" y="112" as="sourcePoint" /><mxPoint x="460" y="600" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="llB" style="html=1;endArrow=none;dashed=1;strokeColor=#b85450;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="780" y="112" as="sourcePoint" /><mxPoint x="780" y="600" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- STEP 1: wave -->
+        <mxCell id="wave" value="👋 &lt;b&gt;1.&lt;/b&gt; You wave at House A's PIR&#10;→ pin 0→1 fires the IRQ&#10;→ motion flag set" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="122" width="210" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- STEP 2: report_motion A -> Hub -->
+        <mxCell id="e_report" value="&lt;b&gt;2.&lt;/b&gt; POST /api/houses/A/report_motion" style="html=1;endArrow=block;strokeColor=#d6b656;strokeWidth=2;fontSize=11;fontFamily=Courier New;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="140" y="200" as="sourcePoint" /><mxPoint x="460" y="200" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- STEP 3: hub sets flag on ALL armed houses -->
+        <mxCell id="hubSet" value="&lt;b&gt;3.&lt;/b&gt; report_motion(A): A is armed →&#10;set &lt;b&gt;alarm_triggered = True&lt;/b&gt; on EVERY armed house" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="290" y="222" width="340" height="48" as="geometry" />
+        </mxCell>
+        <!-- fan-out to B (internal) -->
+        <mxCell id="e_fanout" value="(internal: B is armed too → B's flag = True)" style="html=1;endArrow=block;dashed=1;strokeColor=#9673a6;strokeWidth=2;fontSize=10;fontColor=#9673a6;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="460" y="290" as="sourcePoint" /><mxPoint x="780" y="290" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="bFlag" value="🚩 alarm_triggered = True" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="690" y="300" width="180" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- STEP 4: A keepalive -->
+        <mxCell id="e_kaA" value="&lt;b&gt;4.&lt;/b&gt; PUT /A/keepalive  (next tick, ~0.5s)" style="html=1;endArrow=block;strokeColor=#d6b656;strokeWidth=2;fontSize=11;fontFamily=Courier New;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="140" y="350" as="sourcePoint" /><mxPoint x="460" y="350" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_respA" value="200 OK  { alarm: TRUE }   (clears A's flag — one-shot)" style="html=1;endArrow=open;dashed=1;strokeColor=#82b366;strokeWidth=2;fontSize=11;fontFamily=Courier New;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="460" y="382" as="sourcePoint" /><mxPoint x="140" y="382" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="aBuzz" value="🔊 &lt;b&gt;5.&lt;/b&gt; buzzer.on()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;" vertex="1" parent="1">
+          <mxGeometry x="50" y="400" width="180" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- STEP 6: B keepalive -->
+        <mxCell id="e_kaB" value="&lt;b&gt;6.&lt;/b&gt; PUT /B/keepalive  (next tick, ~0.5s)" style="html=1;endArrow=block;strokeColor=#d6b656;strokeWidth=2;fontSize=11;fontFamily=Courier New;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="780" y="470" as="sourcePoint" /><mxPoint x="460" y="470" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e_respB" value="200 OK  { alarm: TRUE }   (clears B's flag)" style="html=1;endArrow=open;dashed=1;strokeColor=#82b366;strokeWidth=2;fontSize=11;fontFamily=Courier New;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="460" y="502" as="sourcePoint" /><mxPoint x="780" y="502" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="bBuzz" value="🔊 &lt;b&gt;7.&lt;/b&gt; buzzer.on()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;" vertex="1" parent="1">
+          <mxGeometry x="690" y="520" width="180" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- FOOTER -->
+        <mxCell id="footer" value="🔔 Both buzzers now stay ON until someone disarms. Worst-case delay from wave to the FARTHEST buzzer ≈ 1 second (A's report + B's keepalive interval). The 'one-shot' flag means each house buzzes once per motion event, not on every keepalive." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="580" width="840" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- LEGEND -->
+        <mxCell id="legReq" value="solid gold = request (house → hub)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="648" width="260" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="legResp" value="dashed green = response (hub → house)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="320" y="648" width="280" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="legInt" value="dashed purple = the hub's internal state change" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="610" y="648" width="290" height="18" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

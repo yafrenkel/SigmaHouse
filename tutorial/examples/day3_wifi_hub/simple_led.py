@@ -38,19 +38,32 @@ led.value(0)
 
 def connect_wifi():
     wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    if not wlan.isconnected():
-        print("Connecting to WiFi...")
-        wlan.connect(WIFI_SSID, WIFI_PASS)
-        for _ in range(40):                # up to ~20 seconds
+    # We try the whole thing up to 5 times. Each try does a FULL radio reset
+    # (active off -> on) before connecting. A soft reboot or a brownout can
+    # leave the WiFi driver wedged, and then connect() throws
+    # "Wifi Internal Error" -- resetting the radio and retrying clears it.
+    for attempt in range(1, 6):
+        try:
+            wlan.active(False)
+            time.sleep(1)
+            wlan.active(True)
+            time.sleep(1)
+            if not wlan.isconnected():
+                print("Connecting to WiFi... (attempt %d of 5)" % attempt)
+                wlan.connect(WIFI_SSID, WIFI_PASS)
+                for _ in range(30):            # wait up to ~15 seconds
+                    if wlan.isconnected():
+                        break
+                    time.sleep(0.5)
             if wlan.isconnected():
-                break
-            time.sleep(0.5)
-    if not wlan.isconnected():
-        raise RuntimeError("WiFi failed")
-    ip = wlan.ifconfig()[0]
-    print("WiFi connected, my IP:", ip)
-    return ip
+                ip = wlan.ifconfig()[0]
+                print("WiFi connected, my IP:", ip)
+                return ip
+            print("  not connected yet; resetting radio and retrying...")
+        except OSError as e:
+            print("  WiFi error (%s); resetting radio and retrying..." % e)
+            time.sleep(2)
+    raise RuntimeError("WiFi failed after 5 tries - check SSID/password and that it's 2.4GHz")
 
 
 def hub_call(method, path, body=None):

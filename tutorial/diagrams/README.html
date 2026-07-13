@@ -61,7 +61,7 @@ img { max-width: 100%; }
 </style>
 </head>
 <body>
-<div class="topbar"><a href="../INDEX.html">⌂ Tutorial Index</a></div>
+<div class="topbar"><a href="../INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
 <article>
 <h1 id="diagrams">Diagrams</h1>
 <p>Two draw.io diagrams that explain the project visually. Camper-friendly — designed to project on a screen at the start of a session, or print as A4 reference sheets.</p>
@@ -74,27 +74,27 @@ img { max-width: 100%; }
 </thead>
 <tbody>
 <tr>
-<td><a href="01_iot_hub.drawio">01_iot_hub.drawio</a></td>
+<td><a href="01_iot_hub.drawio" target="_blank" rel="noopener">01_iot_hub.drawio</a></td>
 <td>The server side: browser, Flask routes, HOUSES dict, watchdog, multiple ESP32 boards</td>
 </tr>
 <tr>
-<td><a href="02_smart_house.drawio">02_smart_house.drawio</a></td>
+<td><a href="02_smart_house.drawio" target="_blank" rel="noopener">02_smart_house.drawio</a></td>
 <td>The board side: physical peripherals with GPIO pins, software stack inside the ESP32, IRQ rule</td>
 </tr>
 <tr>
-<td><a href="03_http_and_server.drawio">03_http_and_server.drawio</a></td>
+<td><a href="03_http_and_server.drawio" target="_blank" rel="noopener">03_http_and_server.drawio</a></td>
 <td>The concept: anatomy of an HTTP request/response, status codes, and the server's listen→match→run→respond loop</td>
 </tr>
 <tr>
-<td><a href="04_house_lifecycle.drawio">04_house_lifecycle.drawio</a></td>
+<td><a href="04_house_lifecycle.drawio" target="_blank" rel="noopener">04_house_lifecycle.drawio</a></td>
 <td>The timeline: a house registers (201 + JSON), then keepalives every second (200 + JSON), and pulls new state with a GET when <code>state_update</code> is true. (Embedded in Day 3 — matches <code>examples/day3_wifi_hub/simple_led.py</code>.)</td>
 </tr>
 <tr>
-<td><a href="05_polling_vs_interrupt.drawio">05_polling_vs_interrupt.drawio</a></td>
+<td><a href="05_polling_vs_interrupt.drawio" target="_blank" rel="noopener">05_polling_vs_interrupt.drawio</a></td>
 <td>Day 2 examples: polling (keep asking) vs interrupt (get told) + the flag pattern. (Embedded in Day 2.)</td>
 </tr>
 <tr>
-<td><a href="06_sync_vs_async.drawio">06_sync_vs_async.drawio</a></td>
+<td><a href="06_sync_vs_async.drawio" target="_blank" rel="noopener">06_sync_vs_async.drawio</a></td>
 <td>Day 5 example: the heartbeat timeline — sync freezes during the slow job, async stays smooth. (Embedded in Day 5.)</td>
 </tr>
 </tbody>
@@ -102,13 +102,13 @@ img { max-width: 100%; }
 <h2 id="how-to-open-edit">How to open / edit</h2>
 <h3 id="option-a-diagramsnet-in-browser-no-install">Option A — diagrams.net in browser (no install)</h3>
 <ol>
-<li>Go to <a href="https://app.diagrams.net/">https://app.diagrams.net/</a>.</li>
+<li>Go to <a href="https://app.diagrams.net/" target="_blank" rel="noopener">https://app.diagrams.net/</a>.</li>
 <li><strong>Open Existing Diagram → Device</strong> → pick the <code>.drawio</code> file.</li>
 <li>Edit, then <strong>File → Save</strong> or <strong>File → Export as → PNG / PDF</strong>.</li>
 </ol>
 <h3 id="option-b-drawio-desktop-app">Option B — draw.io desktop app</h3>
 <ol>
-<li>Download once (online): <a href="https://github.com/jgraph/drawio-desktop/releases">https://github.com/jgraph/drawio-desktop/releases</a>. Drop the installer on the USB.</li>
+<li>Download once (online): <a href="https://github.com/jgraph/drawio-desktop/releases" target="_blank" rel="noopener">https://github.com/jgraph/drawio-desktop/releases</a>. Drop the installer on the USB.</li>
 <li>Open → File → pick the file.</li>
 </ol>
 <h3 id="option-c-vs-code-extension">Option C — VS Code extension</h3>

@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wed — Lists, Dicts &amp; Functions</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:18px;line-height:1.65;color:#1f2328;max-width:860px;margin:0 auto;padding:0 22px 80px;background:#fffdf9}
+h1{font-size:1.9em;border-bottom:3px solid #ffd23f;padding-bottom:.2em;margin-top:.6em}
+h2{font-size:1.35em;margin-top:1.5em;color:#0b6b4f}
+h3{font-size:1.1em;margin-top:1em}
+a{color:#0969da}
+code{font-family:Consolas,monospace;font-size:.9em;background:#f0f1f2;padding:.12em .4em;border-radius:4px}
+pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}
+pre code{background:none;padding:0}
+.win{border-left:6px solid #57cc99;background:#f1fff6;border-radius:10px;padding:.6em 1em;margin:1em 0}
+.tie{border-left:6px solid #b388eb;background:#f7f2ff;border-radius:10px;padding:.6em 1em;margin:1em 0}
+.quiz{border-left:6px solid #f6ae2d;background:#fff8ec;border-radius:10px;padding:.6em 1em;margin:1em 0}
+.bug{border-left:6px solid #e5534b;background:#fff2f1;border-radius:10px;padding:.6em 1em;margin:1em 0}
+.hard{border-left:6px solid #4cc9f0;background:#f2fbff;border-radius:10px;padding:.6em 1em;margin:1em 0}
+details{border:1px solid #d0d7de;border-radius:8px;padding:.5em 1em;margin:.7em 0;background:#fbfcfd}
+summary{cursor:pointer;font-weight:600}
+.topbar{position:sticky;top:0;background:#fffdf9ee;backdrop-filter:blur(4px);border-bottom:1px solid #eadfc5;padding:8px 0;margin-bottom:16px;font-size:.85em}
+.topbar a{font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="index.html">🏠 Code Week home</a></div>
+
+<h1>Wednesday — Lists, Dicts &amp; Functions 📦</h1>
+<p><strong>Today is the big one.</strong> You'll learn the three tools that real programs are built from — lists, dictionaries, and functions — and combine them to build a mini smart house that's genuinely close to the real camp project. Deep day. Take it in pieces.</p>
+<div class="tie">☀️ First: commit yesterday's Rock-Paper-Scissors game to GitHub (your 2-minute morning habit). Then dive in.</div>
+
+<h2>🎯 Mission 1 — Lists, deeper</h2>
+<p>A <strong>list</strong> holds many values in order, inside <code>[ ]</code>. You've met <code>.append()</code> — here's the rest of the toolkit:</p>
+<pre><code>scores = [40, 90, 75, 60, 90]
+
+print(scores[0])        # 40   — first (counting starts at 0)
+print(scores[-1])       # 90   — last (negative counts from the end!)
+print(len(scores))      # 5    — how many
+print(max(scores))      # 90   — biggest
+print(min(scores))      # 40   — smallest
+print(sum(scores))      # 355  — total
+print(sorted(scores))   # [40, 60, 75, 90, 90] — a sorted copy
+print(90 in scores)     # True — is 90 somewhere in the list?
+
+scores.append(100)      # add to the end
+scores.remove(40)       # remove the first 40
+print(scores)</code></pre>
+<h3>Slicing — grab a piece of a list</h3>
+<pre><code>letters = ["a", "b", "c", "d", "e"]
+print(letters[1:3])     # ['b', 'c']  — from index 1 up to (not including) 3
+print(letters[:2])      # ['a', 'b']  — the first two
+print(letters[-2:])     # ['d', 'e']  — the last two</code></pre>
+<div class="quiz">🔮 <strong>Predict, then run.</strong> For <code>nums = [10, 20, 30, 40, 50]</code>:
+<pre><code>print(nums[2])
+print(nums[-1])
+print(nums[1:4])
+print(sum(nums) / len(nums))</code></pre>
+<details><summary>▶ Answers</summary><p><code>30</code> · <code>50</code> · <code>[20, 30, 40]</code> · <code>30.0</code> (that last one is the <em>average</em> — sum divided by how many!).</p></details></div>
+<p>🛠 <strong>Try it:</strong> make a list of 6 test scores. Print the highest, the lowest, and the average. Then print just the <em>last three</em> scores using a slice.</p>
+<div class="win">✅ <strong>Win:</strong> you can slice, sort, search, and summarize a list.</div>
+
+<h2>🎯 Mission 2 — Dictionaries, deeper (and dicts inside dicts)</h2>
+<p>A <strong>dictionary</strong> stores <em>key → value</em> pairs in <code>{ }</code>. New powers:</p>
+<pre><code>device = {"name": "lamp", "on": False, "brightness": 80}
+
+print(device["name"])          # lamp
+print(device.get("color", "unknown"))   # safe lookup: "unknown" if no such key
+print("on" in device)          # True — is there an "on" key?
+
+# loop over BOTH keys and values:
+for key, value in device.items():
+    print(f"{key} = {value}")</code></pre>
+<h3>The big one: a dictionary of dictionaries</h3>
+<p>This is exactly how the real smart-house hub stores every house. Read it slowly:</p>
+<pre><code>houses = {
+    "house_A": {"led": True,  "fan": False},
+    "house_B": {"led": False, "fan": True},
+}
+
+print(houses["house_A"]["led"])    # True — dig in two levels
+houses["house_B"]["fan"] = False   # change a nested value
+
+for name, state in houses.items():
+    print(f"{name}: LED={state['led']}, fan={state['fan']}")</code></pre>
+<div class="tie">🔗 <strong>This IS the project.</strong> The real hub keeps a dictionary of houses, each with its own state dictionary. You're not learning a toy version — you're learning the actual data structure the smart house runs on. 🤯</div>
+<p>🛠 <strong>Try it:</strong> make a dictionary of 3 friends, where each value is a dictionary with their <code>age</code> and <code>favorite_color</code>. Then loop and print <code>"Sam is 13 and loves blue"</code> for each.</p>
+<details><summary>▶ Peek</summary>
+<pre><code>friends = {
+    "Sam":  {"age": 13, "favorite_color": "blue"},
+    "Alex": {"age": 12, "favorite_color": "green"},
+    "Robin":{"age": 14, "favorite_color": "purple"},
+}
+for name, info in friends.items():
+    print(f"{name} is {info['age']} and loves {info['favorite_color']}")</code></pre></details>
+<div class="win">✅ <strong>Win:</strong> you can nest data — the shape real apps use.</div>
+
+<h2>🎯 Mission 3 — Functions that work together</h2>
+<p>A <strong>function</strong> packages code you can reuse. Today: functions with <em>defaults</em>, and functions that <em>call other functions</em>.</p>
+<pre><code>def greet(name, greeting="Hello"):     # greeting has a DEFAULT value
+    return f"{greeting}, {name}!"
+
+print(greet("Sam"))                    # Hello, Sam!   (uses the default)
+print(greet("Sam", "Yo"))              # Yo, Sam!      (overrides it)
+
+def is_even(n):
+    return n % 2 == 0                  # returns True or False
+
+def describe(n):
+    if is_even(n):                     # one function calling another
+        return f"{n} is even"
+    else:
+        return f"{n} is odd"
+
+print(describe(4))     # 4 is even
+print(describe(7))     # 7 is odd</code></pre>
+<p>🛠 <strong>Try it:</strong> write a function <code>average(numbers)</code> that takes a list and returns its average. Then use it: <code>print(average([10, 20, 30]))</code> should give <code>20.0</code>.</p>
+<details><summary>▶ Peek</summary>
+<pre><code>def average(numbers):
+    return sum(numbers) / len(numbers)
+
+print(average([10, 20, 30]))   # 20.0
+print(average([5, 5, 5, 5]))   # 5.0</code></pre></details>
+<div class="win">✅ <strong>Win:</strong> you can build functions that team up — the way real programs are organized.</div>
+
+<h2>🐞 Debug Challenge</h2>
+<div class="bug">This should print each fruit with its number, but it crashes with an error. Find and fix it.
+<pre><code>fruits = ["apple", "banana", "cherry"]
+for i in range(1, 4):
+    print(i, fruits[i])</code></pre>
+<details><summary>▶ What's wrong?</summary>
+<p>List positions start at <strong>0</strong>, so valid indexes are 0, 1, 2. But <code>range(1, 4)</code> gives 1, 2, 3 — and <code>fruits[3]</code> doesn't exist → <code>IndexError: list index out of range</code>. Fix it by starting at 0:</p>
+<pre><code>fruits = ["apple", "banana", "cherry"]
+for i in range(len(fruits)):      # 0, 1, 2
+    print(i, fruits[i])</code></pre>
+<p>💡 <code>IndexError</code> almost always means you counted past the end of a list. Off-by-one bugs are the most common bug in all of programming — now you'll spot them.</p></details></div>
+<div class="win">✅ <strong>Win:</strong> you can squash an off-by-one bug — a pro-level catch.</div>
+
+<h2>👑 Boss Build — A real smart-house controller</h2>
+<p>Yesterday's tools + today's = a genuinely capable smart house. Build a <strong>house with rooms</strong>, each room holding devices, controlled by typed commands. This is a simplified version of the actual camp hub.</p>
+<p>🛠 <strong>Build it in stages.</strong> Stage 1: the data + a <code>show()</code> that prints every room and device. Stage 2: a command loop that understands <code>on</code>, <code>off</code>, and <code>status</code>.</p>
+<pre><code>house = {
+    "living_room": {"led": False, "fan": False},
+    "bedroom":     {"led": False, "buzzer": False},
+}
+
+def show(house):
+    print("\n=== HOUSE STATUS ===")
+    for room, devices in house.items():
+        print(f"[{room}]")
+        for name, on in devices.items():
+            print(f"   {name}: {'ON' if on else 'off'}")
+
+def set_device(house, room, device, value):
+    if room in house and device in house[room]:
+        house[room][device] = value
+        print(f"  → {room}/{device} set to {'ON' if value else 'off'}")
+    else:
+        print("  ! No such room/device")
+
+# quick test:
+show(house)
+set_device(house, "bedroom", "led", True)
+show(house)</code></pre>
+<p>Now the interactive command loop — type things like <code>living_room led on</code>:</p>
+<pre><code>while True:
+    command = input("\nCommand (room device on/off, or 'quit'): ")
+    if command == "quit":
+        break
+    parts = command.split()          # splits "living_room led on" into a list
+    if len(parts) == 3:
+        room, device, action = parts
+        set_device(house, room, device, action == "on")
+        show(house)
+    else:
+        print("  ! Try: living_room led on")</code></pre>
+<details><summary>▶ Peek (everything together)</summary>
+<pre><code>house = {
+    "living_room": {"led": False, "fan": False},
+    "bedroom":     {"led": False, "buzzer": False},
+}
+
+def show(house):
+    print("\n=== HOUSE STATUS ===")
+    for room, devices in house.items():
+        print(f"[{room}]")
+        for name, on in devices.items():
+            print(f"   {name}: {'ON' if on else 'off'}")
+
+def set_device(house, room, device, value):
+    if room in house and device in house[room]:
+        house[room][device] = value
+    else:
+        print("  ! No such room/device")
+
+show(house)
+while True:
+    command = input("\nCommand (room device on/off, or 'quit'): ")
+    if command == "quit":
+        break
+    parts = command.split()
+    if len(parts) == 3:
+        room, device, action = parts
+        set_device(house, room, device, action == "on")
+        show(house)
+    else:
+        print("  ! Try: living_room led on")
+
+print("Goodbye! 👋")</code></pre></details>
+<div class="win">✅ <strong>👑 Boss done — this is a legit program!</strong> Nested dictionaries + functions + a command parser. When you see the real hub at camp, you'll say "oh, I basically built this." Demo it, log it, collect your bonus. 💵</div>
+
+<h2>⚡ Stretch challenges (bonuses)</h2>
+<ul>
+<li><strong>Turn-it-all-off:</strong> add a command <code>alloff</code> that loops through every room and device and switches them off.</li>
+<li><strong>Count what's on:</strong> add a function that returns how many devices are currently ON across the whole house.</li>
+<li><strong>Add a room:</strong> add a <code>kitchen</code> with a <code>led</code> and a <code>fan</code> — notice you don't change any of the functions. That's the power of good structure!</li>
+<li><strong>Alarm:</strong> add a house-wide <code>alarm_armed</code> and a command to arm/disarm it, printing "🚨 ARMED" in <code>show()</code> when it's on.</li>
+</ul>
+
+<hr>
+<p>🎉 Enormous day — lists, nested dictionaries, cooperating functions, a debugged bug, and a real controller. Tomorrow you leave Python and learn to build web pages.</p>
+<p>👉 Next: <a href="p4_web_html_css.html"><strong>Thursday — The Web: HTML &amp; CSS</strong></a></p>
+</body>
+</html>

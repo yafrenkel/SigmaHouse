@@ -150,4 +150,13 @@ def main():
 
 
 if __name__ == "__main__":
+    import sys
+    # DISABLED ON PURPOSE. The tutorial is now maintained as HTML directly --
+    # the .html files are the source of truth and are hand-edited. Running this
+    # would OVERWRITE those hand-edited .html files from the (now stale) .md files.
+    if "--force" not in sys.argv:
+        print("build_html is DISABLED: the tutorial HTML is now hand-edited.")
+        print("Running this would overwrite your .html edits from the stale .md files.")
+        print("If you REALLY mean to regenerate from .md, run:  py -3 build_html.py --force")
+        raise SystemExit(1)
     main()

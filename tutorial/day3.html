@@ -61,14 +61,11 @@ img { max-width: 100%; }
 </style>
 </head>
 <body>
-<div class="topbar"><a href="INDEX.html">⌂ Tutorial Index</a></div>
+<div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
 <article>
 <h1 id="day-3-wifi-talking-to-the-hub">Day 3 — WiFi + Talking to the Hub</h1>
 <p><strong>Goal:</strong> Make your ESP32 join the camp WiFi, send an HTTP request to the hub, and appear in the dashboard. By the end, clicking a button in the dashboard will switch your real LED.</p>
-<p><strong>Time:</strong> ~2 hours.</p>
-<p><strong>Prereqs:</strong> Day 1 hub running on a counsellor's laptop. Day 2 — you can blink an LED and read a button.</p>
-<blockquote>
-<p>🔬 <strong>The whole thing in one file:</strong> <a href="examples/day3_wifi_hub/simple_led.py">examples/day3_wifi_hub/simple_led.py</a> is a complete, readable "smart house" (WiFi → register → keepalive → LED) in ~120 lines. It's a gentle stepping stone before the full multi-device firmware — run it once you've got WiFi working below.</p>
+<p>🔬 <strong>The whole thing in one file:</strong> <a href="examples/day3_wifi_hub/simple_led.py" target="_blank" rel="noopener">examples/day3_wifi_hub/simple_led.py</a> is a complete, readable "smart house" (WiFi → register → keepalive → LED) in ~120 lines. It's a gentle stepping stone before the full multi-device firmware — run it once you've got WiFi working below.</p>
 </blockquote>
 <p>This is exactly the conversation <code>simple_led.py</code> has with the hub:</p>
 <p align="center">
@@ -80,7 +77,7 @@ img { max-width: 100%; }
 <p>The hub is a web server on the camp network. To talk to it you need its IP address and port.</p>
 <p>🛠 <strong>Try this</strong>: a counsellor will write the hub URL on the board, e.g. <code>http://192.168.1.42:8080</code>. Verify it works:</p>
 <ol>
-<li>On your laptop, open <a href="http://192.168.1.42:8080">http://192.168.1.42:8080</a> in a browser. The dashboard loads.</li>
+<li>On your laptop, open <a href="http://192.168.1.42:8080" target="_blank" rel="noopener">http://192.168.1.42:8080</a> in a browser. The dashboard loads.</li>
 <li>From PyCharm's terminal:
    <code>bash
    curl http://192.168.1.42:8080/api/houses</code>
@@ -148,7 +145,7 @@ finally:
 <hr>
 <h2 id="part-4-read-hub_clientpy-15-min">Part 4 — Read <code>hub_client.py</code> (15 min)</h2>
 <p>You just did manually what <code>hub_client.py</code> does in a tidy way.</p>
-<p>🛠 <strong>Try this</strong>: Open <code>claude/implementation/smart_house/hub_client.py</code> in PyCharm. Find these things:</p>
+<p>🛠 <strong>Try this</strong>: Open <code>implementation/smart_house/hub_client.py</code> in PyCharm. Find these things:</p>
 <ol>
 <li>The <code>_request</code> method — wraps every call in <code>try/except</code> and <code>finally: resp.close()</code>.</li>
 <li>The <code>register</code> method — does the same POST you just did at the REPL.</li>
@@ -171,10 +168,10 @@ finally:
 <p>⚠️ Never commit <code>secrets.py</code> to git or share it. It has the WiFi password in cleartext.</p>
 <hr>
 <h2 id="part-6-run-the-full-firmware-25-min">Part 6 — Run the full firmware (25 min)</h2>
-<p>Now upload everything from <code>claude/implementation/smart_house/</code> to the board:</p>
+<p>Now upload everything from <code>implementation/smart_house/</code> to the board:</p>
 <p>🛠 <strong>Try this</strong> (in Thonny):</p>
 <ol>
-<li>In the <strong>left/local pane</strong>, navigate to <code>C:\Projects\sigma\claude\implementation\smart_house</code>.</li>
+<li>In the <strong>left/local pane</strong>, navigate to <code>C:\Projects\sigma\implementation\smart_house</code>.</li>
 <li>Select these files: <code>main.py</code>, <code>config.py</code>, <code>hub_client.py</code>, <code>app_sync.py</code>, <code>app_async.py</code>, <code>lcd_api.py</code>, <code>lcd_i2c.py</code>. <strong>Right-click → Upload to /</strong>.</li>
 <li>Make a <code>devices</code> folder on the board: in the <strong>right/board pane</strong>, right-click → <strong>New directory → "devices"</strong>.</li>
 <li>In the local pane, navigate into <code>devices/</code>. Select all the <code>.py</code> files. Right-click → Upload to /devices.</li>
@@ -229,7 +226,7 @@ CampWiFi
 <li>The hub-device protocol: register → keepalive every 1s → pull state when <code>state_update: true</code>.</li>
 <li>The whole project's HTTP code is one file: <code>hub_client.py</code>.</li>
 </ul>
-<p><strong>Tomorrow:</strong> sensors, motion detection, and the global alarm. → <a href="day4.html">day4.md</a></p>
+<p><strong>Tomorrow:</strong> sensors, motion detection, and the global alarm. → <a href="day4.html" target="_blank" rel="noopener">day4.md</a></p>
 </article>
 </body>
 </html>

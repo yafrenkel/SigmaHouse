@@ -26,6 +26,20 @@ from constants import VALID_DEVICES, WATCHDOG_INTERVAL_S
 app = Flask(__name__)
 
 
+# ---------- CORS ----------
+# Let a browser on another origin call the hub -- e.g. Friday's fetch demo
+# from a file:// page (origin "null") or a dashboard opened on another
+# device. We add the headers by hand so no extra library is needed offline.
+# Flask already answers the browser's OPTIONS "preflight" automatically;
+# these headers make that preflight pass.
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    return response
+
+
 # ---------- pages ----------
 
 @app.route("/")

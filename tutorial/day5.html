@@ -61,14 +61,11 @@ img { max-width: 100%; }
 </style>
 </head>
 <body>
-<div class="topbar"><a href="INDEX.html">⌂ Tutorial Index</a></div>
+<div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
 <article>
 <h1 id="day-5-async-final-project">Day 5 — Async + Final Project</h1>
 <p><strong>Goal:</strong> Compare the synchronous and async versions of the firmware to see what <code>async/await</code> actually changes, then build a feature of your choice.</p>
-<p><strong>Time:</strong> ~2 hours.</p>
-<p><strong>Prereqs:</strong> Day 4 — global alarm working, you can add data-layer functions and routes.</p>
-<blockquote>
-<p>🔬 <strong>See async for real:</strong> <a href="examples/day5_async/async_demo.py">examples/day5_async/async_demo.py</a> blinks a heartbeat LED while a fake "slow job" runs. Flip <code>USE_ASYNC</code> and watch the LED <strong>freeze</strong> (sync) vs <strong>stay smooth</strong> (async) — the difference the real firmware can't show you.</p>
+<p>🔬 <strong>See async for real:</strong> <a href="examples/day5_async/async_demo.py" target="_blank" rel="noopener">examples/day5_async/async_demo.py</a> blinks a heartbeat LED while a fake "slow job" runs. Flip <code>USE_ASYNC</code> and watch the LED <strong>freeze</strong> (sync) vs <strong>stay smooth</strong> (async) — the difference the real firmware can't show you.</p>
 </blockquote>
 <p align="center">
   <img src="diagrams/06_sync_vs_async.drawio.svg" alt="Timeline: in sync the 2-second slow job blocks the loop so the heartbeat freezes; in async the slow job yields with await so the heartbeat keeps beating." style="max-width:100%;">
@@ -216,8 +213,8 @@ img { max-width: 100%; }
 </ul>
 <h3 id="good-books-and-resources-offline-friendly">Good books and resources (offline-friendly)</h3>
 <ul>
-<li>The <a href="https://docs.micropython.org/">MicroPython docs</a> — bundled in <code>claude/docs/</code> if your camp pre-downloaded them.</li>
-<li>The <a href="https://flask.palletsprojects.com/">Flask docs</a> — same.</li>
+<li>The <a href="https://docs.micropython.org/" target="_blank" rel="noopener">MicroPython docs</a> — bundled in <code>docs/</code> if your camp pre-downloaded them.</li>
+<li>The <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener">Flask docs</a> — same.</li>
 <li>The original <code>SigmaHouse-master/</code> repo for ideas (RFID, OLED, more sensors).</li>
 </ul>
 <hr>
@@ -227,7 +224,7 @@ img { max-width: 100%; }
 - One thing that surprised you.
 - One thing you'd do differently.</p>
 <p>That's the end. Good work — you wrote real code that runs on real hardware that talks to a real server. The next thing you build will be easier.</p>
-<p>← back to <a href="INDEX.html">INDEX.md</a></p>
+<p>← back to <a href="INDEX.html" target="_blank" rel="noopener">INDEX.md</a></p>
 </article>
 </body>
 </html>

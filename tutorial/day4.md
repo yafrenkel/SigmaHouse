@@ -8,6 +8,8 @@
 
 > 🔬 **Runnable example:** [examples/day4_sensors/motion_test.py](examples/day4_sensors/motion_test.py) reads the PIR on its own (no WiFi, no hub) — the quickest way to *see* the sensor fire and learn its quirks before wiring it into the alarm.
 
+> 🎵 **Just for fun:** the same buzzer that sounds the alarm can also play *music*. [examples/bonus_music/play_melody.py](examples/bonus_music/play_melody.py) teaches a bit of music theory (notes are just frequencies!) and plays a tune — a nice "make it yours" break, and a great Day-5 final-project seed.
+
 ---
 
 ## Part 1 — How the PIR sensor works (15 min)

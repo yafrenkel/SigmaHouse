@@ -61,11 +61,10 @@ img { max-width: 100%; }
 </style>
 </head>
 <body>
-<div class="topbar"><a href="INDEX.html">⌂ Tutorial Index</a></div>
+<div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
 <article>
 <h1 id="day-2-esp32-first-steps">Day 2 — ESP32 First Steps</h1>
 <p><strong>Goal:</strong> Forget the hub for a day. Get your ESP32 to blink an LED, then read a button, then make the button toggle the LED — all running ON the board, no WiFi.</p>
-<p><strong>Time:</strong> ~2 hours.</p>
 <h2 id="meet-your-board">Meet your board</h2>
 <p>Here's the ESP32 "smart house" and everything wired to it — the LED, buttons, and sensors you'll drive today, with their GPIO pin numbers. Keep this handy; the pin numbers live in <code>config.py</code>.</p>
 <p align="center">
@@ -73,7 +72,7 @@ img { max-width: 100%; }
 </p>
 
 <blockquote>
-<p>🔬 <strong>Runnable examples:</strong> the code you'll write today is ready to open and run in <a href="examples/day2_esp32_basics/">examples/day2_esp32_basics/</a> — <code>1_blink.py</code>, <code>2_button_poll.py</code>, <code>3_button_irq.py</code>, <code>4_button_led.py</code>. Try typing them yourself first; use the files if you get stuck or want to compare.</p>
+<p>🔬 <strong>Runnable examples:</strong> the code you'll write today is ready to open and run in <a href="examples/day2_esp32_basics/" target="_blank" rel="noopener">examples/day2_esp32_basics/</a> — <code>1_blink.py</code>, <code>2_button_poll.py</code>, <code>3_button_irq.py</code>, <code>4_button_led.py</code>. Try typing them yourself first; use the files if you get stuck or want to compare.</p>
 </blockquote>
 <p align="center">
   <img src="diagrams/05_polling_vs_interrupt.drawio.svg" alt="Polling keeps asking the button in a loop; an interrupt fires a tiny handler that just sets a flag, and the main loop does the real work (the flag pattern)." style="max-width:100%;">
@@ -209,7 +208,7 @@ while True:
 <hr>
 <h2 id="part-5-read-the-projects-device-code-15-min">Part 5 — Read the project's device code (15 min)</h2>
 <p>You just learned what's behind <code>devices/led.py</code> and <code>devices/button.py</code>.</p>
-<p>🛠 <strong>Try this</strong>: Open <code>claude/implementation/smart_house/devices/led.py</code> in PyCharm and read it. It's 21 lines.</p>
+<p>🛠 <strong>Try this</strong>: Open <code>implementation/smart_house/devices/led.py</code> in PyCharm and read it. It's 21 lines.</p>
 <pre><code class="language-python">class LED:
     def __init__(self, pin_num):
         self._pin = Pin(pin_num, Pin.OUT)
@@ -244,7 +243,7 @@ while True:
 <li>IRQ handlers must be FAST — set a flag, do the work elsewhere.</li>
 <li>The project's <code>devices/*.py</code> files are thin wrappers around what you just did.</li>
 </ul>
-<p><strong>Tomorrow:</strong> WiFi, HTTP from the board, and your physical house appears in the dashboard. → <a href="day3.html">day3.md</a></p>
+<p><strong>Tomorrow:</strong> WiFi, HTTP from the board, and your physical house appears in the dashboard. → <a href="day3.html" target="_blank" rel="noopener">day3.md</a></p>
 </article>
 </body>
 </html>

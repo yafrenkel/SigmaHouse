@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fri — JavaScript &amp; the Dashboard</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:18px;line-height:1.65;color:#1f2328;max-width:860px;margin:0 auto;padding:0 22px 80px;background:#fffdf9}
+h1{font-size:1.9em;border-bottom:3px solid #ffd23f;padding-bottom:.2em;margin-top:.6em}
+h2{font-size:1.35em;margin-top:1.5em;color:#0b6b4f}
+h3{font-size:1.1em;margin-top:1em}
+a{color:#0969da}
+code{font-family:Consolas,monospace;font-size:.9em;background:#f0f1f2;padding:.12em .4em;border-radius:4px}
+pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}
+pre code{background:none;padding:0}
+table{border-collapse:collapse;margin:1em 0}
+th,td{border:1px solid #d0d7de;padding:6px 12px;text-align:left}
+th{background:#f0f1f2}
+.win{border-left:6px solid #57cc99;background:#f1fff6;border-radius:10px;padding:.6em 1em;margin:1em 0}
+.tie{border-left:6px solid #b388eb;background:#f7f2ff;border-radius:10px;padding:.6em 1em;margin:1em 0}
+.bug{border-left:6px solid #e5534b;background:#fff2f1;border-radius:10px;padding:.6em 1em;margin:1em 0}
+.grad{border-left:6px solid #f6ae2d;background:#fff8ec;border-radius:10px;padding:.7em 1.1em;margin:1.2em 0}
+details{border:1px solid #d0d7de;border-radius:8px;padding:.5em 1em;margin:.7em 0;background:#fbfcfd}
+summary{cursor:pointer;font-weight:600}
+.topbar{position:sticky;top:0;background:#fffdf9ee;backdrop-filter:blur(4px);border-bottom:1px solid #eadfc5;padding:8px 0;margin-bottom:16px;font-size:.85em}
+.topbar a{font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="index.html">🏠 Code Week home</a></div>
+
+<h1>Friday — JavaScript &amp; the Dashboard ⚡</h1>
+<p><strong>The finale!</strong> HTML builds a page, CSS styles it — but <strong>JavaScript</strong> makes it <em>do things</em>: respond to clicks, change on the fly, talk to servers. Today you'll make yesterday's dashboard actually work, then control a <em>real</em> smart house.</p>
+<div class="tie">☀️ First: commit yesterday's dashboard mockup to GitHub. Then let's make it come alive.</div>
+
+<h2>🎯 Mission 1 — JavaScript basics</h2>
+<p>JavaScript lives in a <code>&lt;script&gt;</code> tag. It's a cousin of Python — here are the differences at a glance:</p>
+<table>
+<tr><th>Python</th><th>JavaScript</th></tr>
+<tr><td><code>name = "Sam"</code></td><td><code>let name = "Sam";</code></td></tr>
+<tr><td><code>print(x)</code></td><td><code>console.log(x);</code></td></tr>
+<tr><td><code>def f():</code></td><td><code>function f() { }</code></td></tr>
+<tr><td>indentation</td><td><code>{ }</code> curly braces</td></tr>
+</table>
+<pre><code>&lt;script&gt;
+  let name = "Junior Developer";
+  let age = 13;
+  console.log("Hi " + name);        // combine text with +
+  console.log(`Next year: ${age + 1}`);   // template string (like an f-string!)
+&lt;/script&gt;</code></pre>
+<p>🛠 <strong>Try it:</strong> put that in a page, open it, press <strong>F12 → Console</strong> to see the messages. Change the name and refresh. (<code>let</code> = a variable that can change; <code>const</code> = one that can't.)</p>
+<div class="win">✅ <strong>Win:</strong> you can read and write JavaScript — you already know most of it from Python!</div>
+
+<h2>🎯 Mission 2 — A button that runs your code</h2>
+<pre><code>&lt;h1 id="title"&gt;Click the button!&lt;/h1&gt;
+&lt;button onclick="surprise()"&gt;Surprise me&lt;/button&gt;
+
+&lt;script&gt;
+  function surprise() {
+    document.getElementById("title").textContent = "You clicked me! 🎉";
+  }
+&lt;/script&gt;</code></pre>
+<ul>
+<li><code>onclick="surprise()"</code> — run this function when clicked.</li>
+<li><code>document.getElementById("title")</code> — grab the element with <code>id="title"</code>.</li>
+<li><code>.textContent = "..."</code> — change its text.</li>
+</ul>
+<p>🛠 <strong>Try it:</strong> add a <em>second</em> button that resets the heading to its original text.</p>
+<div class="win">✅ <strong>Win:</strong> a click that changes the screen — the heartbeat of every app.</div>
+
+<h2>🎯 Mission 3 — Arrays &amp; loops in JavaScript</h2>
+<p>JavaScript's version of a list is an <strong>array</strong>. Loops look a little different but do the same job:</p>
+<pre><code>let fruits = ["apple", "banana", "cherry"];
+console.log(fruits[0]);        // apple
+console.log(fruits.length);    // 3
+
+for (let i = 0; i &lt; fruits.length; i++) {
+  console.log(fruits[i]);
+}
+
+let pick = Math.floor(Math.random() * fruits.length);   // random index
+console.log("Random fruit: " + fruits[pick]);</code></pre>
+<p>🛠 <strong>Try it:</strong> make an array of 4 compliments. Write a function <code>cheer()</code> that picks a random one and shows it in an <code>&lt;h1&gt;</code>. Wire it to a button.</p>
+<details><summary>▶ Peek</summary>
+<pre><code>&lt;h1 id="msg"&gt;Click for a cheer 😊&lt;/h1&gt;
+&lt;button onclick="cheer()"&gt;Cheer me&lt;/button&gt;
+&lt;script&gt;
+  let lines = ["You rock!", "Great coder!", "Superstar ⭐", "You've got this!"];
+  function cheer() {
+    let pick = Math.floor(Math.random() * lines.length);
+    document.getElementById("msg").textContent = lines[pick];
+  }
+&lt;/script&gt;</code></pre></details>
+<div class="win">✅ <strong>Win:</strong> arrays + loops + randomness in the browser.</div>
+
+<h2>🎯 Mission 4 — Change styles with JavaScript</h2>
+<p>JS can change how things <em>look</em>, not just their text. The magic move for dashboards is <code>classList.toggle</code> — it adds a CSS class if it's missing, removes it if it's there.</p>
+<pre><code>&lt;style&gt; .on { background: #c8f7c5; } &lt;/style&gt;
+
+&lt;div id="box"&gt;Click me&lt;/div&gt;
+&lt;script&gt;
+  function flip() {
+    document.getElementById("box").classList.toggle("on");
+  }
+&lt;/script&gt;
+&lt;button onclick="flip()"&gt;Toggle&lt;/button&gt;</code></pre>
+<p>🛠 <strong>Try it:</strong> make the box turn green when you click, and back when you click again.</p>
+<div class="win">✅ <strong>Win:</strong> you can change styles on the fly — exactly how a dashboard shows a device turning on.</div>
+
+<h2>🐞 Debug Challenge</h2>
+<div class="bug">This button should change the heading, but clicking does nothing (and the Console shows an error). Find the bug.
+<pre><code>&lt;h1 id="title"&gt;Hello&lt;/h1&gt;
+&lt;button onclick="change()"&gt;Change&lt;/button&gt;
+&lt;script&gt;
+  function change() {
+    document.getElementById("titel").textContent = "Changed!";
+  }
+&lt;/script&gt;</code></pre>
+<details><summary>▶ What's wrong?</summary>
+<p><code>"titel"</code> is a typo — the element's id is <code>"title"</code>. <code>getElementById("titel")</code> finds nothing (<code>null</code>), so setting <code>.textContent</code> on it throws an error (check the F12 Console — it'll say "Cannot set properties of null"). Fix the spelling to <code>"title"</code>.</p>
+<p>💡 When a button "does nothing," open the <strong>Console (F12)</strong> — the error almost always names the exact problem.</p></details></div>
+<div class="win">✅ <strong>Win:</strong> you can use the Console to hunt down a JavaScript bug — a real pro habit.</div>
+
+<h2>👑 Boss Build — Your dashboard COMES ALIVE</h2>
+<p>Take yesterday's smart-house dashboard mockup and make the cards <strong>actually clickable</strong> — click a device to toggle it ON/off, changing both its color and its label. This is a real interactive dashboard. 🤯</p>
+<details><summary>▶ Peek (a full working dashboard — build yours, peek if stuck)</summary>
+<pre><code>&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;style&gt;
+  body { font-family: Arial; background: #f4f6f8; }
+  .bar { background: #0b6b4f; color: white; padding: 16px; border-radius: 8px;
+         text-align: center; font-size: 22px; }
+  .row { display: flex; gap: 14px; margin-top: 16px; }
+  .card { flex: 1; padding: 24px; border-radius: 10px; text-align: center;
+          font-size: 20px; border: 2px solid #ccc; background: #eee; color: #888;
+          cursor: pointer; }
+  .card.on { background: #c8f7c5; border-color: #57cc99; color: #1f2328; }
+&lt;/style&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="bar"&gt;🏠 My Smart House&lt;/div&gt;
+  &lt;div class="row"&gt;
+    &lt;div class="card" onclick="toggle(this, '💡 LED')"&gt;💡 LED&lt;br&gt;&lt;span&gt;off&lt;/span&gt;&lt;/div&gt;
+    &lt;div class="card" onclick="toggle(this, '🌀 Fan')"&gt;🌀 Fan&lt;br&gt;&lt;span&gt;off&lt;/span&gt;&lt;/div&gt;
+    &lt;div class="card" onclick="toggle(this, '🔔 Buzzer')"&gt;🔔 Buzzer&lt;br&gt;&lt;span&gt;off&lt;/span&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    function toggle(card, label) {
+      card.classList.toggle("on");                       // flip the color
+      let isOn = card.classList.contains("on");
+      card.querySelector("span").textContent = isOn ? "ON" : "off";   // flip the text
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>New tricks: <code>this</code> = "the card you clicked", <code>card.querySelector("span")</code> = find the label inside it, and <code>condition ? "ON" : "off"</code> = a quick if/else (called a ternary).</p></details>
+<div class="tie">🔗 <strong>You just built the real thing.</strong> The actual camp dashboard works exactly like this — click a device, its card flips color and label. You've built the front end of an IoT system! 🎉</div>
+<div class="win">✅ <strong>👑 Boss done — an interactive dashboard!</strong> Click your devices on and off. Log it, collect your bonus. 💵</div>
+
+<h2>🚀 The Real Deal — control an actual smart house (with a grown-up)</h2>
+<p>One more JavaScript power runs the real dashboard: <strong><code>fetch</code></strong> — it asks a server for data without reloading the page. Time to use it for real.</p>
+<p>Ask your manager to start the smart-house <strong>hub</strong> on the laptop. Open the dashboard page, press <strong>F12 → Console</strong>, and paste:</p>
+<pre><code>await fetch("/api/houses", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ unique_id: "DEV1", ip_address: "127.0.0.1" })
+}).then(r =&gt; r.json())</code></pre>
+<p>Refresh the dashboard — <strong>a house named DEV1 appears!</strong> You registered a real house on a real IoT system using JavaScript you now understand. 🤯 (Hub not set up yet? No worries — you'll do this on Day 1 of camp.)</p>
+<div class="win">✅ <strong>Win:</strong> you connected everything you learned to a real live system.</div>
+
+<div class="grad">
+<h2 style="margin-top:.2em">🏆 Ship-It Friday — your demo</h2>
+<p>Time to earn the big bonus. Gather the family for a <strong>5-minute demo</strong>:</p>
+<ol>
+<li>Show your <strong>Wednesday</strong> smart-house controller (typed commands) running.</li>
+<li>Show your <strong>Thursday</strong> styled dashboard.</li>
+<li>Show your <strong>Friday</strong> interactive dashboard — click devices on and off live.</li>
+<li>If you did the Real Deal, show DEV1 appearing on the real dashboard.</li>
+<li>Say one thing you're proud of and one thing that surprised you.</li>
+</ol>
+<p>That's what real engineers do — build something, then show it. 🎤</p>
+</div>
+
+<div class="tie">🚀 <strong>Final commit:</strong> you've saved your work to GitHub all week — now commit and push <em>today's</em> dashboard too, so your whole portfolio is online. Need a refresher? <a href="p6_publish_github.html">Save Your Work to GitHub →</a></div>
+
+<div class="grad" style="border-left-color:#57cc99;background:#f1fff6">
+<h2 style="margin-top:.2em">🎓 You did it!</h2>
+<p>In one week you went from zero to writing Python (variables, loops, dictionaries, functions, debugging) <em>and</em> building interactive web pages with HTML, CSS, and JavaScript — and you saved it all to your own GitHub. That's genuinely impressive; many adults never get this far.</p>
+<p>You are now <strong>ready for the smart-house camp</strong>, where you'll put it all together to build a real internet-connected house. 🏠⚡</p>
+<p>Total up your Mission Log and collect your final paycheck — <strong>you earned every cent.</strong> 💵🎉</p>
+</div>
+
+<h2>⚡ Stretch challenges (bonuses)</h2>
+<ul>
+<li><strong>"All off" button:</strong> add a button that turns every dashboard card off at once (loop over them with <code>document.querySelectorAll(".card")</code>).</li>
+<li><strong>Counter:</strong> show "3 of 3 devices on" at the top, updating each click.</li>
+<li><strong>Alarm card:</strong> add a red "🚨 Arm alarm" card with its own toggle.</li>
+</ul>
+
+<p>👉 Back to <a href="index.html">🏠 Code Week home</a></p>
+</body>
+</html>

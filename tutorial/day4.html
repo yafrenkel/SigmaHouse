@@ -61,14 +61,19 @@ img { max-width: 100%; }
 </style>
 </head>
 <body>
-<div class="topbar"><a href="INDEX.html">⌂ Tutorial Index</a></div>
+<div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
 <article>
 <h1 id="day-4-sensors-and-the-global-alarm">Day 4 — Sensors and the Global Alarm</h1>
 <p><strong>Goal:</strong> Understand how the PIR motion sensor works, trace exactly how the global alarm fires across all houses, and add your own twist.</p>
-<p><strong>Time:</strong> ~2 hours.</p>
-<p><strong>Prereqs:</strong> Day 3 — your house is in the dashboard, dashboard toggles work both ways.</p>
 <blockquote>
-<p>🔬 <strong>Runnable example:</strong> <a href="examples/day4_sensors/motion_test.py">examples/day4_sensors/motion_test.py</a> reads the PIR on its own (no WiFi, no hub) — the quickest way to <em>see</em> the sensor fire and learn its quirks before wiring it into the alarm.</p>
+<p>🔬 <strong>Runnable example:</strong> <a href="examples/day4_sensors/motion_test.py" target="_blank" rel="noopener">examples/day4_sensors/motion_test.py</a> reads the PIR on its own (no WiFi, no hub) — the quickest way to <em>see</em> the sensor fire and learn its quirks before wiring it into the alarm.</p>
+<p>🎵 <strong>Just for fun:</strong> the same buzzer that sounds the alarm can also play <em>music</em>. <a href="examples/bonus_music/play_melody.py" target="_blank" rel="noopener">examples/bonus_music/play_melody.py</a> teaches a bit of music theory (notes are just frequencies!) and plays a tune — a nice "make it yours" break, and a great Day-5 final-project seed.</p>
+</blockquote>
+<hr>
+<h2 id="assemble-the-house">🏠 Step 0 — Assemble the house</h2>
+<p>Before wiring the sensors, build the physical house model (walls, roof, and the board mount) and connect the parts to the ESP32. Follow the illustrated build guide:</p>
+<blockquote>
+<p>📄 <a href="docs/IoT_Smart_House_Tutorial.pdf" target="_blank" rel="noopener"><strong>IoT Smart House Tutorial (PDF)</strong> — assembly steps &amp; wiring</a></p>
 </blockquote>
 <hr>
 <h2 id="part-1-how-the-pir-sensor-works-15-min">Part 1 — How the PIR sensor works (15 min)</h2>
@@ -85,7 +90,7 @@ img { max-width: 100%; }
 <p>💡 <strong>Why <code>Pin.IN</code> with no pull-up?</strong> The PIR has its own driver chip that pushes the line either low or high — it doesn't need our help.</p>
 <h3 id="why-interrupts-again">Why interrupts again?</h3>
 <p>We <em>could</em> poll <code>pir.value()</code> in the main loop. But the loop also has to send keepalives, read buttons, write to the LCD… If motion happens during a 200 ms keepalive HTTP call, we'd miss it. Interrupts catch it regardless.</p>
-<p>🛠 <strong>Try this</strong>: read <code>claude/implementation/smart_house/devices/motion.py</code>. Find the IRQ trigger.</p>
+<p>🛠 <strong>Try this</strong>: read <code>implementation/smart_house/devices/motion.py</code>. Find the IRQ trigger.</p>
 <pre><code class="language-python">self._pin.irq(trigger=Pin.IRQ_RISING, handler=self._on_irq)
 </code></pre>
 <p><code>IRQ_RISING</code> because the PIR pulls the line FROM 0 TO 1 when it sees you. The handler just sets <code>self._triggered = True</code>. The main loop calls <code>was_triggered()</code> which returns <em>and clears</em> the flag.</p>
@@ -111,7 +116,9 @@ img { max-width: 100%; }
 <li>Both buzzers are now on until disarmed.</li>
 </ol>
 <p>So the <em>worst-case</em> delay between motion and the <em>farthest</em> buzzer is <strong>(A's report) + (B's keepalive interval)</strong> ≈ 1.0 second. Not bad.</p>
-</details>
+<p align="center">
+  <img src="diagrams/07_global_alarm.svg" alt="Sequence diagram of the global alarm across three lanes (House A, Hub, House B). You wave at House A's PIR, House A POSTs report_motion to the hub, the hub sets alarm_triggered=True on every armed house (A and B), then each house's next keepalive returns alarm:TRUE and clears its own flag, turning on both buzzers within about one second." style="max-width:100%;">
+</p>
 <p>💡 <strong>Why one-shot?</strong> If <code>alarm_triggered</code> stayed <code>true</code> forever, the buzzer would re-fire on every keepalive even after the user pressed <code>disarm</code>. Clearing on read means "you got the message".</p>
 <hr>
 <h2 id="part-3-test-it-for-real-20-min">Part 3 — Test it for real (20 min)</h2>
@@ -233,7 +240,7 @@ document.getElementById(&quot;disarm-all&quot;).onclick = async () =&gt; {
 <li>The "one-shot" alarm flag avoids re-firing on every keepalive.</li>
 <li>A multi-house feature usually needs: one new function in <code>houses.py</code>, one route in <code>app.py</code>, and (sometimes) one button in the dashboard.</li>
 </ul>
-<p><strong>Tomorrow:</strong> the async version of the firmware, and a final project of your choice. → <a href="day5.html">day5.md</a></p>
+<p><strong>Tomorrow:</strong> the async version of the firmware, and a final project of your choice. → <a href="day5.html" target="_blank" rel="noopener">day5.md</a></p>
 </article>
 </body>
 </html>

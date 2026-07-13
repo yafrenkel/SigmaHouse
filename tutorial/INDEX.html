@@ -61,24 +61,15 @@ img { max-width: 100%; }
 </style>
 </head>
 <body>
-<div class="topbar"><a href="INDEX.html">⌂ Tutorial Index</a></div>
+<div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
 <article>
-<h1 id="sigma-camp-iot-5-day-semilab">Sigma Camp IoT — 5-Day Semilab</h1>
-<p>A 5-day, 2-hour-per-day curriculum for advanced 14-year-olds who already know basic Python. By the end you'll have an internet-of-things system: many ESP32 "smart houses" controlled from a dashboard running on a counsellor's laptop, with a global alarm that fires across every house.</p>
+<h1 id="sigma-camp-iot-5-day-semilab">Smart Camp Offline - IoT and Web Dev</h1>
+<p>By the end you'll have an internet-of-things system: many ESP32 "smart houses" controlled from a dashboard running on a local server.</p>
+<p style="background:#f2fbff;border-left:6px solid #4cc9f0;border-radius:8px;padding:.6em 1em">🐣 <strong>New to Python or the web?</strong> Do the <a href="prerequisites/index.html"><strong>Code Week prep</strong></a> first — a 5-day, self-guided warm-up that gets you ready for everything below.</p>
 <h2 id="what-youll-build">What you'll build</h2>
-<pre><code>                            Dashboard in browser
-                                    │
-                                    ▼
-                        ┌───────────────────────┐
-                        │   Flask hub (laptop)  │
-                        └───────────────────────┘
-                            ▲    ▲    ▲    ▲
-                  HTTP/WiFi │    │    │    │
-                       ┌────┘    │    │    └────┐
-                       ▼         ▼    ▼         ▼
-                    [ESP32]   [ESP32] [ESP32]  [ESP32]
-                     House A   House B  House C  House D
-</code></pre>
+<p align="center">
+  <img src="diagrams/01_iot_hub.svg" alt="The system you'll build: a browser dashboard talks to the Flask hub on a laptop, which tracks every house in the HOUSES dict and monitors them with a watchdog; several ESP32 'smart houses' connect over WiFi." style="max-width:100%;">
+</p>
 <p>Each ESP32 has: LED, two buttons, motion sensor, fan, buzzer, LCD screen.</p>
 <h2 id="day-plan">Day plan</h2>
 <table>
@@ -91,27 +82,27 @@ img { max-width: 100%; }
 </thead>
 <tbody>
 <tr>
-<td><a href="day1.html">1</a></td>
+<td><a href="day1.html" target="_blank" rel="noopener">1</a></td>
 <td><strong>The Hub</strong> — HTTP, Flask, dashboard</td>
 <td>You can register fake houses with <code>curl</code> and see them appear.</td>
 </tr>
 <tr>
-<td><a href="day2.html">2</a></td>
+<td><a href="day2.html" target="_blank" rel="noopener">2</a></td>
 <td><strong>ESP32 first steps</strong> — MicroPython, LED, button</td>
 <td>Pressing the button toggles the LED. No WiFi yet.</td>
 </tr>
 <tr>
-<td><a href="day3.html">3</a></td>
+<td><a href="day3.html" target="_blank" rel="noopener">3</a></td>
 <td><strong>WiFi + talking to the hub</strong></td>
 <td>Your physical board appears in the dashboard. Toggling the dashboard changes the real LED.</td>
 </tr>
 <tr>
-<td><a href="day4.html">4</a></td>
+<td><a href="day4.html" target="_blank" rel="noopener">4</a></td>
 <td><strong>Sensors + global alarm</strong> — PIR, interrupts</td>
 <td>Wave at one armed house → all armed houses buzz.</td>
 </tr>
 <tr>
-<td><a href="day5.html">5</a></td>
+<td><a href="day5.html" target="_blank" rel="noopener">5</a></td>
 <td><strong>Async + final project</strong></td>
 <td>You diff <code>app_sync.py</code> vs <code>app_async.py</code> and add your own feature.</td>
 </tr>
@@ -179,7 +170,7 @@ img { max-width: 100%; }
 </tr>
 </tbody>
 </table>
-<p>Don't worry about memorising this — <code>claude/implementation/smart_house/config.py</code> has it all.</p>
+<p>Don't worry about memorising this — <code>implementation/smart_house/config.py</code> has it all.</p>
 <h2 id="conventions-in-this-tutorial">Conventions in this tutorial</h2>
 <ul>
 <li>🛠 <strong>Try this</strong> = hands-on step. Do it, don't just read it.</li>
@@ -202,33 +193,33 @@ img { max-width: 100%; }
 <p>The whole project is small (~1500 lines including blank lines). You can read it all in a day.</p>
 <h2 id="kick-off">Kick-off</h2>
 <ul>
-<li><strong><a href="icebreaker.html">icebreaker.md</a></strong> — "You Are the Internet": a 20-min no-computer game for the very start of Day 1. Campers physically act out HTTP requests, keepalives, and the global alarm before writing any code.</li>
+<li><strong><a href="icebreaker.html" target="_blank" rel="noopener">Icebreaker</a></strong> — "You Are the Internet": a 20-min no-computer game for the very start of Day 1. Campers physically act out HTTP requests, keepalives, and the global alarm before writing any code.</li>
 </ul>
 <h2 id="reference">Reference</h2>
 <ul>
-<li><strong><a href="glossary.html">glossary.md</a></strong> — every acronym used anywhere in this camp (HTTP, TCP, WiFi, GPIO, I2C, IRQ, …), spelled out with a one-line meaning. Keep it open while you work.</li>
+<li><strong><a href="glossary.html" target="_blank" rel="noopener">Glossary</a></strong> — every acronym used anywhere in this camp (HTTP, TCP, WiFi, GPIO, I2C, IRQ, …), spelled out with a one-line meaning. Keep it open while you work.</li>
+<li><strong><a href="circuits.html" target="_blank" rel="noopener">Circuits &amp; the physics behind the parts</a></strong> — four camper-friendly circuit diagrams (LED, buttons, buzzer, fan) with the electricity explained in plain words: voltage, current, resistors, PWM, and why the motor needs a driver.</li>
+<li><strong><a href="PWM.html" target="_blank" rel="noopener">PWM &amp; the duty count</a></strong> — the one number behind dimming the LED, setting fan speed, and buzzer volume: what <code>duty(512)</code> really means (a raw <code>0–1023</code> count, not volts or seconds), why the max is 1023, and why the same number does a different job on each part.</li>
 </ul>
 <h2 id="optional-deep-dives">Optional deep-dives</h2>
 <ul>
-<li><strong><a href="background/how_the_internet_works.html">background/how_the_internet_works.md</a></strong> — short history of the internet, TCP/IP layers, IP/ports, DNS, and how HTTP is "just text". Not required for the labs — for campers who want to know what's <em>really</em> happening. ~20 min read.</li>
+<li><strong><a href="background/how_the_internet_works.html" target="_blank" rel="noopener">How the internet works</a></strong> — short history of the internet, TCP/IP layers, IP/ports, DNS, and how HTTP is "just text". Not required for the labs — for campers who want to know what's <em>really</em> happening. ~20 min read.</li>
 </ul>
 <h2 id="visual-references">Visual references</h2>
 <ul>
-<li><strong><a href="diagrams/README.html">diagrams/</a></strong> — three draw.io diagrams (the hub side; the ESP32 side; HTTP + the server loop concept). Project on screen during sessions or print as A4 reference sheets.</li>
+<li><strong><a href="diagrams/README.html" target="_blank" rel="noopener">diagrams/</a></strong> — three draw.io diagrams (the hub side; the ESP32 side; HTTP + the server loop concept). Project on screen during sessions or print as A4 reference sheets.</li>
 </ul>
 <h2 id="for-staff-counsellors">For staff (counsellors)</h2>
 <ul>
-<li><strong><a href="counsellor/README.html">counsellor/</a></strong> — pacing, common mistakes, ready-to-paste hints (one page per day).</li>
+<li><strong><a href="counsellor/README.html" target="_blank" rel="noopener">counsellor/</a></strong> — pacing, common mistakes, ready-to-paste hints (one page per day).</li>
 </ul>
 <h2 id="runnable-examples">Runnable examples</h2>
 <ul>
-<li><strong><a href="examples/README.html">examples/</a></strong> — per-day code you can open and run on the board (blink, buttons, the one-file smart house, PIR test, the async demo).</li>
+<li><strong><a href="examples/README.html" target="_blank" rel="noopener">examples/</a></strong> — per-day code you can open and run on the board (blink, buttons, the one-file smart house, PIR test, the async demo).</li>
 </ul>
-<h2 id="built-with-ai-on-purpose">Built with AI, on purpose 🤖</h2>
-<p>This tutorial was designed and optimized with an AI agent (Claude) to make the path to understanding as clear and fast as possible.</p>
 <hr>
 <h2 id="ready">Ready?</h2>
-<p>Open <a href="day1.html">day1.md</a> and let's go.</p>
+<p>Open <a href="day1.html" target="_blank" rel="noopener">day 1</a> and let's go.</p>
 </article>
 </body>
 </html>

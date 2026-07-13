@@ -61,7 +61,7 @@ img { max-width: 100%; }
 </style>
 </head>
 <body>
-<div class="topbar"><a href="../INDEX.html">⌂ Tutorial Index</a></div>
+<div class="topbar"><a href="../INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
 <article>
 <h1 id="how-the-internet-actually-works-optional-deep-dive">How the Internet Actually Works (optional deep-dive)</h1>
 <blockquote>
@@ -69,7 +69,7 @@ img { max-width: 100%; }
 </blockquote>
 <p>You can read this on Day 1 (before HTTP), or Day 3 (after you've seen WiFi work). Either order is fine.</p>
 <blockquote>
-<p>🔤 Every acronym below (HTTP, TCP, IP, DNS, NAT, …) is spelled out in the <strong><a href="../glossary.html">glossary</a></strong> if you want the quick version.</p>
+<p>🔤 Every acronym below (HTTP, TCP, IP, DNS, NAT, …) is spelled out in the <strong><a href="../glossary.html" target="_blank" rel="noopener">glossary</a></strong> if you want the quick version.</p>
 </blockquote>
 <hr>
 <h2 id="part-1-a-very-short-history-so-the-acronyms-make-sense">Part 1 — A very short history (so the acronyms make sense)</h2>
@@ -79,7 +79,7 @@ img { max-width: 100%; }
 <li><strong>1974 — TCP/IP invented.</strong> Vint Cerf and Bob Kahn designed a set of rules for <em>any</em> network to talk to <em>any other</em> network — an "inter-network". That's where the word <strong>internet</strong> comes from. Their rules are still what your ESP32 uses today, 50 years later.</li>
 <li><strong>1983 — the switch.</strong> On 1 January 1983, ARPANET switched to TCP/IP overnight. People wore buttons that said "I survived the TCP/IP transition." (Peak nerd.)</li>
 <li><strong>1989-91 — the Web.</strong> Tim Berners-Lee, at CERN, invented <strong>HTTP</strong>, <strong>HTML</strong>, and the <strong>URL</strong> so physicists could link documents. The Web is <em>not</em> the same thing as the internet — the Web is one thing that runs <em>on top of</em> the internet (like your smart-house API is one thing running on top of the Web's plumbing).</li>
-<li><em><em>1990s-now — everything else.</em><a href="../glossary.html">glossary.md</a></em> Email, video, games, your fridge. All of it rides on the same TCP/IP rules from 1974.</li>
+<li><em><em>1990s-now — everything else.</em><a href="../glossary.html" target="_blank" rel="noopener">glossary.md</a></em> Email, video, games, your fridge. All of it rides on the same TCP/IP rules from 1974.</li>
 </ul>
 <p><strong>Key idea:</strong> the internet is not one machine or one company. It's an agreement — a set of rules (<em>protocols</em>) that millions of independent machines follow so they can pass messages to each other.</p>
 <hr>
@@ -171,7 +171,7 @@ Content-Type: application/json
 <hr>
 <h2 id="where-this-connects-to-the-rest-of-the-camp">Where this connects to the rest of the camp</h2>
 <ul>
-<li>The <strong>request/response + status codes</strong> here are drawn in <a href="../diagrams/03_http_and_server.drawio">diagrams/03_http_and_server.drawio</a>.</li>
+<li>The <strong>request/response + status codes</strong> here are drawn in <a href="../diagrams/03_http_and_server.drawio" target="_blank" rel="noopener">diagrams/03_http_and_server.drawio</a>.</li>
 <li>The <strong>hub's loop</strong> (listen → match → run → respond) is diagram 03's bottom section, and the real code is <code>implementation/iot_hub/app.py</code>.</li>
 <li>The <strong>ESP32's HTTP calls</strong> are all in <code>implementation/smart_house/hub_client.py</code>.</li>
 </ul>
