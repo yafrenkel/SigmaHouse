@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 1 — The Hub · Dry Run</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:18px;line-height:1.65;color:#1f2328;max-width:900px;margin:0 auto;padding:0 22px 80px;background:#f7fbff}
+h1{font-size:2em;border-bottom:3px solid #4a90d9;padding-bottom:.2em;margin-top:.6em}
+h2{font-size:1.4em;margin-top:1.6em;color:#0b4f6b;border-bottom:1px solid #d5e6f5;padding-bottom:.2em}
+h3{font-size:1.12em;margin-top:1.1em}
+a{color:#0969da}
+code{font-family:Consolas,monospace;font-size:.9em;background:#eef1f4;padding:.12em .4em;border-radius:4px}
+pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:8px;padding:12px 14px;overflow-x:auto}
+pre code{background:none;padding:0}
+.card{background:#fff;border:1px solid #d5e6f5;border-left:6px solid #4a90d9;border-radius:10px;padding:.7em 1.1em;margin:1.1em 0}
+.snag{border-left-color:#e5534b;background:#fff2f1}
+.boss{border-left-color:#9b59b6;background:#f7f0fb}
+.explain{border-left-color:#0b6b4f;background:#f1fff9}
+.pay{border-left-color:#f6ae2d;background:#fff8ec}
+details{border:1px solid #d5e6f5;border-radius:8px;padding:.5em .9em;margin:.6em 0;background:#fbfdff}
+summary{cursor:pointer;font-weight:600}
+ul.check{list-style:none;padding-left:0}
+ul.check li{margin:.55em 0;padding-left:1.8em;text-indent:-1.8em}
+.nav{display:flex;justify-content:space-between;margin-top:2.4em;font-weight:600}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;background:#f7fbffee;backdrop-filter:blur(4px);border-bottom:1px solid #d5e6f5;padding:8px 0;margin-bottom:18px;font-size:.85em">
+  <a href="index.html">🔧 Dry Run home</a> &nbsp;·&nbsp; <strong>Day 1 — The Hub</strong> &nbsp;·&nbsp; <a href="../day1.html">📖 open the camp field guide (day1)</a>
+</div>
+
+<h1>Day 1 — The Hub 🧠</h1>
+<p><strong>The goal:</strong> get the <em>brain</em> of the whole system running on your laptop — a little web server called the <strong>hub</strong> — and see a dashboard in your browser. By the end you'll register a fake "house" and watch it pop up, then add your own command to the server.</p>
+
+<div class="card">
+📖 <strong>Your field guide today:</strong> <a href="../day1.html">day1.html</a>. Open it in a second tab and follow it Part by Part. <em>This</em> page is your checklist, your Boss build, and your snag list. Read a Part on the field guide → do it → check the Win here.
+</div>
+
+<h2>🎯 Missions</h2>
+<ul class="check">
+<li>☐ <strong>M1 · Start the hub.</strong> Follow <a href="../day1.html#part-1-setup-15-min">Part 1 — Setup</a>. ✅ <strong>Win 1.1:</strong> your browser shows the dashboard saying <em>"Waiting for houses to register…"</em></li>
+<li>☐ <strong>M2 · Learn how HTTP works.</strong> Read <a href="../day1.html#part-2-how-http-works-20-min">Part 2</a> and <a href="../day1.html#part-2b-what-the-server-says-back-status-codes-5-min">Part 2b (status codes)</a>. You should be able to say what <code>GET</code> and <code>POST</code> mean.</li>
+<li>☐ <strong>M3 · Register a fake house.</strong> Do <a href="../day1.html#part-3-register-a-fake-house-20-min">Part 3</a>. ✅ <strong>Win 1.2:</strong> your fake house appears as a row in the dashboard.</li>
+<li>☐ <strong>M4 · Read the routes.</strong> Skim <a href="../day1.html#part-4-read-the-routes-20-min">Part 4</a> so you know what "doors" (routes) the hub offers.</li>
+</ul>
+
+<div class="card boss">
+<h3 style="margin-top:.2em">👑 Boss Build — your own "panic button" endpoint</h3>
+<p>Follow <a href="../day1.html#part-5-add-your-own-endpoint-40-min">Part 5 — Add your own endpoint</a>. You'll add a new route to the hub that disarms (or arms) every house at once, then trigger it.</p>
+<p>✅ <strong>Win 1.3 (the Boss):</strong> your panic button works — calling it changes the dashboard for <em>all</em> houses. Show your manager.</p>
+<p>⚡ <strong>Stretch:</strong> pick one from <a href="../day1.html#part-6-stretch-challenges-10-min">Part 6</a>.</p>
+</div>
+
+<div class="card snag">
+<h3 style="margin-top:.2em">🐞 Snags to watch for (and the fixes)</h3>
+<details>
+<summary>▶ The dashboard won't load / it opened on the wrong address</summary>
+<p>Run the hub as a <strong>plain script</strong>: open <code>implementation/iot_hub/app.py</code> in PyCharm and use <strong>Run ▶</strong> (or a terminal: <code>python app.py</code>). Don't use PyCharm's "Flask server" button — that launches it on the wrong port/address. Our hub runs itself on <code>http://localhost:8080</code>.</p>
+</details>
+<details>
+<summary>▶ Make sure you're running the RIGHT hub</summary>
+<p>Use <code>implementation/iot_hub/app.py</code>. There's an older hub elsewhere in the project — ignore it. If routes look weird, check the file path.</p>
+</details>
+<details>
+<summary>▶ <code>curl</code> in PowerShell gives quoting errors</summary>
+<p>PowerShell's <code>curl</code> is not real curl and mangles JSON. Easiest for Part 3: open the dashboard, press <strong>F12</strong> → <strong>Console</strong>, and use a <code>fetch(...)</code> like the field guide shows. (Or use Git Bash, or <code>Invoke-RestMethod</code>.)</p>
+</details>
+<details>
+<summary>▶ "Failed to fetch" / CORS error in the console</summary>
+<p>The hub now sends the header that allows this, so just make sure you <strong>restarted the hub</strong> after any change (Ctrl-C, then run it again). If you opened your test page as a <code>file://</code>, that's fine — the hub allows it.</p>
+</details>
+</div>
+
+<div class="card explain">
+<h3 style="margin-top:.2em">💬 Explain-Back (earn your bonus — 2 min)</h3>
+<p>Be ready to answer any two:</p>
+<ul>
+<li>What's the difference between a <code>GET</code> and a <code>POST</code>? Give an example of each from the hub.</li>
+<li>When you registered your fake house, what <strong>status code</strong> did the server send back, and what does it mean?</li>
+<li>Walk me through your panic-button endpoint — which line actually changes the houses?</li>
+</ul>
+</div>
+
+<p class="card pay">💵 <strong>Payday:</strong> Missions + Boss = base $25 · Explain-Back = +$20 · stretch or no-Peek Boss = +$5.</p>
+
+<div class="nav">
+  <a href="index.html">← Home</a>
+  <a href="d2_board.html">Next: Day 2 — Meet the Board →</a>
+</div>
+</body>
+</html>

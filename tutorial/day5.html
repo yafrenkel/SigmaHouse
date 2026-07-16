@@ -150,6 +150,77 @@ img { max-width: 100%; }
 <p><strong>Take-away:</strong> for most embedded code, <strong>sync is fine and clearer</strong>. Async pays off when you have several independent activities with different timing.</p>
 <p>For our project, sync is the default, async exists because it's a great teaching example of a real refactor.</p>
 <hr>
+<h2 id="bonus-reading-a-real-rfid-card-20-min">Bonus — Reading a real RFID card (20 min)</h2>
+<p>An RFID reader's whole job is tiny: you tap a card, it hands you that card's <strong>UID</strong> — a unique code like <code>DE AD BE EF</code>. Everything else a door lock does is just a decision about that string.</p>
+<p><code>examples/day5_async/rfid_hello.py</code> is the smallest program that does it: wake the reader, wait for a card, print its UID. It needs an MFRC522 reader wired to the board.</p>
+<h3 id="first-two-names-pcd-and-picc">First, two names: PCD and PICC</h3>
+<p>The library uses the official ISO 14443 names, which look like alphabet soup until someone tells you:</p>
+<ul>
+<li><strong>PCD</strong> = <em>Proximity Coupling Device</em> = <strong>the reader</strong> (the MFRC522 board).</li>
+<li><strong>PICC</strong> = <em>Proximity Integrated Circuit Card</em> = <strong>the card</strong> you tap.</li>
+</ul>
+<p>So <code>PCD_Init()</code> means "set up the reader" and <code>PICC_IsNewCardPresent()</code> means "is a card sitting there?".</p>
+<h3 id="how-rfid_hellopy-works">How <code>rfid_hello.py</code> works</h3>
+<p><strong>1. Wire up the reader.</strong></p>
+<pre><code class="language-python">addr = 0x28
+scl  = 22
+sda  = 21
+rc522 = mfrc522(scl, sda, addr)
+</code></pre>
+<p>This is I2C: two wires, <code>scl</code> (clock) and <code>sda</code> (data), plus an address so the board knows which chip it's talking to. <code>0x28</code> is the MFRC522's address on our kit — if that doesn't match the module, nothing works and every read comes back as garbage.</p>
+<p>Look inside <code>soft_iic.py</code> if you're curious: it doesn't use MicroPython's built-in <code>machine.I2C</code> at all. It implements I2C <strong>by hand</strong>, toggling the two pins high and low with <code>time.sleep_us(5)</code> between edges. That's called <em>bit-banging</em>, and it's why any two GPIO pins work.</p>
+<p><strong>2. Wake the chip up.</strong></p>
+<pre><code class="language-python">rc522.PCD_Init()
+</code></pre>
+<p>Three things happen in here (see <code>mfrc522_i2c.py:103</code>): a soft reset, a timeout timer so a half-finished card conversation can't hang forever, and — the important one — <code>PCD_AntennaOn()</code>. <strong>After a reset the antenna is OFF.</strong> No antenna means no radio field, means no card is ever detected. This one line is the difference between a working reader and a silent one.</p>
+<p><strong>3. Sanity-check the wiring.</strong></p>
+<pre><code class="language-python">rc522.ShowReaderDetails()
+</code></pre>
+<p>This reads one register (<code>VersionReg</code>) and prints it. It's the cheapest possible "are you there?" test:</p>
+<ul>
+<li><code>145 = v1.0</code> or <code>146 = v2.0</code> → the reader is wired correctly and answering.</li>
+<li><code>0</code>, <code>255</code>, or <code>unknown</code> → the reader is <strong>not</strong> talking. Check the wires and the address before debugging anything else.</li>
+</ul>
+<p><strong>4. Poll for a card.</strong></p>
+<pre><code class="language-python">while True:
+    if rc522.PICC_IsNewCardPresent():
+        if rc522.PICC_ReadCardSerial() == True:
+</code></pre>
+<p>Two steps, because they're two different radio conversations:</p>
+<ul>
+<li><code>PICC_IsNewCardPresent()</code> shouts "anyone out there?" (a REQA command) and returns True if <em>something</em> answered. It doesn't know who.</li>
+<li><code>PICC_ReadCardSerial()</code> then does the real work: it runs <em>anti-collision</em> (sorting out which card to talk to, in case two are on the reader) and asks the winner for its UID.</li>
+</ul>
+<p><strong>5. Read the UID.</strong></p>
+<pre><code class="language-python">uid_bytes = rc522.uid.uidByte[0: rc522.uid.size]
+uid_hex = ' '.join(f'{b:02X}' for b in uid_bytes)
+print("UID (Hex):", uid_hex)
+</code></pre>
+<p>The UID lands in <code>rc522.uid</code> as a side effect of step 4 — the function returns <code>True</code>/<code>False</code>, not the card. UIDs are 4, 7 or 10 bytes long (that's what <code>uid.size</code> tells you), so you slice off just the real bytes and format them as hex: <code>DE AD BE EF</code>.</p>
+<p><strong>That string is the whole point of an RFID reader.</strong> Everything after this is just a decision about a string.</p>
+<p><strong>6. Decide.</strong></p>
+<pre><code class="language-python">for i in rc522.uid.uidByte[0: rc522.uid.size]:
+    data = data + i
+if (data == 645):
+    print("open")
+</code></pre>
+<p>It adds up the UID's bytes and opens if the total is 645. It works, but think about it for a second: <strong>any</strong> card whose bytes happen to sum to 645 opens the door, and to enroll a friend's card you'd have to do arithmetic. Keeping an <strong>allow-list</strong> of UIDs instead — a set of strings, and <code>if uid in allowed</code> — is both safer and easier to read.</p>
+<h3 id="gotchas-youll-hit">Gotchas you'll hit</h3>
+<ul>
+<li><strong>Lift the card between taps.</strong> <code>PICC_IsNewCardPresent()</code> only invites cards in the IDLE state. A card left sitting on the reader has already been selected, so it goes quiet. Lift it off and tap again.</li>
+<li><strong><code>time.sleep(1)</code> at the bottom of the loop.</strong> The reader is checked once per second, so a quick tap can be missed entirely — hold the card there. And during that second the board can do <em>nothing else</em>: no LED, no buttons, no hub. That's the exact problem Part 2 was about — swap it for <code>await asyncio.sleep_ms(150)</code> inside a task and the reader gets checked far more often <em>while</em> everything else keeps running.</li>
+<li><strong><code>error: 0</code></strong> means a card answered step 4 but its UID couldn't be read (moved too fast, or two cards at once). It's a near-miss, not a broken reader.</li>
+</ul>
+<p>🛠 <strong>Try this</strong>: run <code>rfid_hello.py</code> on a board with a reader attached and tap a card. Note the hex UID it prints, then tap a second card — two different codes, and they never change. Now replace the <code>data == 645</code> test with your own allow-list:</p>
+<pre><code class="language-python">ALLOWED = ["DE AD BE EF"]        # &lt;- paste YOUR card's UID here
+
+if uid_hex in ALLOWED:
+    print("open")
+else:
+    print("denied:", uid_hex)
+</code></pre>
+<p>That's a working door lock. Add a friend's card to the list and it lets them in too — no arithmetic.</p>
+<hr>
 <h2 id="part-4-final-project-60-min">Part 4 — Final project (60 min)</h2>
 <p>Pick ONE of these and build it end-to-end. You have ~1 hour. A counsellor is around if you're stuck. Show the result before you leave.</p>
 <h3 id="option-a-doorbell-medium">Option A — "Doorbell" (medium)</h3>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manager's Guide — Dry Run (Junior Counselor week)</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:17px;line-height:1.6;color:#1f2328;max-width:900px;margin:0 auto;padding:0 22px 80px;background:#fff}
+h1{font-size:1.8em;border-bottom:3px solid #4a90d9;padding-bottom:.2em;margin-top:.6em}
+h2{font-size:1.3em;margin-top:1.5em;color:#0b4f6b}
+h3{font-size:1.06em;margin-top:1em}
+a{color:#0969da}
+code{font-family:Consolas,monospace;font-size:.9em;background:#eef1f4;padding:.12em .4em;border-radius:4px}
+table{border-collapse:collapse;width:100%;margin:1em 0;display:block;overflow-x:auto}
+th,td{border:1px solid #d0d7de;padding:8px 12px;text-align:left;vertical-align:top}
+th{background:#e3f0fb}
+.key{border-left:6px solid #4a90d9;background:#eef6ff;border-radius:10px;padding:.6em 1em;margin:1em 0}
+.flag{border-left:6px solid #e5534b;background:#fff2f1;border-radius:10px;padding:.6em 1em;margin:1em 0}
+.topbar{position:sticky;top:0;background:#ffffffee;backdrop-filter:blur(4px);border-bottom:1px solid #eee;padding:8px 0;margin-bottom:16px;font-size:.85em}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="index.html">🔧 Dry Run home</a> &nbsp;·&nbsp; <strong>Manager's Guide (for the grown-up)</strong></div>
+
+<h1>🧑‍🏫 Manager's Guide — Dry Run</h1>
+<p>This is the same light-touch playbook as Code Week, adapted for the <strong>real hardware camp</strong> she's doing solo at home. It has the daily answer key, the Explain-Back prompts, the one prep job, and how to help without giving it away.</p>
+
+<div class="key">
+<h3 style="margin-top:.2em">🧭 Her frame this week: "junior counselor"</h3>
+<p>She's not just a student — she's <strong>acting as a junior counselor validating the camp's lab content</strong>: does every assignment actually work, and do the days stay consistent? That framing does real work for you: it gives her permission to be critical, a reason to read carefully, and pride in catching problems instead of hiding when she's stuck. Encourage her <strong>Counselor's Logbook</strong> (doable? consistent? broken/confusing?), and treat a <strong>genuine bug she finds in the material as an easy Extra-mile ($5)</strong> — that's exactly a counselor's job. (Anything real she logs, send it my way and it gets fixed.)</p>
+</div>
+
+<div class="key">
+<h3 style="margin-top:.2em">💬 The Explain-Back (same as last week)</h3>
+<p>Before she collects her <strong>understanding bonus</strong>, she spends 2 minutes doing <em>two</em> of: <strong>explain</strong> a piece of her code, <strong>predict</strong> what a line/click will do, or <strong>make a tiny live change</strong> you ask for. If she did the work, she nails it; if she copied, she can't. Understanding can't be faked out loud.</p>
+</div>
+
+<h2>💵 The paycheck ($50/day → $250/week)</h2>
+<table>
+<thead><tr><th>Part</th><th>Pay</th><th>Earned by</th></tr></thead>
+<tbody>
+<tr><td><strong>Base</strong></td><td>$25</td><td>Doing the day's 🎯 Missions + the 👑 Boss build (it runs).</td></tr>
+<tr><td><strong>Understanding bonus</strong></td><td>$20</td><td>Passing the 2-minute Explain-Back. <em>The part AI can't earn for her.</em></td></tr>
+<tr><td><strong>Extra-mile</strong></td><td>$5</td><td>A ⚡ stretch, or solving the Boss with no ▶ Peek.</td></tr>
+</tbody>
+</table>
+
+<h2>🔧 Your one prep job</h2>
+<p>This week is more physical than Code Week. Before each day, make sure she has:</p>
+<ul>
+<li><strong>The hub runnable</strong> — she starts it herself (<code>python app.py</code> in <code>implementation/iot_hub</code>), but confirm Python/PyCharm work.</li>
+<li><strong>2.4&nbsp;GHz WiFi</strong> she can name and the password. (The ESP32 can't see 5&nbsp;GHz — this trips up almost everyone on Day 3.)</li>
+<li><strong>A good USB data cable</strong> and ideally a rear USB port or a powered hub. A weak cable is the #1 cause of Day 3 grief (brownouts).</li>
+</ul>
+<div class="key">📚 <strong>Your deep-help resource:</strong> the camp's own counsellor guides — <a href="../counsellor/day1.html">day1</a>, <a href="../counsellor/day2.html">day2</a>, <a href="../counsellor/day3.html">day3</a>, <a href="../counsellor/day4.html">day4</a>, <a href="../counsellor/day5.html">day5</a> — each has "Where they'll get stuck," "Ready-to-paste hints," and "What done looks like." That's your cheat sheet if she's stuck and you want the exact fix.</div>
+
+<h2>🧩 Daily answer key + Explain-Back prompts</h2>
+<table>
+<thead><tr><th>Day</th><th>"Done" looks like</th><th>Ask her (pick 2)</th></tr></thead>
+<tbody>
+<tr>
+<td><strong>1</strong><br>The Hub</td>
+<td>Dashboard shows "Waiting for houses…"; a <strong>fake house appears</strong> after she registers it; her <strong>panic-button endpoint</strong> arms/disarms all houses.</td>
+<td>• "<code>GET</code> vs <code>POST</code> — give an example of each from the hub."<br>• "What status code came back when you registered? What does it mean?" (201 = created)<br>• Live: "add a house with a different id."</td>
+</tr>
+<tr>
+<td><strong>2</strong><br>The Board</td>
+<td>REPL answers <code>2+2</code>; LED blinks <em>from the board</em>; one message per button press; press toggles the LED and it <strong>holds</strong>.</td>
+<td>• "What's the REPL vs running a file?"<br>• "Polling vs interrupt — why is the button an interrupt?"<br>• Live: "make it blink twice as fast."</td>
+</tr>
+<tr>
+<td><strong>3</strong><br>Get Online</td>
+<td><code>wlan.isconnected()</code> True + an IP; her house <strong>appears and stays Active</strong>; round-trip both ways (dashboard→LED, button→dashboard).</td>
+<td>• "What's an IP address? What's the board's vs the hub's?"<br>• "What's a keepalive, and what happens if it stops?"<br>• "Trace a dashboard LED click to the real LED." (state_update)</td>
+</tr>
+<tr>
+<td><strong>4</strong><br>Sensors &amp; Alarm</td>
+<td>Waving gives <code>pir.value()==1</code>; the <strong>global alarm</strong> fires across two houses (real + a fake one she registers); <strong>panic mode</strong> arms/disarms all with one click.</td>
+<td>• "What does the PIR actually sense?" (body heat / infrared, not a camera)<br>• "Wave at House A → walk me to House B reacting."<br>• "What are the TWO conditions for a house to buzz?" (reporter armed AND receiver armed)</td>
+</tr>
+<tr>
+<td><strong>5</strong><br>Ship It</td>
+<td><code>USE_ASYNC=True</code> behaves identically; her <strong>own feature</strong> works end-to-end; a <strong>2-minute demo</strong> to the family.</td>
+<td>• "Sync vs async in your own words — when use each?"<br>• "Demo your feature — which parts (board/WiFi/hub/dashboard) does it use?"<br>• "What was the hardest bug and how did you crack it?"</td>
+</tr>
+</tbody>
+</table>
+
+<div class="key">
+<h3 style="margin-top:.2em">🧑‍🔧 Day 4 solo note (important)</h3>
+<p>The global alarm needs <strong>two armed houses</strong>. She only has one board, so she registers a <strong>fake second house</strong> from the dashboard console (a <code>fetch</code> POST, exactly like Day 1) and arms both. When she waves at the real house, the dashboard should flag the fake one as <em>in alarm</em> too — that proves the "all armed houses" logic even though the fake house has no physical buzzer. A borrowed second board is a nice bonus but not required.</p>
+</div>
+
+<h2>🪜 Helping without giving it away</h2>
+<ol>
+<li>"Read the <strong>last line</strong> of the error out loud. What's it saying?"</li>
+<li>"What did you expect, and what happened instead?"</li>
+<li>On hardware days: "Check the <strong>cable and the pin</strong> before the code — is it seated? right port?"</li>
+<li>"Try the ▶ Peek on the mission page, or the matching Part on the field guide — then do it from memory."</li>
+</ol>
+<p>Resist typing on her keyboard. The goal is her "aha," not a working file.</p>
+
+<div class="flag">
+<h3 style="margin-top:.2em">🚩 Signs she's pasting instead of thinking</h3>
+<ul>
+<li>Can't explain what her own code does, or goes quiet during the Explain-Back.</li>
+<li>Code is fancier than the field guide taught, with features she can't account for.</li>
+<li>Finishes with zero errors along the way (real hardware work has messy middles — loose wires, WiFi sulks).</li>
+<li>Fumbles a 60-second live change.</li>
+</ul>
+<p><strong>If you see these:</strong> no drama — "Cool, walk me through it," then do a live change together. If she can't, that day's understanding bonus waits until she can explain it. Coaching, not a courtroom.</p>
+</div>
+
+<div class="flag">
+<h3 style="margin-top:.2em">🔒 Keep this guide private</h3>
+<p>Same rule as the Code Week Manager's Guide: this is the answer key — don't hand it to her, and if you push the dry-run pages to a repo she downloads from, <strong>leave <code>manager_guide.html</code> out</strong> (just like <code>parent_guide.html</code> last week).</p>
+</div>
+
+<p style="margin-top:2em"><a href="index.html">← Back to Dry Run home</a></p>
+</body>
+</html>

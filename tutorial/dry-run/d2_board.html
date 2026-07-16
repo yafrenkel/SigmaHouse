@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 2 — Meet the Board · Dry Run</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:18px;line-height:1.65;color:#1f2328;max-width:900px;margin:0 auto;padding:0 22px 80px;background:#f7fbff}
+h1{font-size:2em;border-bottom:3px solid #4a90d9;padding-bottom:.2em;margin-top:.6em}
+h2{font-size:1.4em;margin-top:1.6em;color:#0b4f6b;border-bottom:1px solid #d5e6f5;padding-bottom:.2em}
+h3{font-size:1.12em;margin-top:1.1em}
+a{color:#0969da}
+code{font-family:Consolas,monospace;font-size:.9em;background:#eef1f4;padding:.12em .4em;border-radius:4px}
+pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:8px;padding:12px 14px;overflow-x:auto}
+pre code{background:none;padding:0}
+.card{background:#fff;border:1px solid #d5e6f5;border-left:6px solid #4a90d9;border-radius:10px;padding:.7em 1.1em;margin:1.1em 0}
+.snag{border-left-color:#e5534b;background:#fff2f1}
+.boss{border-left-color:#9b59b6;background:#f7f0fb}
+.explain{border-left-color:#0b6b4f;background:#f1fff9}
+.pay{border-left-color:#f6ae2d;background:#fff8ec}
+details{border:1px solid #d5e6f5;border-radius:8px;padding:.5em .9em;margin:.6em 0;background:#fbfdff}
+summary{cursor:pointer;font-weight:600}
+ul.check{list-style:none;padding-left:0}
+ul.check li{margin:.55em 0;padding-left:1.8em;text-indent:-1.8em}
+.nav{display:flex;justify-content:space-between;margin-top:2.4em;font-weight:600}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;background:#f7fbffee;backdrop-filter:blur(4px);border-bottom:1px solid #d5e6f5;padding:8px 0;margin-bottom:18px;font-size:.85em">
+  <a href="index.html">🔧 Dry Run home</a> &nbsp;·&nbsp; <strong>Day 2 — Meet the Board</strong> &nbsp;·&nbsp; <a href="../day2.html">📖 open the camp field guide (day2)</a>
+</div>
+
+<h1>Day 2 — Meet the Board 🤖</h1>
+<p><strong>The goal:</strong> hold a real computer in your hand and make it obey you. Today there's <em>no WiFi</em> — just you, the ESP32, and Thonny. You'll make an LED blink, then read a button, then wire them together so a press flips the light.</p>
+
+<div class="card">
+📖 <strong>Field guide:</strong> <a href="../day2.html">day2.html</a> (start at <a href="../day2.html#meet-your-board">Meet your board</a>). Want to see the electricity behind it? The <a href="../circuits.html#led">LED</a> and <a href="../circuits.html#button">button</a> circuits explain what's happening in the wires.
+</div>
+
+<h2>🎯 Missions</h2>
+<ul class="check">
+<li>☐ <strong>M1 · Talk to the board.</strong> Do <a href="../day2.html#part-1-meet-micropython-on-the-esp32-20-min">Part 1 (the REPL)</a>. ✅ <strong>Win 2.1:</strong> you type <code>2 + 2</code> in the Shell and the board answers <code>4</code>.</li>
+<li>☐ <strong>M2 · Blink an LED.</strong> Do <a href="../day2.html#part-2-blink-an-led-20-min">Part 2</a>. ✅ <strong>Win 2.2:</strong> the LED blinks once a second, running <em>from the board</em>.</li>
+<li>☐ <strong>M3 · Read a button.</strong> Do <a href="../day2.html#part-3-read-a-button-25-min">Part 3</a> (polling vs interrupt). ✅ <strong>Win 2.3:</strong> one "Button pressed!" message per press.</li>
+</ul>
+
+<div class="card boss">
+<h3 style="margin-top:.2em">👑 Boss Build — the button flips the light</h3>
+<p>Do <a href="../day2.html#part-4-button-toggles-led-30-min">Part 4 — Button toggles LED</a>. Now a press changes the LED and it <em>stays</em> changed (on → off → on).</p>
+<p>✅ <strong>Win 2.4 (the Boss):</strong> press the button → the LED toggles and holds its new state.</p>
+<p>Then skim <a href="../day2.html#part-5-read-the-projects-device-code-15-min">Part 5</a> to see how the real project wraps this up. ⚡ <strong>Stretch:</strong> pick one from <a href="../day2.html#part-6-stretch-challenges-10-min">Part 6</a>.</p>
+</div>
+
+<div class="card snag">
+<h3 style="margin-top:.2em">🐞 Snags to watch for (and the fixes)</h3>
+<details>
+<summary>▶ Thonny can't find the board / no Shell</summary>
+<p>Bottom-right of Thonny → pick the interpreter <strong>MicroPython (ESP32)</strong> and the right port (e.g. <strong>COM3</strong>). If it's greyed out, close any other program using the port (Arduino IDE, PuTTY, another Thonny) and replug the USB.</p>
+</details>
+<details>
+<summary>▶ "Access is denied" or the connection drops</summary>
+<p>Usually the USB cable/port. Use a short, good <strong>data</strong> cable straight into a rear USB port (not a hub). Then Thonny → <strong>Stop/Restart</strong>. (This matters even more tomorrow when WiFi turns on.)</p>
+</details>
+<details>
+<summary>▶ Error mentioning <code>float</code> / <code>__floordiv__</code> on a sleep</summary>
+<p>On the ESP32, use <code>time.sleep_ms(200)</code> (whole milliseconds) instead of <code>time.sleep(0.2)</code> for short delays.</p>
+</details>
+<details>
+<summary>▶ The button does nothing / prints 5 times</summary>
+<p>Two classics: (1) you're pressing the <em>wrong</em> button — this kit has two; check which pin the code uses. (2) Multiple prints per press is "bounce" — normal; the real project fixes it with a debounce, and Part 3 explains it.</p>
+</details>
+</div>
+
+<div class="card explain">
+<h3 style="margin-top:.2em">💬 Explain-Back (2 min)</h3>
+<ul>
+<li>What is the <strong>REPL</strong>? How is it different from running a saved file?</li>
+<li>In your blink code, what does <code>time.sleep</code> do — and what happens if you make the number smaller?</li>
+<li>Your button uses an <strong>interrupt</strong>. In your own words, why is that better than checking the button over and over (polling)?</li>
+<li><em>(Live change)</em> Make the LED blink twice as fast.</li>
+</ul>
+</div>
+
+<p class="card pay">💵 <strong>Payday:</strong> Missions + Boss = base $25 · Explain-Back = +$20 · stretch or no-Peek Boss = +$5.</p>
+
+<div class="nav">
+  <a href="d1_hub.html">← Day 1</a>
+  <a href="d3_wifi.html">Next: Day 3 — Get Online →</a>
+</div>
+</body>
+</html>

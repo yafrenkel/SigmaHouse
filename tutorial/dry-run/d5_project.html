@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 5 — Ship It · Dry Run</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:18px;line-height:1.65;color:#1f2328;max-width:900px;margin:0 auto;padding:0 22px 80px;background:#f7fbff}
+h1{font-size:2em;border-bottom:3px solid #4a90d9;padding-bottom:.2em;margin-top:.6em}
+h2{font-size:1.4em;margin-top:1.6em;color:#0b4f6b;border-bottom:1px solid #d5e6f5;padding-bottom:.2em}
+h3{font-size:1.12em;margin-top:1.1em}
+a{color:#0969da}
+code{font-family:Consolas,monospace;font-size:.9em;background:#eef1f4;padding:.12em .4em;border-radius:4px}
+pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:8px;padding:12px 14px;overflow-x:auto}
+pre code{background:none;padding:0}
+.card{background:#fff;border:1px solid #d5e6f5;border-left:6px solid #4a90d9;border-radius:10px;padding:.7em 1.1em;margin:1.1em 0}
+.snag{border-left-color:#e5534b;background:#fff2f1}
+.boss{border-left-color:#9b59b6;background:#f7f0fb}
+.explain{border-left-color:#0b6b4f;background:#f1fff9}
+.pay{border-left-color:#f6ae2d;background:#fff8ec}
+.win{border-left-color:#57cc99;background:#f1fff6}
+details{border:1px solid #d5e6f5;border-radius:8px;padding:.5em .9em;margin:.6em 0;background:#fbfdff}
+summary{cursor:pointer;font-weight:600}
+ul.check{list-style:none;padding-left:0}
+ul.check li{margin:.55em 0;padding-left:1.8em;text-indent:-1.8em}
+.nav{display:flex;justify-content:space-between;margin-top:2.4em;font-weight:600}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;background:#f7fbffee;backdrop-filter:blur(4px);border-bottom:1px solid #d5e6f5;padding:8px 0;margin-bottom:18px;font-size:.85em">
+  <a href="index.html">🔧 Dry Run home</a> &nbsp;·&nbsp; <strong>Day 5 — Ship It</strong> &nbsp;·&nbsp; <a href="../day5.html">📖 open the camp field guide (day5)</a>
+</div>
+
+<h1>Day 5 — Ship It 🚀</h1>
+<p><strong>The goal:</strong> learn one pro concept (two ways to write the same program — <em>sync</em> vs <em>async</em>), then <strong>build your own feature</strong> and demo the whole smart house to your family. This is graduation day. 🎓</p>
+
+<div class="card">
+📖 <strong>Field guide:</strong> <a href="../day5.html">day5.html</a>. Today is lighter on new stuff and heavier on <em>making it yours</em> — the final project is whatever <em>you</em> think the house should do.
+</div>
+
+<h2>🎯 Missions</h2>
+<ul class="check">
+<li>☐ <strong>M1 · Two shapes, same behavior.</strong> Do <a href="../day5.html#part-1-same-behavior-two-shapes-20-min">Part 1</a> — flip <code>USE_ASYNC=True</code>. ✅ <strong>Win 5.1:</strong> the board behaves exactly the same with async on.</li>
+<li>☐ <strong>M2 · Spot the difference.</strong> Do <a href="../day5.html#part-2-diff-the-two-files-25-min">Part 2</a> and <a href="../day5.html#part-3-when-to-choose-which-15-min">Part 3</a> — when would you pick each?</li>
+</ul>
+
+<div class="card win">
+<h3 style="margin-top:.2em">🧠 Full-circle moment</h3>
+<p>Remember your Code Week Wednesday boss — the little "smart house" you built <em>in Python</em> with rooms, devices, and typed commands? Open the real firmware (<code>simple_led.py</code>) next to it. Same idea: register, loop, check state, switch a light. <strong>You basically wrote the firmware a week early — you just didn't have the board yet.</strong> 😎</p>
+</div>
+
+<div class="card boss">
+<h3 style="margin-top:.2em">👑 Boss Build — your own feature + the demo</h3>
+<p>Do <a href="../day5.html#part-4-final-project-60-min">Part 4 — Final project</a>. Invent something the house does that isn't in the tutorial. Ideas: a "movie mode" that dims things, a doorbell that flashes the LED, a counter of how many times motion fired today, a new dashboard button — your call.</p>
+<p>✅ <strong>Win 5.2:</strong> your feature works end-to-end.</p>
+<p>🏆 <strong>Final milestone (5.3): the demo.</strong> Do <a href="../day5.html#final-milestone">the wrap-up</a> — gather the family and, in 2 minutes, show your smart house and explain what it does and how the board and hub talk. This is the finale — make it an event.</p>
+</div>
+
+<div class="card explain">
+<h3 style="margin-top:.2em">💬 Explain-Back / Demo (2 min — the big one)</h3>
+<ul>
+<li>In kid words: what's the difference between <strong>sync</strong> and <strong>async</strong>? When would you use each?</li>
+<li>Demo your feature. What does it do, and which pieces (board, WiFi, hub, dashboard) does it use?</li>
+<li>What was the <em>hardest</em> bug this week, and how did you figure it out? (Engineers love this question.)</li>
+</ul>
+</div>
+
+<p class="card pay">💵 <strong>Payday:</strong> Missions + Boss = base $25 · Explain-Back/Demo = +$20 · stretch or a polished demo = +$5. <strong>Plus the 🏆 finale bonus if the family demo goes off — your manager's call.</strong></p>
+
+<div class="card win">
+<strong>🎓 You did it.</strong> You built a real Internet-of-Things device from scratch — sensor, WiFi, web dashboard, alarm — and you understand how every piece talks to the others. When you walk into camp, you won't be learning this for the first time; you'll be the engineer who already knows. Go show off. 🚀
+</div>
+
+<div class="nav">
+  <a href="d4_sensors.html">← Day 4</a>
+  <a href="index.html">🏠 Home</a>
+</div>
+</body>
+</html>

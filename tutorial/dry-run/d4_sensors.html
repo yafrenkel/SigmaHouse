@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 4 — Sensors &amp; Alarm · Dry Run</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:18px;line-height:1.65;color:#1f2328;max-width:900px;margin:0 auto;padding:0 22px 80px;background:#f7fbff}
+h1{font-size:2em;border-bottom:3px solid #4a90d9;padding-bottom:.2em;margin-top:.6em}
+h2{font-size:1.4em;margin-top:1.6em;color:#0b4f6b;border-bottom:1px solid #d5e6f5;padding-bottom:.2em}
+h3{font-size:1.12em;margin-top:1.1em}
+a{color:#0969da}
+code{font-family:Consolas,monospace;font-size:.9em;background:#eef1f4;padding:.12em .4em;border-radius:4px}
+pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:8px;padding:12px 14px;overflow-x:auto}
+pre code{background:none;padding:0}
+.card{background:#fff;border:1px solid #d5e6f5;border-left:6px solid #4a90d9;border-radius:10px;padding:.7em 1.1em;margin:1.1em 0}
+.snag{border-left-color:#e5534b;background:#fff2f1}
+.boss{border-left-color:#9b59b6;background:#f7f0fb}
+.explain{border-left-color:#0b6b4f;background:#f1fff9}
+.pay{border-left-color:#f6ae2d;background:#fff8ec}
+.solo{border-left-color:#f6ae2d;background:#fffdf3}
+details{border:1px solid #d5e6f5;border-radius:8px;padding:.5em .9em;margin:.6em 0;background:#fbfdff}
+summary{cursor:pointer;font-weight:600}
+ul.check{list-style:none;padding-left:0}
+ul.check li{margin:.55em 0;padding-left:1.8em;text-indent:-1.8em}
+.nav{display:flex;justify-content:space-between;margin-top:2.4em;font-weight:600}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;background:#f7fbffee;backdrop-filter:blur(4px);border-bottom:1px solid #d5e6f5;padding:8px 0;margin-bottom:18px;font-size:.85em">
+  <a href="index.html">🔧 Dry Run home</a> &nbsp;·&nbsp; <strong>Day 4 — Sensors &amp; Alarm</strong> &nbsp;·&nbsp; <a href="../day4.html">📖 open the camp field guide (day4)</a>
+</div>
+
+<h1>Day 4 — Sensors &amp; Alarm 🚨</h1>
+<p><strong>The goal:</strong> give your house a sense — a motion sensor — and build the coolest feature of the week: the <strong>global alarm</strong>. Wave your hand at one armed house and <em>every</em> armed house sounds off. Then you'll add a "panic mode" that arms or disarms them all with one click.</p>
+
+<div class="card">
+📖 <strong>Field guide:</strong> <a href="../day4.html">day4.html</a>. Start with <a href="../day4.html#assemble-the-house">Step 0 — Assemble the house</a> if you haven't. Part 2 has a diagram of the whole alarm flow — study it, it's the heart of today.
+</div>
+
+<h2>🎯 Missions</h2>
+<ul class="check">
+<li>☐ <strong>M1 · Meet the motion sensor.</strong> Do <a href="../day4.html#part-1-how-the-pir-sensor-works-15-min">Part 1</a>. ✅ <strong>Win 4.1:</strong> wave your hand and <code>pir.value()</code> returns <code>1</code>.</li>
+<li>☐ <strong>M2 · Trace the alarm on paper.</strong> Do <a href="../day4.html#part-2-trace-the-alarm-flow-on-paper-20-min">Part 2</a> — draw the flow yourself <em>before</em> you peek at the diagram. This is the "understand it" mission.</li>
+<li>☐ <strong>M3 · Fire the global alarm.</strong> Do <a href="../day4.html#part-3-test-it-for-real-20-min">Part 3</a> (see the solo setup below). ✅ <strong>Win 4.2:</strong> motion on one armed house triggers the alarm on another.</li>
+<li>☐ <strong>M4 · Read the code.</strong> Skim <a href="../day4.html#part-4-read-housesreport_motion-10-min">Part 4</a> — how the hub decides who buzzes.</li>
+</ul>
+
+<div class="card solo">
+<h3 style="margin-top:.2em">🧑‍🔧 Solo setup for the two-house alarm</h3>
+<p>The global alarm needs <strong>two armed houses</strong>, but you have one board. Two ways to do it:</p>
+<ul>
+<li><strong>Easiest:</strong> keep your real board running (House&nbsp;A), then <strong>register a fake House&nbsp;B</strong> from the dashboard console the same way you did on Day 1 (a <code>fetch</code> POST with a made-up <code>unique_id</code>). Arm <em>both</em>. Now wave at your real House&nbsp;A → watch the dashboard mark <strong>House&nbsp;B in alarm too</strong>. Your real house buzzes; the fake one lights up red in the dashboard (it has no buzzer, but the hub still flags it — that's the whole point).</li>
+<li><strong>Even better (if you can):</strong> borrow a second board (a parent or friend with the kit) so you hear <em>two</em> buzzers. Optional bonus, not required.</li>
+</ul>
+</div>
+
+<div class="card boss">
+<h3 style="margin-top:.2em">👑 Boss Build — "Panic mode"</h3>
+<p>Do <a href="../day4.html#part-5-write-a-feature-panic-mode-30-min">Part 5 — Write a feature: panic mode</a>. One dashboard click arms (or disarms) <em>every</em> house at once.</p>
+<p>✅ <strong>Win 4.3 (the Boss):</strong> one click arms/disarms all houses. (Notice this reuses your Day 1 "panic button" idea — that's not a coincidence. 😏)</p>
+<p>⚡ <strong>Stretch:</strong> <a href="../day4.html#part-6-stretch-10-min">Part 6</a>.</p>
+</div>
+
+<div class="card snag">
+<h3 style="margin-top:.2em">🐞 Snags to watch for</h3>
+<details>
+<summary>▶ The PIR's own little light seems backwards</summary>
+<p>The tiny indicator LED on the sensor module is just cosmetic and can look "reversed." Ignore it — the <strong>dashboard</strong> (and <code>pir.value()</code>) is the real source of truth. If the dashboard reacts when you wave, it's working.</p>
+</details>
+<details>
+<summary>▶ "Motion" shows and never clears</summary>
+<p>By design, a motion reading auto-clears after a few seconds so one wave doesn't latch forever. If it seems stuck, wait ~3 seconds and check again.</p>
+</details>
+<details>
+<summary>▶ Nothing buzzes even though motion is detected</summary>
+<p>Remember the <strong>two</strong> conditions: the house that <em>reports</em> motion must be armed, AND the house you expect to buzz must <em>also</em> be armed. Arm both, then wave.</p>
+</details>
+</div>
+
+<div class="card explain">
+<h3 style="margin-top:.2em">💬 Explain-Back (2 min)</h3>
+<ul>
+<li>What does the PIR sensor actually detect? (Hint: it's not "seeing" you like a camera.)</li>
+<li>Using your Part 2 drawing: wave at House A → walk me through every step until House B reacts.</li>
+<li>What are the <strong>two</strong> conditions for a house to sound the alarm?</li>
+<li>Walk me through your panic mode — what does one click actually do on the hub?</li>
+</ul>
+</div>
+
+<p class="card pay">💵 <strong>Payday:</strong> Missions + Boss = base $25 · Explain-Back = +$20 · stretch or no-Peek Boss = +$5.</p>
+
+<div class="nav">
+  <a href="d3_wifi.html">← Day 3</a>
+  <a href="d5_project.html">Next: Day 5 — Ship It →</a>
+</div>
+</body>
+</html>

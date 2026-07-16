@@ -87,6 +87,107 @@ For our project, sync is the default, async exists because it's a great teaching
 
 ---
 
+## Bonus — Reading a real RFID card (20 min)
+
+There are three RFID files in `examples/day5_async/`, and only ONE of them touches hardware. This trips everyone up, so read the table first:
+
+| File | Reads a real card? | What it's for |
+|---|:---:|---|
+| `rfid_hello.py` | **yes** | The only file that talks to the MFRC522 reader. Prints the UID of whatever you tap. |
+| `1_rfid_lock_simple.py` | no | The **lock logic** — "is this card allowed?" — with pretend taps. Runs on your laptop. |
+| `2_rfid_lock_async.py` | no | The same logic done async, with a heartbeat LED and a simulated reader. |
+
+> ⚠️ **`1_rfid_lock_simple.py` will never read your card.** There is no reader code in it at all — its "taps" are a hardcoded list of UIDs at the top of `main()`. That's on purpose: deciding *whether a card may open the door* is worth learning on its own, and it runs anywhere with no wiring. **`rfid_hello.py` is the file that reads cards.** The two halves meet in the YOUR TURN section of `2_rfid_lock_async.py`.
+
+### First, two names: PCD and PICC
+
+The library uses the official ISO 14443 names, which look like alphabet soup until someone tells you:
+
+- **PCD** = *Proximity Coupling Device* = **the reader** (the MFRC522 board).
+- **PICC** = *Proximity Integrated Circuit Card* = **the card** you tap.
+
+So `PCD_Init()` means "set up the reader" and `PICC_IsNewCardPresent()` means "is a card sitting there?".
+
+### How `rfid_hello.py` works
+
+**1. Wire up the reader.**
+
+```python
+addr = 0x28
+scl  = 22
+sda  = 21
+rc522 = mfrc522(scl, sda, addr)
+```
+
+This is I2C: two wires, `scl` (clock) and `sda` (data), plus an address so the board knows which chip it's talking to. `0x28` is the MFRC522's address on our kit — if that doesn't match the module, nothing works and every read comes back as garbage.
+
+Look inside `soft_iic.py` if you're curious: it doesn't use MicroPython's built-in `machine.I2C` at all. It implements I2C **by hand**, toggling the two pins high and low with `time.sleep_us(5)` between edges. That's called *bit-banging*, and it's why any two GPIO pins work.
+
+**2. Wake the chip up.**
+
+```python
+rc522.PCD_Init()
+```
+
+Three things happen in here (see `mfrc522_i2c.py:103`): a soft reset, a timeout timer so a half-finished card conversation can't hang forever, and — the important one — `PCD_AntennaOn()`. **After a reset the antenna is OFF.** No antenna means no radio field, means no card is ever detected. This one line is the difference between a working reader and a silent one.
+
+**3. Sanity-check the wiring.**
+
+```python
+rc522.ShowReaderDetails()
+```
+
+This reads one register (`VersionReg`) and prints it. It's the cheapest possible "are you there?" test:
+
+- `145 = v1.0` or `146 = v2.0` → the reader is wired correctly and answering.
+- `0`, `255`, or `unknown` → the reader is **not** talking. Check the wires and the address before debugging anything else.
+
+**4. Poll for a card.**
+
+```python
+while True:
+    if rc522.PICC_IsNewCardPresent():
+        if rc522.PICC_ReadCardSerial() == True:
+```
+
+Two steps, because they're two different radio conversations:
+
+- `PICC_IsNewCardPresent()` shouts "anyone out there?" (a REQA command) and returns True if *something* answered. It doesn't know who.
+- `PICC_ReadCardSerial()` then does the real work: it runs *anti-collision* (sorting out which card to talk to, in case two are on the reader) and asks the winner for its UID.
+
+**5. Read the UID.**
+
+```python
+uid_bytes = rc522.uid.uidByte[0: rc522.uid.size]
+uid_hex = ' '.join(f'{b:02X}' for b in uid_bytes)
+print("UID (Hex):", uid_hex)
+```
+
+The UID lands in `rc522.uid` as a side effect of step 4 — the function returns `True`/`False`, not the card. UIDs are 4, 7 or 10 bytes long (that's what `uid.size` tells you), so you slice off just the real bytes and format them as hex: `DE AD BE EF`.
+
+**That string is the whole point of an RFID reader.** Everything after this is just a decision about a string — which is exactly what `1_rfid_lock_simple.py` teaches.
+
+**6. Decide.**
+
+```python
+for i in rc522.uid.uidByte[0: rc522.uid.size]:
+    data = data + i
+if (data == 645):
+    print("open")
+```
+
+It adds up the UID's bytes and opens if the total is 645. It works, but think about it for a second: **any** card whose bytes happen to sum to 645 opens the door, and to enroll a friend's card you'd have to do arithmetic. That's why `1_rfid_lock_simple.py` replaces this with an allow-list — `if uid in self.allowed` — which is both safer and easier to read.
+
+### Gotchas you'll hit
+
+- **Lift the card between taps.** `PICC_IsNewCardPresent()` only invites cards in the IDLE state. A card left sitting on the reader has already been selected, so it goes quiet. Lift it off and tap again.
+- **`time.sleep(1)` at the bottom of the loop.** The reader is checked once per second, so a quick tap can be missed entirely — hold the card there. And during that second the board can do *nothing else*: no LED, no buttons, no hub. That's the exact problem Part 2 was about, and it's why `2_rfid_lock_async.py` polls with `await sleep_ms(150)` instead — same reader, but the heartbeat keeps beating between checks.
+- **`error: 0`** means a card answered step 4 but its UID couldn't be read (moved too fast, or two cards at once). It's a near-miss, not a broken reader.
+
+🛠 **Try this**: run `rfid_hello.py` on a board with a reader attached, tap a card, and copy the hex UID it prints. Paste it into the `allowed=[...]` list in `1_rfid_lock_simple.py` (and into `taps`) — now the lock logic knows *your* card. Wiring the two together for real is exactly what YOUR TURN #1 in `2_rfid_lock_async.py` walks you through.
+
+---
+
 ## Part 4 — Final project (60 min)
 
 Pick ONE of these and build it end-to-end. You have ~1 hour. A counsellor is around if you're stuck. Show the result before you leave.

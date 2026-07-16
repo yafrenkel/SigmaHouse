@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 3 — Get Online · Dry Run</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:18px;line-height:1.65;color:#1f2328;max-width:900px;margin:0 auto;padding:0 22px 80px;background:#f7fbff}
+h1{font-size:2em;border-bottom:3px solid #4a90d9;padding-bottom:.2em;margin-top:.6em}
+h2{font-size:1.4em;margin-top:1.6em;color:#0b4f6b;border-bottom:1px solid #d5e6f5;padding-bottom:.2em}
+h3{font-size:1.12em;margin-top:1.1em}
+a{color:#0969da}
+code{font-family:Consolas,monospace;font-size:.9em;background:#eef1f4;padding:.12em .4em;border-radius:4px}
+pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:8px;padding:12px 14px;overflow-x:auto}
+pre code{background:none;padding:0}
+.card{background:#fff;border:1px solid #d5e6f5;border-left:6px solid #4a90d9;border-radius:10px;padding:.7em 1.1em;margin:1.1em 0}
+.snag{border-left-color:#e5534b;background:#fff2f1}
+.boss{border-left-color:#9b59b6;background:#f7f0fb}
+.explain{border-left-color:#0b6b4f;background:#f1fff9}
+.pay{border-left-color:#f6ae2d;background:#fff8ec}
+details{border:1px solid #d5e6f5;border-radius:8px;padding:.5em .9em;margin:.6em 0;background:#fbfdff}
+summary{cursor:pointer;font-weight:600}
+ul.check{list-style:none;padding-left:0}
+ul.check li{margin:.55em 0;padding-left:1.8em;text-indent:-1.8em}
+.nav{display:flex;justify-content:space-between;margin-top:2.4em;font-weight:600}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;background:#f7fbffee;backdrop-filter:blur(4px);border-bottom:1px solid #d5e6f5;padding:8px 0;margin-bottom:18px;font-size:.85em">
+  <a href="index.html">🔧 Dry Run home</a> &nbsp;·&nbsp; <strong>Day 3 — Get Online</strong> &nbsp;·&nbsp; <a href="../day3.html">📖 open the camp field guide (day3)</a>
+</div>
+
+<h1>Day 3 — Get Online 📶</h1>
+<p><strong>The goal:</strong> the big one. Your board joins the WiFi, finds the hub, and <em>appears in the dashboard</em>. Then you close the loop: click the dashboard → the real LED changes; press the board's button → the dashboard changes. This is the day the two halves of the system finally talk.</p>
+
+<div class="card">
+📖 <strong>Field guide:</strong> <a href="../day3.html">day3.html</a>. Both the hub (from Day 1) <em>and</em> the board need to be running today. Heads-up: WiFi is the fussiest part of the whole week — the snag box below has the exact fixes, so don't panic if it doesn't connect on the first try. Real engineers expect this.
+</div>
+
+<h2>🎯 Missions</h2>
+<ul class="check">
+<li>☐ <strong>M1 · Find the hub.</strong> Do <a href="../day3.html#part-1-find-the-hub-10-min">Part 1</a> — get your laptop's IP so the board knows where to call.</li>
+<li>☐ <strong>M2 · Join the WiFi.</strong> Do <a href="../day3.html#part-2-connect-to-wifi-from-the-repl-15-min">Part 2</a>. ✅ <strong>Win 3.1:</strong> <code>wlan.isconnected()</code> is <code>True</code> and you get an IP like <code>192.168.1.x</code>.</li>
+<li>☐ <strong>M3 · First call to the hub.</strong> Do <a href="../day3.html#part-3-send-your-first-http-request-from-the-board-15-min">Part 3</a>. ✅ <strong>Win 3.2:</strong> your board appears as a house in the dashboard.</li>
+<li>☐ <strong>M4 · Read + configure.</strong> Skim <a href="../day3.html#part-4-read-hub_clientpy-15-min">Part 4</a>, then set your <a href="../day3.html#part-5-configure-your-secrets-10-min">secrets (Part 5)</a>.</li>
+<li>☐ <strong>M5 · Run the full firmware.</strong> Do <a href="../day3.html#part-6-run-the-full-firmware-25-min">Part 6</a>. ✅ <strong>Win 3.3:</strong> your house stays <em>Active</em> in the dashboard (it keeps checking in).</li>
+</ul>
+
+<div class="card boss">
+<h3 style="margin-top:.2em">👑 Boss Build — the round trip</h3>
+<p>Do <a href="../day3.html#part-7-round-trip-test-15-min">Part 7 — Round-trip test</a>. Click the LED toggle in the dashboard → your real LED changes. Press the button on the board → the dashboard updates within a second.</p>
+<p>✅ <strong>Win 3.4 (the Boss):</strong> both directions work. You just controlled hardware from a web page. 🤯</p>
+<p>⚡ <strong>Stretch:</strong> <a href="../day3.html#part-8-stretch-10-min">Part 8</a>.</p>
+</div>
+
+<div class="card snag">
+<h3 style="margin-top:.2em">🐞 Snags to watch for (WiFi day = expect a couple)</h3>
+<details>
+<summary>▶ "Connection lost / Access is denied" the moment it prints "Connecting to WiFi…"</summary>
+<p>That's a <strong>power brownout</strong>: the WiFi radio spikes the current and the weak USB link resets. Fix the power: short good <strong>data</strong> cable, straight into a <strong>rear</strong> USB port (no hub), or a <strong>powered</strong> USB hub. Then Stop/Restart in Thonny.</p>
+</details>
+<details>
+<summary>▶ <code>OSError: Wifi Internal Error</code></summary>
+<p>The radio got wedged (often right after a brownout reset). <strong>Power-cycle the board</strong> — unplug USB, wait 3 seconds, replug (or press EN/RST). The connect code then resets the radio and retries on its own, so re-run it.</p>
+</details>
+<details>
+<summary>▶ It never finds your network</summary>
+<p>The ESP32 only sees <strong>2.4&nbsp;GHz</strong> WiFi, never 5&nbsp;GHz. If your network has one name for both, connect a phone to the 2.4&nbsp;GHz one to confirm the password, then double-check <code>WIFI_SSID</code> / <code>WIFI_PASS</code> (exact spelling and case).</p>
+</details>
+<details>
+<summary>▶ It connects but the house never appears</summary>
+<p>The board can't reach the hub. Check three things: the hub is running (<code>python app.py</code>), your <code>HUB_URL</code> uses your laptop's real IP + <code>:8080</code>, and the laptop and board are on the <em>same</em> WiFi.</p>
+</details>
+<details>
+<summary>▶ Keep your WiFi password private</summary>
+<p>Your real SSID/password live in <code>secrets.py</code> only — never put them in files you push to GitHub. (The push script even checks for this.)</p>
+</details>
+</div>
+
+<div class="card explain">
+<h3 style="margin-top:.2em">💬 Explain-Back (2 min)</h3>
+<ul>
+<li>What's an <strong>IP address</strong>? What's your board's, and what's the hub's? Why do they need each other's?</li>
+<li>The board sends a <strong>keepalive</strong> every second. What is it, and what does the hub do if it stops hearing them?</li>
+<li>When you click the LED in the dashboard, trace what happens until the real LED changes. (Hint: <code>state_update</code>.)</li>
+</ul>
+</div>
+
+<p class="card pay">💵 <strong>Payday:</strong> Missions + Boss = base $25 · Explain-Back = +$20 · stretch or no-Peek Boss = +$5.</p>
+
+<div class="nav">
+  <a href="d2_board.html">← Day 2</a>
+  <a href="d4_sensors.html">Next: Day 4 — Sensors &amp; Alarm →</a>
+</div>
+</body>
+</html>

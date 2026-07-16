@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dry Run — Your IoT Engineer Week</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:18px;line-height:1.65;color:#1f2328;max-width:900px;margin:0 auto;padding:0 22px 80px;background:#f7fbff}
+h1{font-size:2.1em;border-bottom:3px solid #4a90d9;padding-bottom:.2em;margin-top:.8em}
+h2{font-size:1.5em;margin-top:1.6em;color:#0b4f6b;border-bottom:1px solid #d5e6f5;padding-bottom:.2em}
+h3{font-size:1.15em;margin-top:1.2em}
+a{color:#0969da}
+code{font-family:Consolas,monospace;font-size:.9em;background:#eef1f4;padding:.12em .4em;border-radius:4px}
+table{border-collapse:collapse;width:100%;margin:1em 0;display:block;overflow-x:auto}
+th,td{border:1px solid #d0d7de;padding:9px 12px;text-align:left;vertical-align:top}
+th{background:#e3f0fb}
+.card{background:#fff;border:1px solid #d5e6f5;border-left:6px solid #4a90d9;border-radius:10px;padding:.7em 1.1em;margin:1.1em 0}
+.pay{border-left-color:#f6ae2d;background:#fff8ec}
+.win{border-left-color:#57cc99;background:#f1fff6}
+.big{font-size:1.15em}
+ul.clean{list-style:none;padding-left:0}
+ul.clean li{margin:.35em 0}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;background:#f7fbffee;backdrop-filter:blur(4px);border-bottom:1px solid #d5e6f5;padding:8px 0;margin-bottom:18px;font-size:.85em">
+  <strong>🧭 Dry Run</strong> — your Junior Counselor week &nbsp;·&nbsp; <a href="../INDEX.html">📚 Camp tutorial</a>
+</div>
+
+<h1>🧭 Dry Run: Junior Counselor</h1>
+<p class="big"><strong>Congratulations — you got promoted.</strong> 🎉 Last week you were a Junior <em>Developer</em> (Code Week). You crushed it, so this week you level up to <strong>Junior Counselor</strong>: you'll build a real <strong>Internet-of-Things smart house</strong> — a tiny WiFi computer (the ESP32) talking to a web dashboard — but this time as a <em>tester</em>, not just a student. 🤖</p>
+
+<p><strong>You are now acting as a junior counselor.</strong> The camp's hands-on lab content (the "<strong>semilab</strong>") needs a real test-run before the campers arrive — and that's your job. You'll <strong>validate</strong> it: build every project yourself, confirm each assignment is actually <strong>doable</strong>, and check that the days fit together and stay <strong>consistent</strong>. Anything broken, confusing, or out of order — you catch it and log it. Do the work → get paid. Understand it → earn the bonus. (See <a href="#paycheck">The Paycheck</a>.)</p>
+
+<div class="card">
+<strong>How this week works — you have TWO tabs open each day:</strong>
+<ul class="clean">
+<li>📋 <strong>This mission page</strong> (e.g. "Day 1") — your checklist, your Boss build, your rewards, and the exact snags to watch for.</li>
+<li>📖 <strong>The camp field guide</strong> (<code>day1.html</code> … <code>day5.html</code>) — the real instructions and code. Your mission page links straight to it.</li>
+</ul>
+<p style="margin:.4em 0 0">Icons you'll see: 🎯 <strong>Mission</strong> (a task) · ✅ <strong>Win</strong> (a milestone — check it off) · 🐞 <strong>Snag</strong> (a common problem + the fix) · 👑 <strong>Boss</strong> (the day's build) · ▶ <strong>Peek</strong> (a hint, hidden until you click).</p>
+</div>
+
+<div class="card win">
+<strong>🧭 Your counselor mission — validate as you go</strong>
+<p>You're not just <em>doing</em> the assignments, you're <em>checking</em> them. As you work each day, keep a short <strong>Counselor's Logbook</strong> (a notes file or paper) and jot:</p>
+<ul class="clean">
+<li>✅ <strong>Doable?</strong> Did each mission actually work by following the field guide?</li>
+<li>🔗 <strong>Consistent?</strong> Did today build cleanly on yesterday — nothing out of order, nothing that needs a step you weren't taught yet?</li>
+<li>🐞 <strong>Broken or confusing?</strong> A wrong instruction, a dead link, a typo, or any bit that made you go "huh?"</li>
+</ul>
+<p>Bring your notes to clock-out. <strong>Finding a real bug in the camp content is a win</strong> — that's exactly what a counselor is for. 🕵️</p>
+</div>
+
+<h2>🧰 What you need set up</h2>
+<ul>
+<li>💻 <strong>Thonny</strong> (for the ESP32) and <strong>PyCharm</strong> (to run the hub) — same tools as camp.</li>
+<li>🤖 The <strong>ESP32 kit</strong> and a good <strong>USB data cable</strong> (a weak cable causes half the problems — see Day 3).</li>
+<li>📶 <strong>2.4&nbsp;GHz WiFi</strong> — the ESP32 <em>cannot</em> see 5&nbsp;GHz networks.</li>
+<li>🌐 New to any word? Keep the <a href="../glossary.html">Glossary</a>, <a href="../circuits.html">Circuits</a>, and <a href="../PWM.html">PWM</a> pages open in a tab.</li>
+</ul>
+
+<h2>🗓️ The week at a glance</h2>
+<table>
+<thead><tr><th>Day</th><th>You'll build</th><th>👑 Boss build</th></tr></thead>
+<tbody>
+<tr><td><a href="d1_hub.html">Day 1 — The Hub</a></td><td>the web server + dashboard; register fake houses</td><td>Add your own "panic button" endpoint</td></tr>
+<tr><td><a href="d2_board.html">Day 2 — Meet the Board</a></td><td>MicroPython on the ESP32: blink an LED, read a button</td><td>Button toggles the LED</td></tr>
+<tr><td><a href="d3_wifi.html">Day 3 — Get Online</a></td><td>the board joins WiFi and appears in the dashboard</td><td>Dashboard ↔ real LED, both directions</td></tr>
+<tr><td><a href="d4_sensors.html">Day 4 — Sensors &amp; Alarm</a></td><td>the motion sensor + the global alarm</td><td>"Panic mode": arm/disarm every house at once</td></tr>
+<tr><td><a href="d5_project.html">Day 5 — Ship It</a></td><td>async vs sync, then your own feature</td><td>Your own invention + a family demo 🏆</td></tr>
+</tbody>
+</table>
+
+<h2>⏰ Your daily schedule</h2>
+<p>Engineering is a sprint sport — short focused bursts, real breaks, best ideas come <em>after</em> you step away. (Clock times are a sample — shift them to your morning.)</p>
+<table>
+<thead><tr><th>Time</th><th>What you're doing</th></tr></thead>
+<tbody>
+<tr><td>🏊 <strong>9:00</strong></td><td><strong>Move first</strong> — pool, gym, bike, walk (~1 hr). Not optional; moving wakes up your brain.</td></tr>
+<tr><td>🥐 <strong>10:00</strong></td><td><strong>Breakfast</strong> + open today's mission page and the camp day page. <em>(From Day 2 on: commit yesterday's work to GitHub first — 2 min.)</em></td></tr>
+<tr><td>💻 <strong>10:20</strong></td><td><strong>Build Block 1</strong> — the day's 🎯 Missions (~75 min). Stand + stretch 2 min every ~25 min.</td></tr>
+<tr><td>📚 <strong>11:35</strong></td><td><strong>Reading break</strong> — a book, 15 min. Rests your eyes, lets your brain file what you learned.</td></tr>
+<tr><td>👑 <strong>11:50</strong></td><td><strong>Boss Build</strong> — the day's real feature (~60 min). Make it yours.</td></tr>
+<tr><td>🍔 <strong>12:50</strong></td><td><strong>Lunch + full break</strong> — no screens, go outside (~50 min).</td></tr>
+<tr><td>🎵 <strong>1:40</strong></td><td><strong>Music break</strong> — play or jam (~20 min).</td></tr>
+<tr><td>🎨 <strong>2:00</strong></td><td><strong>Quiet creative time</strong> — draw, sketch, journal, read (~45 min).</td></tr>
+<tr><td>🚴 <strong>2:45</strong></td><td><strong>Afternoon exercise</strong> — bike, dog, hoops, dance (~30 min).</td></tr>
+<tr><td>✨ <strong>3:15</strong></td><td><strong>Free-choice</strong> — keep building, try a ⚡ stretch for a bonus, or relax (~45 min).</td></tr>
+<tr><td>🎉 <strong>4:00</strong></td><td><strong>Clock out with your manager!</strong> Show what you built, do the 2-min Explain-Back, log your wins, collect your paycheck. 💵 Evening is yours.</td></tr>
+</tbody>
+</table>
+<p>💡 <strong>Build blocks are "work till the missions feel done," not strict clock times.</strong> Hardware days can run long when a wire is loose or WiFi sulks — that's the job. Breathe, take the break, come back.</p>
+
+<h2>📵 Phone policy (pro mode)</h2>
+<div class="card">
+<ul>
+<li>🔒 <strong>Phone in the basket during Build Block &amp; Boss Build.</strong> Keeps you focused — and honest (no sneaky Googling).</li>
+<li>🍔 <strong>Lunch is your phone break.</strong> 📚🚴🎨 Reading/exercise/drawing are screen-free. 🎵 Music break: phone's fine for music.</li>
+<li>🏁 <strong>4:00 = off the clock.</strong> Phone and evening are all yours.</li>
+</ul>
+</div>
+
+<h2 id="paycheck">💵 The Paycheck</h2>
+<div class="card pay">
+<p>Still <strong>up to $50 a day</strong> ($250 for the week). Same deal as Code Week:</p>
+<table>
+<thead><tr><th>How</th><th>Pay</th></tr></thead>
+<tbody>
+<tr><td>🗓️ <strong>Base</strong> — do the day's 🎯 Missions + the 👑 Boss build (it runs)</td><td>$25 / day</td></tr>
+<tr><td>💬 <strong>Understanding bonus</strong> — pass the 2-minute Explain-Back</td><td>+$20 / day</td></tr>
+<tr><td>⚡ <strong>Extra-mile</strong> — a stretch challenge, OR you solved the Boss with no ▶ Peek</td><td>+$5 / day</td></tr>
+</tbody>
+</table>
+<p><strong>Like a real job:</strong> base pay for the work, the big bonus for <em>understanding</em> it. That's what you're really building. 💪</p>
+</div>
+
+<div class="card">
+<strong>🧠 The honesty rule:</strong>
+<ul>
+<li>Google/AI are <strong>off-limits for the puzzle answers</strong> this week. Stuck? Struggle ~10 min, then click the ▶ <strong>Peek</strong> or check the camp day page — that's your allowed hint.</li>
+<li>Each day you <strong>explain your work</strong> to your manager for 2 minutes to earn the bonus. Did the thinking? Easy money. 😎</li>
+<li>Asking an AI to <em>explain a concept</em> you're curious about is great. Asking it to <em>hand you the answer</em> is the thing we skip.</li>
+</ul>
+</div>
+
+<p style="font-size:.9em;color:#666">👨‍👩‍👧 <em>Grown-up running this? See the <a href="manager_guide.html">Manager's Guide</a> — the daily answer key, Explain-Back prompts, the one prep job, and how to help without giving it away. (Don't peek, engineer! 🙂)</em></p>
+
+<h2>📋 Mission Log</h2>
+<p>Your timesheet — check a box each time you finish, and log any issues you spot as a counselor. It's how you prove the work and collect your pay.</p>
+<table>
+<thead><tr><th>Day</th><th>Missions ✅</th><th>👑 Boss ✅</th><th>⚡ Stretch</th><th>🔎 Bugs logged</th><th>💵 Earned</th></tr></thead>
+<tbody>
+<tr><td>Day 1</td><td>☐</td><td>☐</td><td>☐</td><td></td><td></td></tr>
+<tr><td>Day 2</td><td>☐</td><td>☐</td><td>☐</td><td></td><td></td></tr>
+<tr><td>Day 3</td><td>☐</td><td>☐</td><td>☐</td><td></td><td></td></tr>
+<tr><td>Day 4</td><td>☐</td><td>☐</td><td>☐</td><td></td><td></td></tr>
+<tr><td>Day 5</td><td>☐</td><td>☐ + 🏆 demo</td><td>☐</td><td></td><td></td></tr>
+</tbody>
+</table>
+
+<h2>💡 Rules of a good engineer</h2>
+<ul>
+<li><strong>Read the last line of the error.</strong> Red text is normal — it usually tells you exactly what's wrong.</li>
+<li><strong>Change one thing at a time.</strong> When something breaks, undo your last change first.</li>
+<li><strong>Check the wire before the code.</strong> On hardware days, half of all bugs are a loose cable or wrong pin.</li>
+<li><strong>Type it, don't paste it.</strong> Your fingers learn too.</li>
+<li><strong>Stuck 10 min?</strong> Walk, then Peek. That's smart, not cheating.</li>
+</ul>
+
+<div class="card win">
+<strong>🎁 The prize:</strong> by Friday you'll have a real smart house you built yourself — motion alarm, web dashboard, the works — you'll walk into camp already knowing how it all fits together, and the bugs you caught will have made the camp better for every camper after you. Let's go! 🚀
+</div>
+
+<p style="margin-top:2em">👉 Start here: <a href="d1_hub.html"><strong>Day 1 — The Hub</strong></a></p>
+
+</body>
+</html>
