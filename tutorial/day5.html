@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Day 5 — Async + Final Project</title>
+<title>Day 5 — Houses Talking to Each Other</title>
 <style>
 :root { color-scheme: light; }
 * { box-sizing: border-box; }
@@ -56,246 +56,228 @@ img { max-width: 100%; }
   .topbar { display: none; }
   body { max-width: none; font-size: 12pt; }
   details { page-break-inside: avoid; }
-  details:not([open]) > *:not(summary) { display: revert; }  /* print expands details */
+  details:not([open]) > *:not(summary) { display: revert; }
 }
 </style>
 </head>
 <body>
 <div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
 <article>
-<h1 id="day-5-async-final-project">Day 5 — Async + Final Project</h1>
-<p><strong>Goal:</strong> Compare the synchronous and async versions of the firmware to see what <code>async/await</code> actually changes, then build a feature of your choice.</p>
-<p>🔬 <strong>See async for real:</strong> <a href="examples/day5_async/async_demo.py" target="_blank" rel="noopener">examples/day5_async/async_demo.py</a> blinks a heartbeat LED while a fake "slow job" runs. Flip <code>USE_ASYNC</code> and watch the LED <strong>freeze</strong> (sync) vs <strong>stay smooth</strong> (async) — the difference the real firmware can't show you.</p>
+<h1 id="day-5-houses-talking-to-each-other">Day 5 — Houses Talking to Each Other</h1>
+<p><strong>Goal:</strong> Make your house <em>send a text message to a friend's house</em>, through the hub. Their board prints it in the Thonny console (and flashes it on the LCD). No new hardware — you already have everything. By the end, one board can message any other board in the room.</p>
+
+<blockquote>
+<p>🔑 <strong>The big idea:</strong> a house never talks <em>directly</em> to another house — it can't even reach it. Every message goes <strong>through the hub</strong>: you drop a note in a friend's <em>mailbox</em> on the server, and their board picks it up on its next keepalive. Same "the board always speaks first, the hub answers" rule from Day 3.</p>
 </blockquote>
-<p align="center">
-  <img src="diagrams/06_sync_vs_async.drawio.svg" alt="Timeline: in sync the 2-second slow job blocks the loop so the heartbeat freezes; in async the slow job yields with await so the heartbeat keeps beating." style="max-width:100%;">
-</p>
 
 <hr>
-<h2 id="part-1-same-behavior-two-shapes-20-min">Part 1 — Same behavior, two shapes (20 min)</h2>
-<p>You already know <code>app_sync.py</code>. Today's surprise: <code>app_async.py</code> does the <strong>exact same thing</strong> with the <strong>same hardware drivers</strong> and the <strong>same <code>hub_client.py</code></strong>. Only the loop structure is different.</p>
-<p>🛠 <strong>Try this</strong>: switch your board to async.</p>
-<ol>
-<li>Open <code>config.py</code> on the board (Thonny → board pane → double-click).</li>
-<li>Change <code>USE_ASYNC = False</code> to <code>USE_ASYNC = True</code>.</li>
-<li>Save and press the ESP32's RESET button.</li>
-<li>Watch the LCD: same "Connecting…" → "Ready". Test that the dashboard toggle still moves the LED. <strong>Identical user-facing behavior.</strong></li>
-</ol>
-<p>✅ <strong>Milestone 5.1</strong>: The board behaves identically with <code>USE_ASYNC=True</code>.</p>
-<hr>
-<h2 id="part-2-diff-the-two-files-25-min">Part 2 — Diff the two files (25 min)</h2>
-<p>🛠 <strong>Try this</strong>: in PyCharm, select both <code>app_sync.py</code> and <code>app_async.py</code> in the project tree, right-click → <strong>Compare Files</strong>. PyCharm shows them side by side with differences highlighted.</p>
-<p>Notice:
-- The <strong>helpers</strong> (<code>_connect_wifi</code>, <code>_build_state</code>, <code>_apply_state</code>, <code>_toggle</code>) are identical.
-- <code>app_sync.py</code> has ONE <code>while True</code> loop checking everything sequentially, with <code>time.sleep_ms(50)</code>.
-- <code>app_async.py</code> has <strong>three concurrent tasks</strong> (<code>task_buttons</code>, <code>task_motion</code>, <code>task_keepalive</code>), each with its own <code>while True</code> and its own <code>await asyncio.sleep_ms(...)</code>.</p>
-<h3 id="what-await-actually-does">What <code>await</code> actually does</h3>
-<p>In sync code:</p>
-<pre><code class="language-python">time.sleep_ms(50)   # CPU does NOTHING for 50 ms.
-</code></pre>
-<p>In async code:</p>
-<pre><code class="language-python">await asyncio.sleep_ms(50)   # &quot;I'll be busy in 50 ms — go run other tasks meanwhile.&quot;
-</code></pre>
-<p>So while <code>task_keepalive</code> is sleeping for 1 second between heartbeats, <code>task_buttons</code> and <code>task_motion</code> keep running. In the sync version, the single loop has to round-robin everything, so it CAN'T sleep for a full second — that's why we used <code>time.sleep_ms(50)</code> (loop runs 20×/sec).</p>
-<p>💡 <strong>Subtle point</strong>: <code>await</code> only switches tasks at <code>await</code> points. If a task does <code>time.sleep(5)</code> (the synchronous version!) inside an async function, <strong>everything stops for 5 seconds</strong>. This is why our async version explicitly notes that <code>urequests</code> is blocking — for 100-200 ms during an HTTP call, the other tasks pause.</p>
-<p>🛠 <strong>Try this — observe it</strong>: add a print to <code>task_buttons</code> that fires on every loop iteration. Watch the Thonny shell during a slow operation:</p>
-<pre><code class="language-python">async def task_buttons(button_a, button_b, led, fan, buzzer, motion, hub, lcd, ctx):
-    while True:
-        if button_a.was_pressed():
-            ...
-        if button_b.was_pressed():
-            ...
-        print(&quot;.&quot;, end=&quot;&quot;)     # &lt;-- add this
-        await asyncio.sleep_ms(30)
-</code></pre>
-<p>Press button B (which triggers an HTTP push). Watch the dots: you'll see them stream, pause briefly during the HTTP call, then resume. In the sync version, dots would only print every 50 ms regardless.</p>
-<hr>
-<h2 id="part-3-when-to-choose-which-15-min">Part 3 — When to choose which (15 min)</h2>
+<h2 id="part-1-the-mailbox-api-10-min">Part 1 — The mailbox API (10 min)</h2>
+<p>Every house now has a <strong>mailbox</strong> on the hub. It's a tiny REST resource — remember Day 1's <em>collection vs. item</em>? The mailbox is a collection that lives <em>under</em> your house:</p>
+<pre><code>/api/houses/&lt;uid&gt;            &lt;- one house  (the item)
+/api/houses/&lt;uid&gt;/messages   &lt;- that house's mailbox  (a collection)</code></pre>
+<p>Two verbs act on it, plus one new flag on the keepalive you already know:</p>
 <table>
 <thead>
-<tr>
-<th>Scenario</th>
-<th style="text-align: center;">Sync</th>
-<th style="text-align: center;">Async</th>
-</tr>
+<tr><th>Verb + URL</th><th>Means</th><th>Response</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>Reading a temperature once</td>
-<td style="text-align: center;">✅ simpler</td>
-<td style="text-align: center;">overkill</td>
-</tr>
-<tr>
-<td>Three things on three different schedules</td>
-<td style="text-align: center;">round-robin works but complex</td>
-<td style="text-align: center;">✅ natural</td>
-</tr>
-<tr>
-<td>One slow blocking call (HTTP, file write)</td>
-<td style="text-align: center;">blocks everything</td>
-<td style="text-align: center;">also blocks (without <code>aiohttp</code> etc.)</td>
-</tr>
-<tr>
-<td>Beginner reading the code</td>
-<td style="text-align: center;">✅ top-to-bottom</td>
-<td style="text-align: center;">needs <code>await</code> knowledge</td>
-</tr>
-<tr>
-<td>You'll later add 5 more concurrent activities</td>
-<td style="text-align: center;">gets messy</td>
-<td style="text-align: center;">✅ scales</td>
-</tr>
+<tr><td><code>POST /api/houses/&lt;uid&gt;/messages</code></td><td>leave a message for that house</td><td><code>201 {"ok": true}</code></td></tr>
+<tr><td><code>GET /api/houses/&lt;uid&gt;/messages</code></td><td>read <em>and empty</em> your own mailbox</td><td><code>200 {"messages": [ … ]}</code></td></tr>
+<tr><td><code>PUT /api/houses/&lt;uid&gt;/keepalive</code></td><td>the heartbeat — now also reports mail</td><td><code>{"alarm":…, "state_update":…, "message": true|false}</code></td></tr>
 </tbody>
 </table>
-<p><strong>Take-away:</strong> for most embedded code, <strong>sync is fine and clearer</strong>. Async pays off when you have several independent activities with different timing.</p>
-<p>For our project, sync is the default, async exists because it's a great teaching example of a real refactor.</p>
-<hr>
-<h2 id="bonus-reading-a-real-rfid-card-20-min">Bonus — Reading a real RFID card (20 min)</h2>
-<p>An RFID reader's whole job is tiny: you tap a card, it hands you that card's <strong>UID</strong> — a unique code like <code>DE AD BE EF</code>. Everything else a door lock does is just a decision about that string.</p>
-<p><code>examples/day5_async/rfid_hello.py</code> is the smallest program that does it: wake the reader, wait for a card, print its UID. It needs an MFRC522 reader wired to the board.</p>
-<h3 id="first-two-names-pcd-and-picc">First, two names: PCD and PICC</h3>
-<p>The library uses the official ISO 14443 names, which look like alphabet soup until someone tells you:</p>
-<ul>
-<li><strong>PCD</strong> = <em>Proximity Coupling Device</em> = <strong>the reader</strong> (the MFRC522 board).</li>
-<li><strong>PICC</strong> = <em>Proximity Integrated Circuit Card</em> = <strong>the card</strong> you tap.</li>
-</ul>
-<p>So <code>PCD_Init()</code> means "set up the reader" and <code>PICC_IsNewCardPresent()</code> means "is a card sitting there?".</p>
-<h3 id="how-rfid_hellopy-works">How <code>rfid_hello.py</code> works</h3>
-<p><strong>1. Wire up the reader.</strong></p>
-<pre><code class="language-python">addr = 0x28
-scl  = 22
-sda  = 21
-rc522 = mfrc522(scl, sda, addr)
-</code></pre>
-<p>This is I2C: two wires, <code>scl</code> (clock) and <code>sda</code> (data), plus an address so the board knows which chip it's talking to. <code>0x28</code> is the MFRC522's address on our kit — if that doesn't match the module, nothing works and every read comes back as garbage.</p>
-<p>Look inside <code>soft_iic.py</code> if you're curious: it doesn't use MicroPython's built-in <code>machine.I2C</code> at all. It implements I2C <strong>by hand</strong>, toggling the two pins high and low with <code>time.sleep_us(5)</code> between edges. That's called <em>bit-banging</em>, and it's why any two GPIO pins work.</p>
-<p><strong>2. Wake the chip up.</strong></p>
-<pre><code class="language-python">rc522.PCD_Init()
-</code></pre>
-<p>Three things happen in here (see <code>mfrc522_i2c.py:103</code>): a soft reset, a timeout timer so a half-finished card conversation can't hang forever, and — the important one — <code>PCD_AntennaOn()</code>. <strong>After a reset the antenna is OFF.</strong> No antenna means no radio field, means no card is ever detected. This one line is the difference between a working reader and a silent one.</p>
-<p><strong>3. Sanity-check the wiring.</strong></p>
-<pre><code class="language-python">rc522.ShowReaderDetails()
-</code></pre>
-<p>This reads one register (<code>VersionReg</code>) and prints it. It's the cheapest possible "are you there?" test:</p>
-<ul>
-<li><code>145 = v1.0</code> or <code>146 = v2.0</code> → the reader is wired correctly and answering.</li>
-<li><code>0</code>, <code>255</code>, or <code>unknown</code> → the reader is <strong>not</strong> talking. Check the wires and the address before debugging anything else.</li>
-</ul>
-<p><strong>4. Poll for a card.</strong></p>
-<pre><code class="language-python">while True:
-    if rc522.PICC_IsNewCardPresent():
-        if rc522.PICC_ReadCardSerial() == True:
-</code></pre>
-<p>Two steps, because they're two different radio conversations:</p>
-<ul>
-<li><code>PICC_IsNewCardPresent()</code> shouts "anyone out there?" (a REQA command) and returns True if <em>something</em> answered. It doesn't know who.</li>
-<li><code>PICC_ReadCardSerial()</code> then does the real work: it runs <em>anti-collision</em> (sorting out which card to talk to, in case two are on the reader) and asks the winner for its UID.</li>
-</ul>
-<p><strong>5. Read the UID.</strong></p>
-<pre><code class="language-python">uid_bytes = rc522.uid.uidByte[0: rc522.uid.size]
-uid_hex = ' '.join(f'{b:02X}' for b in uid_bytes)
-print("UID (Hex):", uid_hex)
-</code></pre>
-<p>The UID lands in <code>rc522.uid</code> as a side effect of step 4 — the function returns <code>True</code>/<code>False</code>, not the card. UIDs are 4, 7 or 10 bytes long (that's what <code>uid.size</code> tells you), so you slice off just the real bytes and format them as hex: <code>DE AD BE EF</code>.</p>
-<p><strong>That string is the whole point of an RFID reader.</strong> Everything after this is just a decision about a string.</p>
-<p><strong>6. Decide.</strong></p>
-<pre><code class="language-python">for i in rc522.uid.uidByte[0: rc522.uid.size]:
-    data = data + i
-if (data == 645):
-    print("open")
-</code></pre>
-<p>It adds up the UID's bytes and opens if the total is 645. It works, but think about it for a second: <strong>any</strong> card whose bytes happen to sum to 645 opens the door, and to enroll a friend's card you'd have to do arithmetic. Keeping an <strong>allow-list</strong> of UIDs instead — a set of strings, and <code>if uid in allowed</code> — is both safer and easier to read.</p>
-<h3 id="gotchas-youll-hit">Gotchas you'll hit</h3>
-<ul>
-<li><strong>Lift the card between taps.</strong> <code>PICC_IsNewCardPresent()</code> only invites cards in the IDLE state. A card left sitting on the reader has already been selected, so it goes quiet. Lift it off and tap again.</li>
-<li><strong><code>time.sleep(1)</code> at the bottom of the loop.</strong> The reader is checked once per second, so a quick tap can be missed entirely — hold the card there. And during that second the board can do <em>nothing else</em>: no LED, no buttons, no hub. That's the exact problem Part 2 was about — swap it for <code>await asyncio.sleep_ms(150)</code> inside a task and the reader gets checked far more often <em>while</em> everything else keeps running.</li>
-<li><strong><code>error: 0</code></strong> means a card answered step 4 but its UID couldn't be read (moved too fast, or two cards at once). It's a near-miss, not a broken reader.</li>
-</ul>
-<p>🛠 <strong>Try this</strong>: run <code>rfid_hello.py</code> on a board with a reader attached and tap a card. Note the hex UID it prints, then tap a second card — two different codes, and they never change. Now replace the <code>data == 645</code> test with your own allow-list:</p>
-<pre><code class="language-python">ALLOWED = ["DE AD BE EF"]        # &lt;- paste YOUR card's UID here
+<p>The message body is just <code>{"from": "&lt;who&gt;", "text": "&lt;≤32 chars&gt;"}</code>. A message to a house that doesn't exist is a <code>404</code>; empty or too-long text is a <code>400</code>.</p>
+<blockquote>
+<p>💡 <strong>Reading empties the mailbox</strong> — exactly like <code>GET /state</code> clears the <code>state_update</code> flag from Day 3. Once your board reads its mail, the next keepalive says <code>message: false</code> again. A message is delivered <em>once</em>.</p>
+</blockquote>
 
-if uid_hex in ALLOWED:
-    print("open")
-else:
-    print("denied:", uid_hex)
+<hr>
+<h2 id="part-2-see-it-work-20-min">Part 2 — Send your first message (20 min)</h2>
+<p>Pair up with a neighbor. You'll need their <strong>house ID</strong> (the full <code>unique_id</code>). Two easy places to find it:</p>
+<ul>
+<li>It prints in <em>their</em> Thonny shell at boot: <code>My house ID: A1B2C3D4E5F6 …</code></li>
+<li>It's the <strong>House ID</strong> column on the <a href="http://localhost:8080/" target="_blank" rel="noopener">dashboard</a>.</li>
+</ul>
+
+<h3 id="warm-up-from-your-laptop">Warm-up — send from your laptop</h3>
+<p>🛠 <strong>Try this</strong> in PyCharm's terminal (swap in your friend's ID and the real hub URL):</p>
+<pre><code class="language-bash">curl -X POST http://192.168.1.42:8080/api/houses/A1B2C3D4E5F6/messages \
+  -H "Content-Type: application/json" \
+  -d '{"from":"me","text":"hello neighbor!"}'
 </code></pre>
-<p>That's a working door lock. Add a friend's card to the list and it lets them in too — no arithmetic.</p>
+<p>Within ~1 second, <strong>your friend's Thonny shell prints</strong>:</p>
+<pre><code>&gt;&gt;&gt; MESSAGE from me : hello neighbor!</code></pre>
+<p>…and their LCD flashes <code>Msg me</code> / <code>hello neighbor!</code> with a short beep. 🎉</p>
+<details>
+<summary>🧪 No terminal? Send from the dashboard or the browser console instead.</summary>
+<p>On the dashboard, click the <strong>Send</strong> button in your friend's row — a popup asks for the text. Or paste this in the browser console (F12) while on the dashboard:</p>
+<pre><code class="language-javascript">fetch("/api/houses/A1B2C3D4E5F6/messages", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ from: "me", text: "hello neighbor!" })
+}).then(r =&gt; r.json()).then(console.log)</code></pre>
+</details>
+
+<h3 id="the-real-deal-from-your-house">The real deal — send from YOUR house</h3>
+<p>That last one came from a <em>laptop</em>. Now let's send from the <strong>board itself</strong> — house to house. Here's the trick: <strong>Thonny's Shell is a Python prompt running on your ESP32.</strong> Anything you type there runs <em>on your board</em>, so when you call <code>send_message</code>, your house makes the request.</p>
+<p>🛠 <strong>Try this</strong>:</p>
+<ol>
+<li>Your firmware is running. Press <strong>Ctrl-C</strong> in the Shell to stop the loop — you get a <code>&gt;&gt;&gt;</code> prompt.</li>
+<li>Your house is still on WiFi and still knows who it is. Send:
+<pre><code class="language-python">&gt;&gt;&gt; import app_sync
+&gt;&gt;&gt; app_sync.hub.send_message("A1B2C3D4E5F6", "hi from my house!")
+{'ok': True}</code></pre></li>
+<li>Press <strong>Ctrl-D</strong> to reboot the board and restart the firmware (keepalives resume).</li>
+</ol>
+<p><code>app_sync.hub</code> is your house's connection to the hub — we left it reachable from the REPL <em>on purpose</em> so you can do this. <code>send_message</code> puts <code>from</code> = your own ID automatically, so your friend sees exactly which house wrote.</p>
+<details>
+<summary>▶ Want to see the raw request? Build the JSON yourself.</summary>
+<p>This is what <code>send_message</code> does under the hood — the same <code>urequests</code> you used on Day 3:</p>
+<pre><code class="language-python">&gt;&gt;&gt; import urequests, config
+&gt;&gt;&gt; r = urequests.post(
+...     config.HUB_URL + "/api/houses/A1B2C3D4E5F6/messages",
+...     json={"from": "my house", "text": "hi!"},
+...     headers={"Content-Type": "application/json"})
+&gt;&gt;&gt; r.status_code
+201
+&gt;&gt;&gt; r.close()          # ALWAYS close it (Day 3 rule!)</code></pre>
+</details>
+<blockquote>
+<p>👀 <strong>Watch your own row while you're paused.</strong> While you sit at the <code>&gt;&gt;&gt;</code> prompt, your board isn't sending keepalives — so after 60 s the dashboard flips your house to <strong>Lost</strong> (red). Ctrl-D brings it back to <strong>Active</strong>. That's the Day-1 watchdog doing its job, live. Send fast, then Ctrl-D!</p>
+</blockquote>
+<p>✅ <strong>Milestone 5.1</strong>: A message you sent <em>from your board's REPL</em> shows up in a friend's Thonny shell.</p>
+
 <hr>
-<h2 id="part-4-final-project-60-min">Part 4 — Final project (60 min)</h2>
-<p>Pick ONE of these and build it end-to-end. You have ~1 hour. A counsellor is around if you're stuck. Show the result before you leave.</p>
-<h3 id="option-a-doorbell-medium">Option A — "Doorbell" (medium)</h3>
-<p>Add a third button option: pressing button B when the LCD shows <strong>DOORBELL</strong> flashes the LED on <strong>all</strong> houses for 2 seconds.</p>
-<p>Hints:
-- Add <code>"doorbell"</code> to the <code>MENU</code> tuple in <code>app_sync.py</code>.
-- New endpoint <code>POST /api/ring_doorbell</code> that walks every house and sets <code>state.led.active = True</code> and <code>pending_state_update = True</code>.
-- A way to turn LEDs back off after 2 sec — easiest is a <code>threading.Timer</code> in <code>app.py</code>.
-- Press button B with menu on <code>doorbell</code> → <code>hub_client</code> POST to your new endpoint.</p>
-<h3 id="option-b-fan-party-easy">Option B — "Fan party" (easy)</h3>
-<p>Make the fan spin in the OPPOSITE direction every other time button B presses it. (The fan supports clockwise + counter-clockwise — see <code>devices/fan.py</code>.)</p>
-<p>Hints:
-- Track a <code>clockwise = True</code> variable in <code>app_sync.py</code>.
-- When toggling the fan ON, alternate the direction.
-- Optionally: add a dashboard column "spin direction" so you can see it remotely.</p>
-<h3 id="option-c-statistics-page-medium">Option C — "Statistics page" (medium)</h3>
-<p>Add a new web page at <code>/stats</code> that shows:
-- Total houses
-- How many active vs. lost
-- How many armed
-- Last alarm fired (timestamp)</p>
-<p>Hints:
-- New route in <code>app.py</code> returning <code>render_template("stats.html")</code>.
-- New template under <code>templates/</code>.
-- Track "last alarm" by adding a module-level variable in <code>houses.py</code> set inside <code>report_motion</code>.</p>
-<h3 id="option-d-soft-alarm-escalation-hard">Option D — "Soft alarm escalation" (hard)</h3>
-<p>Currently the buzzer either fires (alarm true) or doesn't. Make it escalate: first 5 seconds beep softly (lower duty cycle), next 5 seconds beep medium, after 10 seconds full blast.</p>
-<p>Hints:
-- <code>Buzzer</code> needs a <code>set_level(0..1023)</code> method.
-- Track when the alarm was triggered (timestamp) — easiest in <code>app_sync.py</code>.
-- Reset the level when alarm is cleared.</p>
-<h3 id="option-e-two-house-morse-chat-hard-two-teams">Option E — "Two-house Morse chat" (hard, two teams)</h3>
-<p>Pair with another team. Pressing your button A sends a "dot" (LED flash on partner's house, 100 ms). Holding it sends a "dash" (300 ms). Try sending HI (•••• ••).</p>
-<p>Hints:
-- New endpoint <code>POST /api/houses/&lt;uid&gt;/flash</code> with body <code>{"ms": 100}</code>.
-- Tell button A which target uid (hardcode in <code>secrets.py</code>).
-- Long-press detection: store the press start time, look at duration on release.</p>
-<h3 id="or-invent-your-own">Or invent your own</h3>
-<p>Run the idea past a counsellor first to make sure it fits the time.</p>
-<p>✅ <strong>Milestone 5.2</strong>: Your final project works end-to-end. Demo it.</p>
+<h2 id="part-3-how-it-works-15-min">Part 3 — How it works (15 min)</h2>
+<p>Follow one message from your keyboard to your friend's screen. Every hop lives in a file you can open:</p>
+<table>
+<thead>
+<tr><th>#</th><th>What happens</th><th>Where (file · function)</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>You POST a message → the hub drops it in the target's mailbox list.</td><td><code>iot_hub/app.py</code> · <code>leave_message()</code> → <code>houses.py</code> · <code>send_message()</code></td></tr>
+<tr><td>2</td><td>Their board's next keepalive answer includes <code>message: true</code> (mailbox not empty).</td><td><code>iot_hub/houses.py</code> · <code>keepalive()</code></td></tr>
+<tr><td>3</td><td>The board sees the flag and does a <code>GET …/messages</code>.</td><td><code>smart_house/app_sync.py</code> · the keepalive block → <code>hub_client.py</code> · <code>get_messages()</code></td></tr>
+<tr><td>4</td><td>The hub returns the list <strong>and empties the mailbox</strong> — so the flag is <code>false</code> next time.</td><td><code>iot_hub/houses.py</code> · <code>get_messages()</code> (it <code>pop</code>s)</td></tr>
+<tr><td>5</td><td>The board prints each message to the console (and shows the newest on the LCD).</td><td><code>smart_house/app_sync.py</code> · <code>_show_messages()</code></td></tr>
+</tbody>
+</table>
+<p>It's the <strong>exact same shape</strong> as the alarm and the LED toggle from Day 3: <em>the hub can't call the board, so it raises a flag on the keepalive, and the board pulls the details when it's ready.</em> Learn this one pattern and you understand the whole system.</p>
+<p>🛠 <strong>Try this</strong>: open <code>smart_house/app_sync.py</code> and find the keepalive block. The message handling is just two lines, right next to the <code>state_update</code> two lines it copies:</p>
+<pre><code class="language-python">if resp.get("message"):
+    _show_messages(hub, lcd, buzzer)</code></pre>
+<details>
+<summary>🤔 Why does the mailbox empty when I read it, instead of staying?</summary>
+<p>So a message is delivered <strong>once</strong>. If reading <em>didn't</em> clear it, the flag would stay <code>true</code> forever and your board would re-print the same message every single second. "Read = drain" (a queue) is the simplest way to guarantee each message is shown exactly one time — the same reason <code>GET /state</code> clears <code>state_update</code>.</p>
+</details>
+
 <hr>
-<h2 id="part-5-wrap-up-10-min">Part 5 — Wrap-up (10 min)</h2>
-<h3 id="what-this-whole-project-taught-you">What this whole project taught you</h3>
-<p>You built and understood:</p>
+<h2 id="part-4-send-from-the-house-30-min">Part 4 — Send from the house itself, with a button (30 min)</h2>
+<p>So far you sent messages from a <em>laptop</em> (curl, the dashboard) or from the REPL. Now let's send with a <strong>button on the board</strong> — no laptop at all.</p>
+<p>Your house already uses the buttons like this: <strong>button A</strong> scrolls a little menu (<code>led → fan → buzzer</code>) and <strong>button B</strong> acts on the selected one. We just add a <strong>message target</strong> to the end of that menu. Scroll A onto it, press B, and your house sends. Who receives depends on one setting in <code>config.py</code>:</p>
+<table>
+<thead><tr><th><code>SEND_MODE</code></th><th>Button A scrolls to…</th><th>Press B →</th></tr></thead>
+<tbody>
+<tr><td><code>"fixed"</code></td><td><code>… buzzer · msg</code></td><td>send to the one friend in <code>MESSAGE_TO</code></td></tr>
+<tr><td><code>"broadcast"</code></td><td><code>… buzzer · msg</code></td><td>send to <strong>every</strong> other house at once</td></tr>
+<tr><td><code>"pick"</code></td><td><code>… buzzer · HOUSE1 · HOUSE2 · …</code></td><td>send to the house you scrolled to</td></tr>
+</tbody>
+</table>
+
+<h3 id="try-fixed-mode">🛠 Try it — "fixed" mode</h3>
+<ol>
+<li>In <code>config.py</code>, set <code>SEND_MODE = "fixed"</code> and paste a friend's ID into <code>MESSAGE_TO</code>.</li>
+<li>Run the firmware. Press <strong>A</strong> until the LCD shows <code>Select: msg</code>.</li>
+<li>Press <strong>B</strong>. The shell prints <code>Button B -&gt; sent to &lt;id&gt; : {'ok': True}</code>, and your friend's house prints your message.</li>
+</ol>
+<p>✅ <strong>Milestone 5.2</strong>: A button press on your board messages a friend.</p>
+
+<h3 id="exercise-pick-mode">⭐ Exercise — build "pick" mode</h3>
+<p>"fixed" always messages the <em>same</em> house. <strong>Your job:</strong> make button A scroll through <em>all the other houses</em> so you can choose who to message. Open <code>app_sync.py</code> — there are two <code>TODO</code> holes, both inside <code>if config.SEND_MODE == "pick"</code>.</p>
+
+<h4>Part 1 — put the houses on the menu (in <code>_build_menu</code>)</h4>
+<p>Right now pick mode returns just the devices, so there's nobody to send to. Return the devices <em>plus</em> every other house.</p>
+<pre><code class="language-python">if config.SEND_MODE == "pick":
+    # HINTS:
+    #   hub.get_houses() -&gt; a LIST of house dicts (or None) -&gt; guard: ... or []
+    #   each dict has h["unique_id"];  skip your OWN:  h["unique_id"] != uid
+    # TODO: return list(DEVICES) + &lt;the other houses' ids&gt;
+    return list(DEVICES)          # &lt;- no houses yet!</code></pre>
+<details>
+<summary>▶ Solution — Part 1</summary>
+<pre><code class="language-python">if config.SEND_MODE == "pick":
+    houses = hub.get_houses() or []
+    others = [h["unique_id"] for h in houses if h["unique_id"] != uid]
+    return list(DEVICES) + others</code></pre>
+</details>
+
+<h4>Part 2 — send to the chosen house (in <code>_send_from_button</code>)</h4>
+<p>Once Part 1 works, <code>selected</code> is the house ID button A landed on. Send the message to it — it's almost a copy of the <code>"fixed"</code> branch right above it.</p>
+<pre><code class="language-python">elif config.SEND_MODE == "pick":
+    # HINT: like "fixed", but the recipient is `selected`, not config.MESSAGE_TO.
+    # TODO: send `text` to `selected`, then print + lcd.show() like the others.
+    print("pick mode isn't built yet -- that's your exercise! selected =", selected)</code></pre>
+<details>
+<summary>▶ Solution — Part 2</summary>
+<pre><code class="language-python">elif config.SEND_MODE == "pick":
+    result = hub.send_message(selected, text)
+    print("Button B -&gt; sent to", selected, ":", result)
+    lcd.show("Sent to", selected)</code></pre>
+</details>
+
+<p>🛠 <strong>Test it</strong>: set <code>SEND_MODE = "pick"</code>, re-run, press <strong>A</strong>. Two checkpoints:</p>
 <ul>
-<li><strong>Server-side Python</strong>: HTTP, Flask, route handlers, JSON, threading + locks.</li>
-<li><strong>Browser-side JS</strong>: <code>fetch</code>, JSON, polling, dynamic table rendering.</li>
-<li><strong>Embedded Python</strong>: GPIO, PWM, I2C, interrupts, async/await.</li>
-<li><strong>Networking</strong>: WiFi setup, HTTP client, request/response cycles.</li>
-<li><strong>Architecture</strong>: separating data from routes, separating drivers from app logic, two implementations sharing one HTTP client.</li>
+<li><strong>After Part 1:</strong> A scrolls <em>past</em> the devices onto real house IDs — and <strong>your own ID isn't in the list</strong> (that's the <code>!= uid</code> filter).</li>
+<li><strong>After Part 2:</strong> scroll to a friend, press B, and their house prints your message.</li>
 </ul>
-<p>That's a real distributed system. Smaller than what you'd build at a job, but the same shape.</p>
-<h3 id="where-to-go-next">Where to go next</h3>
-<ul>
-<li><strong>Front-end</strong> — try rebuilding the dashboard with React or HTMX for fun.</li>
-<li><strong>Real protocol</strong> — replace polling with WebSockets or MQTT for instant push (no 1-second delay).</li>
-<li><strong>Persistence</strong> — add a SQLite database so houses don't disappear on hub restart.</li>
-<li><strong>Security</strong> — add API tokens (right now anyone on the WiFi can toggle anyone's LED).</li>
-<li><strong>Other boards</strong> — Raspberry Pi Pico W runs MicroPython too, with different sensors.</li>
-<li><strong>Other languages</strong> — try writing the firmware in Arduino C++ to feel the difference.</li>
-</ul>
-<h3 id="good-books-and-resources-offline-friendly">Good books and resources (offline-friendly)</h3>
-<ul>
-<li>The <a href="https://docs.micropython.org/" target="_blank" rel="noopener">MicroPython docs</a> — bundled in <code>docs/</code> if your camp pre-downloaded them.</li>
-<li>The <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener">Flask docs</a> — same.</li>
-<li>The original <code>SigmaHouse-master/</code> repo for ideas (RFID, OLED, more sensors).</li>
-</ul>
+<p>✅ <strong>Milestone 5.3</strong>: You can scroll to any house and message it from the board.</p>
+<blockquote>
+<p>💡 <strong>The sneaky edge case:</strong> houses come and go, so the menu is rebuilt every few seconds. If a house you'd scrolled to goes <strong>Lost</strong>, the list shrinks — the line <code>if menu_index &gt;= len(menu): menu_index = 0</code> keeps the pointer from falling off the end. Delete it and a disappearing house crashes your loop with an <code>IndexError</code>.</p>
+</blockquote>
+
 <hr>
-<h2 id="final-milestone">Final milestone</h2>
-<p>✅ <strong>Milestone 5.3</strong>: Demo your project to the group. Explain in 2 minutes:
-- What you built.
-- One thing that surprised you.
-- One thing you'd do differently.</p>
-<p>That's the end. Good work — you wrote real code that runs on real hardware that talks to a real server. The next thing you build will be easier.</p>
-<p>← back to <a href="INDEX.html" target="_blank" rel="noopener">INDEX.md</a></p>
+<h2 id="bonus-morse-code">Bonus — Talk in Morse code 📻 (no coding required)</h2>
+<p>Here's the neat part: the message system already carries <em>any</em> text, so you can send secret Morse-code messages <strong>without changing a single line of code</strong>. Morse is just the message <em>content</em> — dots and dashes typed into the text.</p>
+<p>🛠 <strong>Try this</strong>: spell a short word in dots (<code>.</code>) and dashes (<code>-</code>) using the chart below, then send it any way you already know — all of these take plain text, so none need code:</p>
+<ul>
+<li><strong>Dashboard</strong> — click <strong>Send</strong>, type <code>... --- ...</code> into the popup.</li>
+<li><strong>REPL</strong> (after Ctrl-C) — <code>app_sync.hub.send_message("FRIENDS_ID", "... --- ...")</code></li>
+<li><strong>Button B</strong> — put your Morse in <code>config.MESSAGE_TEXT</code> (that's a <em>setting</em>, not code) and press B.</li>
+</ul>
+<p>Your friend reads the dots and dashes in their <strong>Thonny console</strong> (it shows the whole message — the LCD only fits the first 16 characters) and decodes them back to letters. The buzzer's little beep just says "mail's here!" 🔔</p>
+
+<h3 id="morse-rules">Two rules that make it readable</h3>
+<ul>
+<li><strong>One space between letters:</strong> <code>H I</code> → <code>.... ..</code></li>
+<li><strong>A slash between words:</strong> <code>HI DAD</code> → <code>.... .. / -.. .- -..</code></li>
+</ul>
+<p>💡 Keep it short — a message is capped at <strong>32 characters</strong>, so aim for one short word or a callsign (about 5 letters of Morse).</p>
+
+<h3 id="morse-chart">Morse chart</h3>
+<pre><code>A  .-       H  ....     O  ---      V  ...-
+B  -...     I  ..       P  .--.     W  .--
+C  -.-.     J  .---     Q  --.-     X  -..-
+D  -..      K  -.-      R  .-.      Y  -.--
+E  .        L  .-..     S  ...      Z  --..
+F  ..-.     M  --       T  -
+G  --.      N  -.       U  ..-
+
+1  .----    3  ...--    5  .....    7  --...    9  ----.
+2  ..---    4  ....-    6  -....    8  ---..    0  -----</code></pre>
+<p>Start with the famous one: <strong>SOS</strong> = <code>... --- ...</code> — three dots, three dashes, three dots.</p>
+<p>⭐ <strong>Stretch (this one <em>does</em> need code):</strong> make the buzzer actually <em>beep</em> the Morse — a short beep for a dot, a long beep for a dash — by walking the message text one character at a time. Ask a counsellor if you want to try it.</p>
+
+<hr>
+<h2 id="what-you-learned-today">What you learned today</h2>
+<ul>
+<li><strong>A mailbox is just a REST collection</strong> under a house: <code>/api/houses/&lt;uid&gt;/messages</code>, POST to fill, GET to drain.</li>
+<li><strong>The flag-then-pull pattern</strong> again: keepalive says <code>message: true</code>, the board fetches — the hub can never call the board first.</li>
+<li><strong>Reading empties the mailbox</strong>, so each message arrives exactly once.</li>
+<li><strong>The Thonny Shell runs on your board</strong> — <code>app_sync.hub.send_message(...)</code> after Ctrl-C is your house talking, and Ctrl-D resumes.</li>
+<li>Pausing the loop makes your house go <strong>Lost</strong> — the watchdog, live.</li>
+<li><strong>Sending from the board:</strong> button A scrolls a menu, button B sends; <code>SEND_MODE</code> picks <em>fixed</em> / <em>broadcast</em> / <em>pick</em>.</li>
+</ul>
+<p><strong>Next:</strong> you've messaged houses one at a time. Flip <code>SEND_MODE = "broadcast"</code> and one button press lights up <em>every</em> house in the room at once. Going further — group replies, a house "mailbox" screen you scroll with the buttons, or an auto-reply. → ask a counsellor for ideas.</p>
 </article>
 </body>
 </html>

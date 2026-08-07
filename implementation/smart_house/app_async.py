@@ -30,6 +30,27 @@ from devices.safe import safe
 
 MENU = ("led", "fan", "buzzer")
 
+# Filled in by _amain(), left as module globals ON PURPOSE so the REPL can
+# reach the house after Ctrl-C:  >>> import app_async
+#                                >>> app_async.hub.send_message("ID", "hi!")
+hub = None
+uid = None
+
+
+def _show_messages(hub, lcd, buzzer):
+    """Fetch our mailbox and PRINT every message to the Thonny console.
+    LCD line + beep are optional extras."""
+    data = hub.get_messages()
+    if not data:
+        return
+    msgs = data.get("messages", [])
+    for m in msgs:
+        print(">>> MESSAGE from", m["from"], ":", m["text"])
+    if msgs:
+        latest = msgs[-1]
+        lcd.show("Msg " + latest["from"][-6:], latest["text"][:16])
+        buzzer.beep(60)
+
 
 def _connect_wifi(lcd):
     wlan = network.WLAN(network.STA_IF)
@@ -98,7 +119,7 @@ async def task_motion(motion, hub):
         await asyncio.sleep_ms(50)
 
 
-async def task_keepalive(hub, ip, led, fan, buzzer):
+async def task_keepalive(hub, ip, led, fan, buzzer, lcd):
     while True:
         await asyncio.sleep_ms(config.UPDATE_INTERVAL_MS)
         resp = hub.keepalive(ip)
@@ -110,6 +131,8 @@ async def task_keepalive(hub, ip, led, fan, buzzer):
             new_state = hub.get_state()
             if new_state:
                 _apply_state(new_state, led, fan, buzzer)
+        if resp.get("message"):
+            _show_messages(hub, lcd, buzzer)
 
 
 # ---------- entry ----------
@@ -127,17 +150,19 @@ async def _amain():
     fan      = safe(lambda: Fan(config.PIN_FAN_A, config.PIN_FAN_B), "Fan")
     buzzer   = safe(lambda: Buzzer(config.PIN_BUZZER), "Buzzer")
 
+    global hub, uid          # module globals so the REPL can send after Ctrl-C
     ip = _connect_wifi(lcd)
     uid = ubinascii.hexlify(unique_id()).decode().upper()
     hub = HubClient(config.HUB_URL, uid)
     hub.register(ip)
+    print("My house ID:", uid, " -- give this to a friend so they can message you!")
     lcd.show("Ready " + uid[-6:], ip)
 
     ctx = {"menu": 0}
 
     asyncio.create_task(task_buttons(button_a, button_b, led, fan, buzzer, motion, hub, lcd, ctx))
     asyncio.create_task(task_motion(motion, hub))
-    asyncio.create_task(task_keepalive(hub, ip, led, fan, buzzer))
+    asyncio.create_task(task_keepalive(hub, ip, led, fan, buzzer, lcd))
 
     try:
         while True:

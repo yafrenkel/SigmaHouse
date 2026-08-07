@@ -1,23 +1,4 @@
-"""SOLUTION build of app_sync.py -- for the INSTRUCTOR demo of "pick" mode.
-
-Same as the campers' app_sync.py, but the two "pick" EXERCISE holes are
-filled in (see _build_menu part 1, and _send_from_button part 2). Use it to
-show pick mode working *before* revealing the code.
-
-HOW TO RUN IT ON YOUR DEMO BOARD (leaves campers' boards untouched):
-  1. In Thonny, open THIS file (solutions/app_sync.py) from the laptop.
-  2. File -> Save as -> MicroPython device -> save it as  app_sync.py
-     (this replaces the stub on your demo board only).
-  3. In config.py on that board set:  SEND_MODE = "pick"
-  4. Make sure a few other houses are registered (other boards, or fake ones
-     via curl) so there's someone to scroll to.
-  5. Reset the board (or run main.py). Press button A to scroll past
-     led/fan/buzzer to the house IDs; press B on one to message it.
-
-To go back to the stub afterwards, re-upload the campers' app_sync.py.
-
-------------------------------------------------------------------------
-Synchronous firmware -- DEFAULT teaching version.
+"""Synchronous firmware -- DEFAULT teaching version.
 
 One while-True loop, one tick every 50 ms. The loop:
   1. Checks button flags (set by interrupts).
@@ -80,21 +61,31 @@ def _build_menu(hub, uid):
     """The list button A scrolls through: the 3 devices, then the message target.
 
     In "fixed"/"broadcast" mode that target is a single "msg" entry.
-    In "pick" mode it's the list of OTHER houses.
+    In "pick" mode it should be the list of OTHER houses -- YOUR EXERCISE below.
     """
     if config.SEND_MODE == "pick":
-        # ===== SOLUTION (part 1 of 2): build the recipient list =====
-        # Devices first, then every OTHER house so button A can scroll them.
-        houses = hub.get_houses() or []
-        others = [h["unique_id"] for h in houses if h["unique_id"] != uid]
-        return list(DEVICES) + others
+        # ===== EXERCISE (part 1 of 2): build the recipient list =====
+        # Goal: let button A scroll through the OTHER houses so you can choose
+        # who to message. Right now it returns only the devices, so there's
+        # nobody to send to yet -- add the houses.
+        #
+        # HINTS:
+        #   1. hub.get_houses() gives a LIST of house dicts (or None on error).
+        #      Guard it:  houses = hub.get_houses() or []
+        #   2. Each dict has h["unique_id"].
+        #   3. Skip your OWN house:   h["unique_id"] != uid
+        #   4. Return  list(DEVICES) + <the other houses' ids>
+        #
+        # TODO: replace the line below with the real list.
+        return list(DEVICES)                      # <-- no houses yet!
     return list(DEVICES) + ["msg"]
 
 
 def _send_from_button(hub, uid, selected, lcd):
     """Button B was pressed on a non-device entry -> send a message.
 
-    Three interchangeable styles, chosen by config.SEND_MODE.
+    Three interchangeable styles, chosen by config.SEND_MODE. This is the
+    piece a camper can rewrite as an exercise.
     """
     text = config.MESSAGE_TEXT
     if config.SEND_MODE == "fixed":
@@ -111,12 +102,18 @@ def _send_from_button(hub, uid, selected, lcd):
         print("Button B -> broadcast to", len(others), "houses:", text)
         lcd.show("Broadcast!", str(len(others)) + " houses")
     elif config.SEND_MODE == "pick":
-        # ===== SOLUTION (part 2 of 2): send to the chosen house =====
-        # 'selected' is the house ID button A landed on. Same as "fixed",
-        # but the recipient is `selected` instead of config.MESSAGE_TO.
-        result = hub.send_message(selected, text)
-        print("Button B -> sent to", selected, ":", result)
-        lcd.show("Sent to", selected)
+        # ===== EXERCISE (part 2 of 2): send to the chosen house =====
+        # Once part 1 adds house IDs to the menu, `selected` will be the house
+        # ID button A landed on. Send the message to it.
+        #
+        # HINTS:
+        #   * hub.send_message(<to_id>, text) does the send (returns {'ok': True}).
+        #   * The "fixed" branch above is almost identical -- the only change is
+        #     the recipient is `selected` instead of config.MESSAGE_TO.
+        #   * Print and lcd.show() like the other modes so you get feedback.
+        #
+        # TODO: send `text` to `selected`.
+        print("pick mode isn't built yet -- that's your exercise! selected =", selected)
 
 
 def _connect_wifi(lcd):

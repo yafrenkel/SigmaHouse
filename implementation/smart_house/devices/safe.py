@@ -20,6 +20,9 @@ class Stub:
     def off(self):
         pass
 
+    def beep(self, *args, **kwargs):
+        pass
+
     def is_on(self):
         return False
 

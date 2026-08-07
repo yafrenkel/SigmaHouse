@@ -37,6 +37,8 @@ th { background: #f0f1f2; }
 .physics { border-left: 6px solid #4a90d9; background: #eef6ff; border-radius: 10px; padding: .6em 1.1em; margin: 1em 0; }
 .tryit { border-left: 6px solid #f6ae2d; background: #fff8ec; border-radius: 10px; padding: .6em 1.1em; margin: 1em 0; }
 .safe { border-left: 6px solid #e5534b; background: #fff2f1; border-radius: 10px; padding: .6em 1.1em; margin: 1em 0; }
+pre { background:#0f2147; color:#e6ecf5; border-radius:8px; padding:12px 15px; overflow-x:auto; line-height:1.5; font-size:.92em; margin:.8em 0; }
+pre code { background:none; padding:0; color:inherit; font-size:1em; }
 hr { border: none; border-top: 1px solid #e1e4e8; margin: 2.4em 0; }
 </style>
 </head>
@@ -123,7 +125,37 @@ hr { border: none; border-top: 1px solid #e1e4e8; margin: 2.4em 0; }
 <div class="diagram">
   <img src="diagrams/13_duty_vs_volume.svg" alt="Graph of loudness (y-axis) versus duty cycle (x-axis, 0 to 100 percent). The curve is a hump that starts at silent at 0%, rises to loudest at 50%, and falls back to silent at 100%. The code parks the buzzer at duty(512), about 50%.">
 </div>
-<p>So it's <em>not</em> simply "more duty = louder." As the graph shows, volume <strong>peaks at 50%</strong> and drops off as you head toward either 0% or 100% (mathematically it follows <code>sin(π&nbsp;×&nbsp;duty)</code>). That's exactly why the code parks the buzzer at <code>duty(512)</code>. That <code>512</code> has <em>no physical unit</em> — it's a raw <strong><a href="PWM.html">PWM duty count</a></strong> on MicroPython's scale, a whole number from <code>0</code> to <code>1023</code> (a 10-bit value, not volts or seconds). So <code>512 ÷ 1023 ≈ 50%</code>, the loudest point. To make a rough <strong>volume knob</strong>, sweep duty <em>up toward 512</em> (louder) and back <em>down toward 0</em> (quieter); going past 512 toward 1023 actually gets quieter again. (Duty also changes the <strong>tone</strong> — how buzzy it sounds — because it changes the mix of harmonics.)</p>
+<p>So it's <em>not</em> simply "more duty = louder." As the graph shows, volume <strong>peaks at 50%</strong> and drops off as you head toward either 0% or 100% (mathematically it follows <code>sin(π&nbsp;×&nbsp;duty)</code>). That's exactly why the code parks the buzzer at <code>duty(512)</code>. That <code>512</code> has <em>no physical unit</em> — it's a raw <strong><a href="PWM.html">PWM duty count</a></strong> on MicroPython's scale, a whole number from <code>0</code> to <code>1023</code> (a 10-bit value, not volts or seconds). So <code>512 ÷ 1023 ≈ 50%</code>, the loudest point. To make a rough <strong>volume knob</strong>, sweep duty <em>up toward 512</em> (louder) and back <em>down toward 0</em> (quieter); going past 512 toward 1023 actually gets quieter again.</p>
+<h3>How duty also changes the tone</h3>
+<p>Pitch (how high) and volume (how loud) still aren't the whole story. There's a third thing your ears pick up: <strong>tone</strong> — the <em>flavour</em> or <em>character</em> of a sound. It's what lets you tell a <strong>flute from a kazoo</strong> even when they play the <em>exact same note at the same loudness</em>. Singing "aaah" versus "eeee" on one pitch is the same idea: same note, different tone.</p>
+<div class="physics">
+<strong>Physics.</strong> The buzzer plays a <strong>square wave</strong> (hard on, hard off), and a square wave isn't one pure note — it's the main note <em>plus a stack of fainter higher notes mixed in</em> (its <strong>harmonics</strong>). That mix <em>is</em> the tone. <code>duty()</code> sets the <strong>shape</strong> of each on/off cycle, and a different shape means a different mix of harmonics — so the <em>same pitch</em> can sound fuller or thinner, rounder or buzzier.
+</div>
+<p>Both rows below flip at the same frequency, so they're the <strong>same note</strong> — only the shape (and therefore the tone) changes:</p>
+<table>
+<thead><tr><th>Shape of one cycle</th><th>Harmonic mix</th><th>Tone you hear</th></tr></thead>
+<tbody>
+<tr><td>50% — even&nbsp; <code>██▁▁██▁▁</code></td><td>fewer, gentler highs</td><td>fuller, rounder</td></tr>
+<tr><td>10% — thin spikes&nbsp; <code>█▁▁▁▁▁▁▁█▁</code></td><td>more &amp; stronger highs</td><td>thinner, brighter, buzzier</td></tr>
+</tbody>
+</table>
+<div class="tryit">
+🔊 <strong>Hear it yourself.</strong> Hold the pitch fixed and step the duty across its whole range. You'll hear the <em>volume</em> rise then fall (loudest near 512), and near the extremes a shift in <em>character</em> — that's the tone:
+<pre><code>from machine import Pin, PWM
+import time
+
+buzzer = PWM(Pin(4))
+buzzer.freq(440)          # fixed pitch (the note A) — only the shape changes below
+
+for duty in (50, 200, 512, 900, 1000):
+    buzzer.duty(duty)     # same note, different on/off shape
+    print("duty", duty)
+    time.sleep(1)
+
+buzzer.duty(0)            # silence</code></pre>
+</div>
+<p>On a cheap piezo the <strong>volume</strong> swing is the big, obvious effect; the <strong>tone</strong> shift is subtler — the buzzer's own resonance hides some of it — but it's real, and it's why the same note can come out "rounder" or "buzzier."</p>
+
 <p>⚠️ This all assumes a <strong>passive</strong> piezo buzzer (you set the pitch yourself with <code>freq()</code>), which is what this kit uses. An <em>active</em> buzzer has its own oscillator inside, so duty barely does anything — it's basically just on/off.</p>
 
 <hr>

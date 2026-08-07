@@ -13,6 +13,8 @@ Endpoints:
   POST   /api/houses/<uid>/toggle/<device>       -> dashboard toggle
   POST   /api/houses/<uid>/arm                   -> dashboard arm/disarm
   POST   /api/houses/<uid>/report_motion         -> device reports motion
+  GET    /api/houses/<uid>/messages              -> read + empty this house's mailbox
+  POST   /api/houses/<uid>/messages              -> leave a message for this house
   DELETE /api/houses/<uid>                       -> unregister a house
 """
 
@@ -21,7 +23,7 @@ import threading
 from flask import Flask, jsonify, render_template, request
 
 import houses
-from constants import VALID_DEVICES, WATCHDOG_INTERVAL_S
+from constants import MAX_MESSAGE_LEN, VALID_DEVICES, WATCHDOG_INTERVAL_S
 
 app = Flask(__name__)
 
@@ -119,6 +121,33 @@ def report_motion(uid):
     if not houses.report_motion(uid):
         return jsonify({"error": "unknown house"}), 404
     return jsonify({"ok": True})
+
+
+# ---------- messages (Day 5) ----------
+
+@app.route("/api/houses/<uid>/messages", methods=["GET"])
+def read_messages(uid):
+    """Read AND clear this house's mailbox. The board calls this when its
+    keepalive says message=True."""
+    msgs = houses.get_messages(uid)
+    if msgs is None:
+        return jsonify({"error": "unknown house"}), 404
+    return jsonify({"messages": msgs})
+
+
+@app.route("/api/houses/<uid>/messages", methods=["POST"])
+def leave_message(uid):
+    """Leave a message for the house named by <uid>."""
+    body = request.get_json(silent=True) or {}
+    sender = body.get("from", "anon")
+    text = body.get("text", "")
+    if not text:
+        return jsonify({"error": "text required"}), 400
+    if len(text) > MAX_MESSAGE_LEN:
+        return jsonify({"error": "text too long (max %d)" % MAX_MESSAGE_LEN}), 400
+    if not houses.send_message(uid, sender, text):
+        return jsonify({"error": "unknown house"}), 404
+    return jsonify({"ok": True}), 201
 
 
 @app.route("/api/houses/<uid>", methods=["DELETE"])

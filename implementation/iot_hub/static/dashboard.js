@@ -43,6 +43,7 @@ function rowFor(h) {
   tr.appendChild(toggleCell(h, "fan"));
   tr.appendChild(toggleCell(h, "buzzer"));
   tr.appendChild(motionCell(h));
+  tr.appendChild(msgCell(h));
   tr.appendChild(cell(h.last_seen));
   return tr;
 }
@@ -94,6 +95,15 @@ function motionCell(h) {
   return td;
 }
 
+function msgCell(h) {
+  const td = document.createElement("td");
+  const btn = document.createElement("button");
+  btn.textContent = "Send";
+  btn.onclick = () => sendMessage(h.unique_id);
+  td.appendChild(btn);
+  return td;
+}
+
 async function toggle(uid, device) {
   await fetch(`/api/houses/${uid}/toggle/${device}`, { method: "POST" });
   refresh();
@@ -104,6 +114,18 @@ async function arm(uid, armed) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ armed }),
+  });
+  refresh();
+}
+
+async function sendMessage(uid) {
+  // prompt() is a modal, so it's safe from the every-second table redraw.
+  const text = prompt("Message to send to " + uid + ":");
+  if (!text) return;                 // Cancel or empty -> do nothing
+  await fetch(`/api/houses/${uid}/messages`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ from: "dashboard", text }),
   });
   refresh();
 }

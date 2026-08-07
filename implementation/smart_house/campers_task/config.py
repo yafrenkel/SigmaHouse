@@ -1,9 +1,4 @@
-"""DEMO config.py -- pairs with solutions/app_sync.py for the "pick" demo.
-
-Identical to the campers' config.py except SEND_MODE is already "pick", so the
-demo board is ready to go. Upload BOTH solutions/app_sync.py (as app_sync.py)
-and this file (as config.py) to your demo board, make sure a few houses are
-registered, reset the board, and scroll button A to a house.
+"""All tunable values for the smart house live here.
 
 Pin numbers match the Keyestudio ESP32 Smart Home kit. If you wire
 something differently, change the number, not the rest of the code.
@@ -26,8 +21,9 @@ WIFI_TIMEOUT_S = 10
 # SEND_MODE picks how the recipient is chosen -- switch it and re-run:
 #   "fixed"     -> always send to MESSAGE_TO           (simplest)
 #   "broadcast" -> send to EVERY other house at once
-#   "pick"      -> button A scrolls other houses' IDs; B sends to the selected one
-SEND_MODE    = "pick"          # <-- demo board is set to the finished exercise
+#   "pick"      -> (YOUR EXERCISE) button A scrolls other houses' IDs; B sends
+#                  to the selected one. It's stubbed in app_sync.py -- finish it!
+SEND_MODE    = "fixed"
 # Used by "fixed" mode. Paste a friend's full house ID -- copy it from their
 # Thonny boot line ("My house ID: ...") or from the dashboard.
 MESSAGE_TO   = "PASTE_FRIEND_ID_HERE"

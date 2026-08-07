@@ -9,7 +9,7 @@ import time
 from datetime import datetime, timedelta
 from threading import Lock
 
-from constants import LOST_AFTER_S, MOTION_HOLD_S, VALID_DEVICES
+from constants import LOST_AFTER_S, MAX_MESSAGES, MOTION_HOLD_S, VALID_DEVICES
 
 # {unique_id: house_record}. Lost on server restart -- devices re-register
 # automatically on their next keepalive (which will get a 404 and trigger
@@ -19,6 +19,11 @@ HOUSES: dict[str, dict] = {}
 # {unique_id: monotonic seconds of last motion report}. Kept OUT of the
 # house record so the records stay JSON-clean for jsonify().
 _MOTION_TS: dict[str, float] = {}
+
+# {unique_id: [ {"from", "text", "time"}, ... ]}. A private mailbox per house.
+# Sidecar (like _MOTION_TS) on purpose: mailboxes stay OUT of list_all(), so a
+# house's messages are never shown on the dashboard -- only its owner reads them.
+_MESSAGES: dict[str, list] = {}
 
 # One coarse lock around the whole dict. Flask's dev server can serve
 # requests from multiple threads, so we need this to keep updates atomic.
@@ -87,7 +92,11 @@ def keepalive(unique_id: str, ip_address: str) -> dict | None:
         house["status"] = "Active"
         alarm = house["alarm_triggered"]
         house["alarm_triggered"] = False
-        return {"alarm": alarm, "state_update": house["pending_state_update"]}
+        return {
+            "alarm": alarm,
+            "state_update": house["pending_state_update"],
+            "message": bool(_MESSAGES.get(unique_id)),   # True if mail is waiting
+        }
 
 
 def get_state(unique_id: str) -> dict | None:
@@ -153,9 +162,37 @@ def report_motion(unique_id: str) -> bool:
         return True
 
 
+# ---------- messages (Day 5) ----------
+
+def send_message(to_uid: str, sender: str, text: str) -> bool:
+    """Leave a message in to_uid's mailbox. False if that house is unknown.
+
+    The keepalive of to_uid will then report message=True, so its board knows
+    to come and fetch. Keeps only the newest MAX_MESSAGES.
+    """
+    with _LOCK:
+        if to_uid not in HOUSES:
+            return False
+        box = _MESSAGES.setdefault(to_uid, [])
+        box.append({"from": sender, "text": text, "time": now_str()})
+        if len(box) > MAX_MESSAGES:
+            del box[0]                 # drop the oldest, keep the newest ones
+        return True
+
+
+def get_messages(unique_id: str) -> list | None:
+    """Drain and return a house's mailbox -- emptying it (like get_state clears
+    its flag). None if the house is unknown, [] if the mailbox was empty."""
+    with _LOCK:
+        if unique_id not in HOUSES:
+            return None
+        return _MESSAGES.pop(unique_id, [])
+
+
 def delete(unique_id: str) -> bool:
     with _LOCK:
         _MOTION_TS.pop(unique_id, None)
+        _MESSAGES.pop(unique_id, None)
         return HOUSES.pop(unique_id, None) is not None
 
 

@@ -210,6 +210,45 @@ CampWiFi
 <p>🛠 <strong>Try this</strong>: press <strong>Button B</strong> on your board. The LED toggles, AND the dashboard updates within 1-2 seconds. (Button A cycles the LCD menu — try LED → FAN → BUZZER. Button B toggles whatever the LCD shows.)</p>
 <p>✅ <strong>Milestone 3.4</strong>: Both directions work — dashboard controls LED, button updates dashboard.</p>
 <hr>
+<h2 id="under-the-hood-dashboard">Under the hood — how the dashboard redraws</h2>
+<p>The dashboard you've been clicking is the <em>browser half</em> of the system — one file, <code>implementation/iot_hub/static/dashboard.js</code>. It holds no state of its own; it just asks the hub "what do all the houses look like right now?" and paints a table from the answer.</p>
+
+<h3 id="dashboard-full-redraw">It redraws the WHOLE table, every time</h3>
+<p>There's no clever "update just the one cell you touched." Every refresh throws the entire table body away and rebuilds it from scratch:</p>
+<pre><code class="language-javascript">function render(houses) {
+  const tbody = table.querySelector("tbody");
+  tbody.innerHTML = "";              // ① delete every existing row
+  for (const h of houses) {
+    tbody.appendChild(rowFor(h));    // ② build each row again from the JSON
+  }
+}</code></pre>
+<p>That row you inspected — <code>camp01 … Lost … [buttons] … 2026-08-04 07:35:08</code> — is built fresh by <code>rowFor(h)</code>, one <code>&lt;td&gt;</code> at a time (<code>statusCell</code>, <code>toggleCell</code>, and friends). So every button you see is a <strong>brand-new element</strong> after each redraw, with a fresh <code>onclick</code> attached.</p>
+
+<h3 id="dashboard-two-triggers">Two things trigger a redraw</h3>
+<ol>
+<li>A <strong>timer</strong>, every <code>REFRESH_MS</code>: <code>setInterval(refresh, REFRESH_MS)</code>.</li>
+<li><strong>Any button click</strong> — the click sends its request and then <em>immediately</em> calls <code>refresh()</code> itself:</li>
+</ol>
+<pre><code class="language-javascript">async function toggle(uid, device) {
+  await fetch(`/api/houses/${uid}/toggle/${device}`, { method: "POST" });
+  refresh();     // ← re-fetch everything and repaint
+}</code></pre>
+<p>💡 The button does <strong>not</strong> update itself from your click. The flow is a full round-trip: <em>click → POST to the hub → GET <code>/api/houses</code> → repaint from what the hub says.</em> The <code>ON</code>/<code>off</code> label only flips because the freshly-fetched JSON reports that <code>led.active</code> changed. The dashboard always shows the <strong>hub's truth</strong>, never a local guess — that's why it can be so simple.</p>
+
+<h3 id="dashboard-polling-lag">🐢 Why the auto-refresh feels sluggish (on purpose)</h3>
+<p>Look at the very top of the file:</p>
+<pre><code class="language-javascript">const REFRESH_MS = 100000;   // 100 seconds — deliberately huge!</code></pre>
+<p>That big number is a teaching knob. With the timer this slow, the dashboard almost never updates on its own. Watch it happen: let a board stop sending keepalives and the <em>hub</em> marks it <strong>Lost</strong> after 60&nbsp;s — but the dashboard keeps showing the stale <strong>Active</strong> row until either 100&nbsp;s tick by <em>or</em> you click something. The data was correct on the server the whole time; the <strong>browser just hadn't asked again yet</strong>.</p>
+<blockquote>
+<p>💡 <strong>Polling vs. push.</strong> This is <em>polling</em> — the browser asks "any news?" on a timer. Ask rarely (100&nbsp;s) and it's cheap but laggy; ask often (1&nbsp;s) and it feels live but hammers the hub. It's the exact same trade-off your ESP32 makes with its 1-second keepalive.</p>
+</blockquote>
+<p>🛠 <strong>Try this</strong>: change <code>REFRESH_MS</code> to <code>1000</code> (one second), save, and reload the dashboard. Now houses flip to <strong>Lost</strong> and back <em>on their own</em>, no clicking needed. Try <code>10000</code> and feel the 10-second lag. Put it back to <code>100000</code> and notice the dashboard only ever looks "live" right after <em>you</em> click a button.</p>
+<details>
+<summary>🤔 Why does clicking feel instant even when the timer is 100&nbsp;s?</summary>
+<p>Because a click doesn't wait for the timer — <code>toggle()</code> and <code>arm()</code> call <code>refresh()</code> themselves right after their POST. So a click both <em>changes</em> something and <em>re-reads</em> everything, giving you an immediate, correct repaint. The slow timer only matters for changes that happen <em>without</em> you clicking: another team's house registering, a board going Lost, or a motion alarm firing.</p>
+</details>
+<p>💡 <strong>The trade-off to notice:</strong> wiping the whole <code>&lt;tbody&gt;</code> and rebuilding it is dead simple to write and always correct, but it also throws away things like which button had keyboard focus or any text you'd selected in the table. A bigger app would patch only the cells that changed. For a handful of houses, "repaint everything" wins on simplicity.</p>
+<hr>
 <h2 id="part-8-stretch-10-min">Part 8 — Stretch (10 min)</h2>
 <p>⚡ <strong>Easy</strong>: Toggle the <strong>fan</strong> from the dashboard. Listen for it to spin.</p>
 <p>⚡ <strong>Medium</strong>: Add a print line in <code>app_sync.py</code> so the Thonny shell shows every keepalive response. Watch the messages stream in the shell.</p>
@@ -225,6 +264,7 @@ CampWiFi
 <li>Your board's <code>unique_id()</code> is a stable hardware ID you can use as a name.</li>
 <li>The hub-device protocol: register → keepalive every 1s → pull state when <code>state_update: true</code>.</li>
 <li>The whole project's HTTP code is one file: <code>hub_client.py</code>.</li>
+<li>The dashboard (<code>dashboard.js</code>) <em>polls</em> <code>GET /api/houses</code> and repaints the whole table; buttons POST then re-fetch. <code>REFRESH_MS</code> is the polling speed — small = live but chatty, big = calm but laggy.</li>
 </ul>
 <p><strong>Tomorrow:</strong> sensors, motion detection, and the global alarm. → <a href="day4.html" target="_blank" rel="noopener">day4.md</a></p>
 </article>

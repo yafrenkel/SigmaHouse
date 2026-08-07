@@ -13,3 +13,11 @@ VALID_DEVICES = ("led", "fan", "buzzer")
 # auto-clears back to "No motion". Motion is an event (a pulse), so we hold
 # the display for a few seconds rather than leaving it stuck on.
 MOTION_HOLD_S = 3
+
+# --- House-to-house messages (Day 5) ---
+# Longest message we accept, in characters. 32 = two 16-char LCD lines.
+MAX_MESSAGE_LEN = 32
+
+# How many unread messages a house's mailbox holds. Past this we drop the
+# oldest, so a house that never reads its mail can't grow forever.
+MAX_MESSAGES = 5

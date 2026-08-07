@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bonus — Buzzer Music & the Orchestra</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.6em; }
+h3 { font-size: 1.25em; margin-top: 1.4em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  border-left: 4px solid #d0d7de; margin: 1em 0; padding: .4em 1em;
+  color: #57606a; background: #f6f8fa; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: .4em 0; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2em 0; }
+/* cheat-sheet card */
+.card { border: 2px solid #d0d7de; border-radius: 10px; padding: .8em 1.1em; margin: 1em 0; background: #fbfcfd; }
+.card h4 { margin: .2em 0 .5em; font-size: 1.02em; }
+.cardrow { display: flex; flex-wrap: wrap; gap: 12px; margin: 1em 0; }
+.vcard { flex: 1 1 130px; border: 2px dashed #7a4fb0; border-radius: 10px;
+  padding: .7em; text-align: center; background: #faf7ff; }
+.vcard .b { font-size: .78em; color: #57606a; letter-spacing: 1px; }
+.vcard .v { font-family: Consolas, monospace; font-size: 1.45em; font-weight: 700;
+  color: #7a4fb0; margin-top: .25em; }
+@media print {
+  .topbar { display: none; }
+  body { max-width: none; font-size: 12pt; }
+  pre, table, .card, .cardrow, .vcard { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
+<article>
+<h1 id="bonus-buzzer-music">🎵 Bonus — Buzzer music, solo to orchestra</h1>
+<p>The buzzer isn't only for the alarm — it can play tunes. This bonus goes from <em>one</em> board playing a melody all the way to a <em>room full</em> of boards playing a round together. All offline: just the buzzer (GPIO 4) and button A. <em>(How the buzzer turns a frequency into a pitch is in the <a href="circuits.html#buzzer" target="_blank" rel="noopener">Circuits</a> page.)</em></p>
+<p>All the files live in <code>examples/bonus_music/</code>.</p>
+
+<hr>
+<h2 id="part-1-play-a-melody">Part 1 — Play a melody</h2>
+<p>🛠 <strong>Try this</strong>: upload <code>play_melody.py</code> to the board and run it. You'll hear a scale, then "Ode to Joy".</p>
+<p>A tune is just a list of <code>(note, beats)</code> pairs. <code>buzzer.freq(hz)</code> sets the <strong>pitch</strong>; <code>buzzer.duty(512)</code> sets the <strong>volume</strong>. A frequency of <code>0</code> means a <strong>rest</strong> (silence).</p>
+<p>💡 Scroll to <strong>YOUR TURN</strong> at the bottom of the file and write your own tune.</p>
+
+<hr>
+<h2 id="part-2-pick-a-tune">Part 2 — Pick from 16 tunes</h2>
+<p>🛠 <strong>Try this</strong>: upload <code>melodies_options.py</code> too (16 ready-made tunes). In <code>play_melody.py</code> set <code>CHOICE</code> near the top to a number <strong>1–16</strong> and re-run — or <code>0</code> to hear them all.</p>
+
+<hr>
+<h2 id="part-3-orchestra-one-board">Part 3 — An "orchestra" on ONE board</h2>
+<p>A single buzzer can only make one pitch at a time, but <code>orchestra.py</code> fakes a two-part sound two ways: it either <strong>flips between two notes so fast</strong> they blend into a chord, or — if you wire a <strong>second buzzer</strong> to GPIO 5 — plays a real harmony a octave below. Flip <code>TWO_BUZZERS = True</code> for the real thing.</p>
+
+<hr>
+<h2 id="ensemble-3-4-boards">Part 4 — Ensemble: 3–4 boards play together 🎻</h2>
+<p>Now the fun one. Give every board <strong>one voice</strong> of the same song and they harmonise as a group. The easy, great-sounding way is a <strong>round</strong> (a canon): every board plays the <em>same</em> melody, but each one starts a few beats after the last. <strong>Frère Jacques is a real 4-part round</strong> — made for exactly this.</p>
+<blockquote>
+<p>💡 <strong>Why a round is the easy path:</strong> real 4-part harmony means writing four different lines by hand. A round needs none of that — it's <em>one</em> melody, just entered at different times, and it's musically guaranteed to fit. It also forgives sloppy timing: the delays are baked into each board, so it's fine if you don't all press "GO" at the exact same instant.</p>
+</blockquote>
+
+<h3 id="setup">Set it up</h3>
+<ol>
+<li>Upload <strong>both</strong> <code>orchestra_ensemble.py</code> and <code>melodies_options.py</code> to every board.</li>
+<li>Set the <strong>same</strong> song / arrangement / tempo on all boards (see the card).</li>
+<li>Give each board a <strong>different</strong> <code>VOICE</code> number: 1, 2, 3, 4.</li>
+<li>Run it on every board. Everyone holds button A; someone counts <strong>"3–2–1–GO"</strong> and you all press together.</li>
+</ol>
+
+<h3 id="cheat-sheet">🎫 Setup cheat-sheet — 4-board Frère Jacques round</h3>
+<div class="card">
+<h4>Same on EVERY board (top of <code>orchestra_ensemble.py</code>):</h4>
+<pre><code class="language-python">SONG        = songs.FRERE_JACQUES
+ARRANGEMENT = "round"
+ROUND_DELAY = 8
+TEMPO_MS    = 400</code></pre>
+<h4>Different on each board — just this one line:</h4>
+<div class="cardrow">
+  <div class="vcard"><div class="b">BOARD 1</div><div class="v">VOICE = 1</div></div>
+  <div class="vcard"><div class="b">BOARD 2</div><div class="v">VOICE = 2</div></div>
+  <div class="vcard"><div class="b">BOARD 3</div><div class="v">VOICE = 3</div></div>
+  <div class="vcard"><div class="b">BOARD 4</div><div class="v">VOICE = 4</div></div>
+</div>
+<p style="margin:.3em 0 0">Only 3 boards? Use cards 1–3 and drop <code>VOICE = 4</code>. Voice 1 leads; each next voice folds in <code>ROUND_DELAY</code> (8) beats later.</p>
+</div>
+<p>✅ <strong>Milestone</strong>: press together — voice 1 starts, the others stack in one after another into a round.</p>
+
+<h3 id="which-songs">Which songs work best</h3>
+<table>
+<thead><tr><th>Arrangement</th><th>Best songs</th><th>Boards</th></tr></thead>
+<tbody>
+<tr><td><code>"round"</code> — canon (the easy path)</td><td>Frère Jacques (4-part!), Row Row Row Your Boat</td><td>2, 3, 4+</td></tr>
+<tr><td><code>"octave"</code> — voices stacked in octaves</td><td>Twinkle, Ode to Joy, When the Saints</td><td>2–3</td></tr>
+</tbody>
+</table>
+<p>To switch to octave mode, set <code>ARRANGEMENT = "octave"</code> on every board — then voice 1 plays the melody, voice 2 an octave lower, voice 3 an octave higher, voice 4 two lower.</p>
+<blockquote>
+<p>⚡ <strong>Stretch — tighter sync:</strong> in octave mode you might hear a faint echo if your starts aren't together. Fix it with a wire: join a <code>GND</code> pin on each board, and run an output pin on the "conductor" board to an input pin on the others — the conductor raises it to say "GO". Ask a counsellor.</p>
+</blockquote>
+
+<hr>
+<p><a href="day5.html" target="_blank" rel="noopener">← Back to Day 5</a> &nbsp;·&nbsp; <a href="INDEX.html" target="_blank" rel="noopener">Tutorial Index</a></p>
+</article>
+</body>
+</html>
