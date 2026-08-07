@@ -1,6 +1,6 @@
 # Sigma Camp IoT — Smart Houses
 
-Clean rewrite of the SigmaHouse summer-camp project, simplified for 14-year-olds with some Python experience.
+Clean rewrite of the SigmaHouse summer-camp project, simplified for campers with some Python experience.
 
 Two parts:
 
