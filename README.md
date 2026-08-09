@@ -82,7 +82,7 @@ If your firewall asks, **allow** incoming connections on port 8080.
 2. Plug in the board. In Thonny: **Tools → Options → Interpreter →
    MicroPython (ESP32)**, and pick the board's serial port.
    - **Fresh board?** The same dialog has **"Install or update MicroPython"** —
-     use it to download and flash the latest `ESP32_GENERIC` firmware.
+     use it to download and flash the latest `ESP32_GENERIC` firmware: follow **tutorial/day3.html** detailed instructions 
    - **No port shows up?** You probably need the USB-serial driver for your board:
      **CH340** (`CH341SER`) or **CP210x** — install it, then replug.
 3. Make your own secrets file: copy
@@ -127,56 +127,6 @@ your hand over the motion sensor while the alarm is armed → the buzzer fires.
 - **`examples/`** — small runnable programs per day, including
   `examples/bonus_music/` (a melody player, 16 tunes, and a multi-board
   "orchestra").
-
----
-
-## For counsellors: prepare an OFFLINE camp bundle
-
-At camp there is no internet, so pre-download everything **once** on a laptop with
-internet, then copy it to a USB stick / shared folder.
-
-### 1. Pre-download Flask as wheels
-
-```bash
-cd implementation/iot_hub
-mkdir wheels
-python -m pip download -d wheels -r requirements.txt
-python -m pip download -d wheels esptool==4.7.0 mpremote==1.22.0
-```
-
-### 2. Download the ESP32 firmware
-
-Grab the latest stable build from
-<https://micropython.org/download/ESP32_GENERIC/> and save the `.bin` into
-`implementation/smart_house/firmware/` (create the folder). Verify the version —
-it changes.
-
-### 3. Download Thonny
-
-Grab the standalone installer from <https://thonny.org/> and drop it on the USB
-stick. Thonny bundles its own Python for the board side.
-
-### 4. Test the offline install before you trust it
-
-```bash
-python -m venv .venv
-source .venv/Scripts/activate        # bash; on cmd use: .venv\Scripts\activate
-python -m pip install --no-index --find-links wheels -r requirements.txt
-python app.py                        # open http://localhost:8080/
-```
-
-### At camp (offline)
-
-- **Hub laptop:** open `implementation/iot_hub` in **PyCharm Community** (or a
-  terminal). Create the venv and install from the local wheels:
-  `pip install --no-index --find-links wheels -r requirements.txt`, then run
-  `app.py`. Find the laptop IP with `ipconfig` and allow port 8080 in the firewall.
-- **Each ESP32:** flash MicroPython from the USB via Thonny's "Install or update
-  MicroPython", copy `secrets_example.py` → `secrets.py` with the camp WiFi + the
-  laptop's `HUB_URL`, then upload the `smart_house/` files as in the home steps.
-
-> `wheels/`, `firmware/`, `*.bin`, and every `secrets.py` are gitignored — they
-> stay on the USB stick, never in the repo.
 
 ---
 
