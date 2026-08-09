@@ -1,4 +1,4 @@
-# Sigma Camp IoT — Smart Houses
+# Sigma Camp Web Dev and IoT Semilab
 
 A summer-camp project for campers with some Python experience. You build a
 tiny **smart house** on an ESP32 board and connect it to a **hub** (a small web
@@ -6,14 +6,14 @@ server) that shows every house on a live dashboard and can control them.
 
 Two parts:
 
-- **`implementation/iot_hub/`** — a Flask web server + dashboard. Runs on a
-  computer (yours at home, or a counsellor's laptop at camp).
+- **`implementation/iot_hub/`** — a Flask web server + dashboard. Runs on your
+  computer
 - **`implementation/smart_house/`** — MicroPython firmware for the ESP32
   (Keyestudio Smart Home kit). Each board joins WiFi, registers with the hub,
   reports its state, and obeys commands from the dashboard.
 
 They talk over plain HTTP. At camp everything runs on the **local WiFi only** (no
-internet needed) — but to set it up **at home you just use your normal WiFi**.
+internet needed) - but to set it up **at home you just use your normal WiFi**.
 
 ## How they talk to each other
 
