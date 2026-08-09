@@ -75,6 +75,32 @@ Now find your computer's address on the WiFi, so the board can reach it:
 Your board's hub URL will be `http://<that-ip>:8080` (e.g. `http://192.168.1.42:8080`).
 If your firewall asks, **allow** incoming connections on port 8080.
 
+### 2b. Prefer PyCharm? Run the hub in the IDE instead
+
+Same result as step 2, but in an IDE many campers find friendlier — and no
+terminal commands. **You have internet at home, so PyCharm installs Flask for
+you** (ignore any offline `--no-index` / `wheels` steps you might see elsewhere —
+those are only for camp).
+
+1. **Install PyCharm** — the free **Community Edition** from
+   <https://www.jetbrains.com/pycharm/download/> (scroll down to *Community*).
+2. **File → Open**, and select the **`implementation/iot_hub`** folder — open
+   *that* folder, so PyCharm sees `app.py` and `requirements.txt` at the top.
+3. PyCharm notices `requirements.txt` and offers to **create a virtual
+   environment** — click **OK**. It makes a project `.venv` and, if it asks,
+   **installs the requirements** (Flask). If it doesn't ask, open the **Terminal**
+   tab at the bottom and run `pip install -r requirements.txt`.
+   - *Manual way:* **Settings → Project → Python Interpreter → Add Interpreter →
+     Add Local Interpreter → Virtualenv**, then the **+** button → search
+     **Flask** → **Install Package**.
+4. Open **`app.py`**, then click the green **▶ Run** (or right-click → **Run 'app'**).
+   The Run panel prints `Running on http://127.0.0.1:8080`.
+5. Open <http://localhost:8080/> — the empty dashboard. Stop the hub with the red
+   **■** in the Run panel.
+
+Then find your computer's IP exactly as in step 2 (for the board's `HUB_URL`), and
+allow port 8080 through the firewall if asked.
+
 ### 3. Set up the ESP32 board (Thonny + MicroPython)
 
 1. Install **Thonny** from <https://thonny.org/> (it includes its own Python — no
