@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examples</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.6em; }
+h3 { font-size: 1.25em; margin-top: 1.4em; }
+h4 { font-size: 1.05em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  border-left: 4px solid #d0d7de; margin: 1em 0; padding: .4em 1em;
+  color: #57606a; background: #f6f8fa; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: .4em 0; }
+details {
+  border: 1px solid #d0d7de; border-radius: 8px; padding: .6em 1em; margin: 1em 0;
+  background: #fbfcfd;
+}
+summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .6em; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2em 0; }
+img { max-width: 100%; }
+@media print {
+  .topbar { display: none; }
+  body { max-width: none; font-size: 12pt; }
+  details { page-break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }  /* print expands details */
+}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="../INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
+<article>
+<h1 id="examples">Examples</h1>
+<p>Runnable code that goes with the tutorial — one folder per day. Open a file
+in Thonny and run it on the board (or run the hub for Day 1).</p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Folder</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><em>(none)</em></td>
+<td>The example is the running hub itself — see <a href="../day1.html" target="_blank" rel="noopener">day1</a> (Flask + <code>curl</code>/browser).</td>
+</tr>
+<tr>
+<td>2</td>
+<td><a href="day2_esp32_basics/" target="_blank" rel="noopener">day2_esp32_basics/</a></td>
+<td>Blink an LED, read a button (polling vs interrupt), button toggles LED</td>
+</tr>
+<tr>
+<td>3</td>
+<td><a href="day3_wifi_hub/" target="_blank" rel="noopener">day3_wifi_hub/</a></td>
+<td><code>simple_led.py</code> — the whole "smart house" in one small file (WiFi + hub + LED)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><a href="day4_sensors/" target="_blank" rel="noopener">day4_sensors/</a></td>
+<td><code>motion_test.py</code> — read the PIR sensor on its own</td>
+</tr>
+<tr>
+<td>5</td>
+<td><a href="day5_async/" target="_blank" rel="noopener">day5_async/</a></td>
+<td><code>async_demo.py</code> — <em>see</em> the difference between sync and async</td>
+</tr>
+<tr>
+<td>🎵 bonus</td>
+<td><a href="bonus_music/" target="_blank" rel="noopener">bonus_music/</a></td>
+<td><code>play_melody.py</code> — a little music theory + make the buzzer play a tune (no WiFi/hub)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="day-2-run-these-in-order">Day 2 — run these in order</h2>
+<ol>
+<li><code>1_blink.py</code> — blink the LED</li>
+<li><code>2_button_poll.py</code> — read a button by asking repeatedly (polling)</li>
+<li><code>3_button_irq.py</code> — read a button with an interrupt (one press = one event)</li>
+<li><code>4_button_led.py</code> — press the button to toggle the LED (the flag pattern the real firmware uses)</li>
+</ol>
+<p>No WiFi or hub needed for Day 2 — just the board.</p>
+<h2 id="day-3-the-networked-example">Day 3+ — the networked example</h2>
+<p><code>day3_wifi_hub/simple_led.py</code> needs the <strong>hub running</strong> and your details filled
+into the <code>EDIT THESE</code> block at the top (WiFi name/password, and <code>HUB_URL</code> =
+your laptop's IP + <code>:8080</code>). It's the same idea as <code>secrets.py</code> in the full
+firmware, just inline so the file stands alone.</p>
+<h2 id="how-these-relate-to-the-full-firmware">How these relate to the full firmware</h2>
+<p>These examples are teaching scaffolds. The real project
+(<code>implementation/smart_house/</code>) combines all of them: the button/IRQ pattern
+from Day 2, the WiFi + hub calls from Day 3's <code>simple_led.py</code>, the PIR from
+Day 4, and the sync/async choice from Day 5 — for six devices at once.</p>
+</article>
+</body>
+</html>

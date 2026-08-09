@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 5 — Async + Final Project</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.6em; }
+h3 { font-size: 1.25em; margin-top: 1.4em; }
+h4 { font-size: 1.05em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  border-left: 4px solid #d0d7de; margin: 1em 0; padding: .4em 1em;
+  color: #57606a; background: #f6f8fa; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: .4em 0; }
+details {
+  border: 1px solid #d0d7de; border-radius: 8px; padding: .6em 1em; margin: 1em 0;
+  background: #fbfcfd;
+}
+summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .6em; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2em 0; }
+img { max-width: 100%; }
+@media print {
+  .topbar { display: none; }
+  body { max-width: none; font-size: 12pt; }
+  details { page-break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }  /* print expands details */
+}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
+<article>
+<h1 id="day-5-async-final-project">Day 5 — Async + Final Project</h1>
+<p><strong>Goal:</strong> Compare the synchronous and async versions of the firmware to see what <code>async/await</code> actually changes, then build a feature of your choice.</p>
+<p>🔬 <strong>See async for real:</strong> <a href="examples/day5_async/async_demo.py" target="_blank" rel="noopener">examples/day5_async/async_demo.py</a> blinks a heartbeat LED while a fake "slow job" runs. Flip <code>USE_ASYNC</code> and watch the LED <strong>freeze</strong> (sync) vs <strong>stay smooth</strong> (async) — the difference the real firmware can't show you.</p>
+</blockquote>
+<p align="center">
+  <img src="diagrams/06_sync_vs_async.drawio.svg" alt="Timeline: in sync the 2-second slow job blocks the loop so the heartbeat freezes; in async the slow job yields with await so the heartbeat keeps beating." style="max-width:100%;">
+</p>
+
+<hr>
+<h2 id="part-1-same-behavior-two-shapes-20-min">Part 1 — Same behavior, two shapes (20 min)</h2>
+<p>You already know <code>app_sync.py</code>. Today's surprise: <code>app_async.py</code> does the <strong>exact same thing</strong> with the <strong>same hardware drivers</strong> and the <strong>same <code>hub_client.py</code></strong>. Only the loop structure is different.</p>
+<p>🛠 <strong>Try this</strong>: switch your board to async.</p>
+<ol>
+<li>Open <code>config.py</code> on the board (Thonny → board pane → double-click).</li>
+<li>Change <code>USE_ASYNC = False</code> to <code>USE_ASYNC = True</code>.</li>
+<li>Save and press the ESP32's RESET button.</li>
+<li>Watch the LCD: same "Connecting…" → "Ready". Test that the dashboard toggle still moves the LED. <strong>Identical user-facing behavior.</strong></li>
+</ol>
+<p>✅ <strong>Milestone 5.1</strong>: The board behaves identically with <code>USE_ASYNC=True</code>.</p>
+<hr>
+<h2 id="part-2-diff-the-two-files-25-min">Part 2 — Diff the two files (25 min)</h2>
+<p>🛠 <strong>Try this</strong>: in PyCharm, select both <code>app_sync.py</code> and <code>app_async.py</code> in the project tree, right-click → <strong>Compare Files</strong>. PyCharm shows them side by side with differences highlighted.</p>
+<p>Notice:
+- The <strong>helpers</strong> (<code>_connect_wifi</code>, <code>_build_state</code>, <code>_apply_state</code>, <code>_toggle</code>) are identical.
+- <code>app_sync.py</code> has ONE <code>while True</code> loop checking everything sequentially, with <code>time.sleep_ms(50)</code>.
+- <code>app_async.py</code> has <strong>three concurrent tasks</strong> (<code>task_buttons</code>, <code>task_motion</code>, <code>task_keepalive</code>), each with its own <code>while True</code> and its own <code>await asyncio.sleep_ms(...)</code>.</p>
+<h3 id="what-await-actually-does">What <code>await</code> actually does</h3>
+<p>In sync code:</p>
+<pre><code class="language-python">time.sleep_ms(50)   # CPU does NOTHING for 50 ms.
+</code></pre>
+<p>In async code:</p>
+<pre><code class="language-python">await asyncio.sleep_ms(50)   # &quot;I'll be busy in 50 ms — go run other tasks meanwhile.&quot;
+</code></pre>
+<p>So while <code>task_keepalive</code> is sleeping for 1 second between heartbeats, <code>task_buttons</code> and <code>task_motion</code> keep running. In the sync version, the single loop has to round-robin everything, so it CAN'T sleep for a full second — that's why we used <code>time.sleep_ms(50)</code> (loop runs 20×/sec).</p>
+<p>💡 <strong>Subtle point</strong>: <code>await</code> only switches tasks at <code>await</code> points. If a task does <code>time.sleep(5)</code> (the synchronous version!) inside an async function, <strong>everything stops for 5 seconds</strong>. This is why our async version explicitly notes that <code>urequests</code> is blocking — for 100-200 ms during an HTTP call, the other tasks pause.</p>
+<p>🛠 <strong>Try this — observe it</strong>: add a print to <code>task_buttons</code> that fires on every loop iteration. Watch the Thonny shell during a slow operation:</p>
+<pre><code class="language-python">async def task_buttons(button_a, button_b, led, fan, buzzer, motion, hub, lcd, ctx):
+    while True:
+        if button_a.was_pressed():
+            ...
+        if button_b.was_pressed():
+            ...
+        print(&quot;.&quot;, end=&quot;&quot;)     # &lt;-- add this
+        await asyncio.sleep_ms(30)
+</code></pre>
+<p>Press button B (which triggers an HTTP push). Watch the dots: you'll see them stream, pause briefly during the HTTP call, then resume. In the sync version, dots would only print every 50 ms regardless.</p>
+<hr>
+<h2 id="part-3-when-to-choose-which-15-min">Part 3 — When to choose which (15 min)</h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th style="text-align: center;">Sync</th>
+<th style="text-align: center;">Async</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reading a temperature once</td>
+<td style="text-align: center;">✅ simpler</td>
+<td style="text-align: center;">overkill</td>
+</tr>
+<tr>
+<td>Three things on three different schedules</td>
+<td style="text-align: center;">round-robin works but complex</td>
+<td style="text-align: center;">✅ natural</td>
+</tr>
+<tr>
+<td>One slow blocking call (HTTP, file write)</td>
+<td style="text-align: center;">blocks everything</td>
+<td style="text-align: center;">also blocks (without <code>aiohttp</code> etc.)</td>
+</tr>
+<tr>
+<td>Beginner reading the code</td>
+<td style="text-align: center;">✅ top-to-bottom</td>
+<td style="text-align: center;">needs <code>await</code> knowledge</td>
+</tr>
+<tr>
+<td>You'll later add 5 more concurrent activities</td>
+<td style="text-align: center;">gets messy</td>
+<td style="text-align: center;">✅ scales</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Take-away:</strong> for most embedded code, <strong>sync is fine and clearer</strong>. Async pays off when you have several independent activities with different timing.</p>
+<p>For our project, sync is the default, async exists because it's a great teaching example of a real refactor.</p>
+<hr>
+<h2 id="bonus-reading-a-real-rfid-card-20-min">Bonus — Reading a real RFID card (20 min)</h2>
+<p>An RFID reader's whole job is tiny: you tap a card, it hands you that card's <strong>UID</strong> — a unique code like <code>DE AD BE EF</code>. Everything else a door lock does is just a decision about that string.</p>
+<p><code>examples/day5_async/rfid_hello.py</code> is the smallest program that does it: wake the reader, wait for a card, print its UID. It needs an MFRC522 reader wired to the board.</p>
+<h3 id="first-two-names-pcd-and-picc">First, two names: PCD and PICC</h3>
+<p>The library uses the official ISO 14443 names, which look like alphabet soup until someone tells you:</p>
+<ul>
+<li><strong>PCD</strong> = <em>Proximity Coupling Device</em> = <strong>the reader</strong> (the MFRC522 board).</li>
+<li><strong>PICC</strong> = <em>Proximity Integrated Circuit Card</em> = <strong>the card</strong> you tap.</li>
+</ul>
+<p>So <code>PCD_Init()</code> means "set up the reader" and <code>PICC_IsNewCardPresent()</code> means "is a card sitting there?".</p>
+<h3 id="how-rfid_hellopy-works">How <code>rfid_hello.py</code> works</h3>
+<p><strong>1. Wire up the reader.</strong></p>
+<pre><code class="language-python">addr = 0x28
+scl  = 22
+sda  = 21
+rc522 = mfrc522(scl, sda, addr)
+</code></pre>
+<p>This is I2C: two wires, <code>scl</code> (clock) and <code>sda</code> (data), plus an address so the board knows which chip it's talking to. <code>0x28</code> is the MFRC522's address on our kit — if that doesn't match the module, nothing works and every read comes back as garbage.</p>
+<p>Look inside <code>soft_iic.py</code> if you're curious: it doesn't use MicroPython's built-in <code>machine.I2C</code> at all. It implements I2C <strong>by hand</strong>, toggling the two pins high and low with <code>time.sleep_us(5)</code> between edges. That's called <em>bit-banging</em>, and it's why any two GPIO pins work.</p>
+<p><strong>2. Wake the chip up.</strong></p>
+<pre><code class="language-python">rc522.PCD_Init()
+</code></pre>
+<p>Three things happen in here (see <code>mfrc522_i2c.py:103</code>): a soft reset, a timeout timer so a half-finished card conversation can't hang forever, and — the important one — <code>PCD_AntennaOn()</code>. <strong>After a reset the antenna is OFF.</strong> No antenna means no radio field, means no card is ever detected. This one line is the difference between a working reader and a silent one.</p>
+<p><strong>3. Sanity-check the wiring.</strong></p>
+<pre><code class="language-python">rc522.ShowReaderDetails()
+</code></pre>
+<p>This reads one register (<code>VersionReg</code>) and prints it. It's the cheapest possible "are you there?" test:</p>
+<ul>
+<li><code>145 = v1.0</code> or <code>146 = v2.0</code> → the reader is wired correctly and answering.</li>
+<li><code>0</code>, <code>255</code>, or <code>unknown</code> → the reader is <strong>not</strong> talking. Check the wires and the address before debugging anything else.</li>
+</ul>
+<p><strong>4. Poll for a card.</strong></p>
+<pre><code class="language-python">while True:
+    if rc522.PICC_IsNewCardPresent():
+        if rc522.PICC_ReadCardSerial() == True:
+</code></pre>
+<p>Two steps, because they're two different radio conversations:</p>
+<ul>
+<li><code>PICC_IsNewCardPresent()</code> shouts "anyone out there?" (a REQA command) and returns True if <em>something</em> answered. It doesn't know who.</li>
+<li><code>PICC_ReadCardSerial()</code> then does the real work: it runs <em>anti-collision</em> (sorting out which card to talk to, in case two are on the reader) and asks the winner for its UID.</li>
+</ul>
+<p><strong>5. Read the UID.</strong></p>
+<pre><code class="language-python">uid_bytes = rc522.uid.uidByte[0: rc522.uid.size]
+uid_hex = ' '.join(f'{b:02X}' for b in uid_bytes)
+print("UID (Hex):", uid_hex)
+</code></pre>
+<p>The UID lands in <code>rc522.uid</code> as a side effect of step 4 — the function returns <code>True</code>/<code>False</code>, not the card. UIDs are 4, 7 or 10 bytes long (that's what <code>uid.size</code> tells you), so you slice off just the real bytes and format them as hex: <code>DE AD BE EF</code>.</p>
+<p><strong>That string is the whole point of an RFID reader.</strong> Everything after this is just a decision about a string.</p>
+<p><strong>6. Decide.</strong></p>
+<pre><code class="language-python">for i in rc522.uid.uidByte[0: rc522.uid.size]:
+    data = data + i
+if (data == 645):
+    print("open")
+</code></pre>
+<p>It adds up the UID's bytes and opens if the total is 645. It works, but think about it for a second: <strong>any</strong> card whose bytes happen to sum to 645 opens the door, and to enroll a friend's card you'd have to do arithmetic. Keeping an <strong>allow-list</strong> of UIDs instead — a set of strings, and <code>if uid in allowed</code> — is both safer and easier to read.</p>
+<h3 id="gotchas-youll-hit">Gotchas you'll hit</h3>
+<ul>
+<li><strong>Lift the card between taps.</strong> <code>PICC_IsNewCardPresent()</code> only invites cards in the IDLE state. A card left sitting on the reader has already been selected, so it goes quiet. Lift it off and tap again.</li>
+<li><strong><code>time.sleep(1)</code> at the bottom of the loop.</strong> The reader is checked once per second, so a quick tap can be missed entirely — hold the card there. And during that second the board can do <em>nothing else</em>: no LED, no buttons, no hub. That's the exact problem Part 2 was about — swap it for <code>await asyncio.sleep_ms(150)</code> inside a task and the reader gets checked far more often <em>while</em> everything else keeps running.</li>
+<li><strong><code>error: 0</code></strong> means a card answered step 4 but its UID couldn't be read (moved too fast, or two cards at once). It's a near-miss, not a broken reader.</li>
+</ul>
+<p>🛠 <strong>Try this</strong>: run <code>rfid_hello.py</code> on a board with a reader attached and tap a card. Note the hex UID it prints, then tap a second card — two different codes, and they never change. Now replace the <code>data == 645</code> test with your own allow-list:</p>
+<pre><code class="language-python">ALLOWED = ["DE AD BE EF"]        # &lt;- paste YOUR card's UID here
+
+if uid_hex in ALLOWED:
+    print("open")
+else:
+    print("denied:", uid_hex)
+</code></pre>
+<p>That's a working door lock. Add a friend's card to the list and it lets them in too — no arithmetic.</p>
+<hr>
+<h2 id="part-4-final-project-60-min">Part 4 — Final project (60 min)</h2>
+<p>Pick ONE of these and build it end-to-end. You have ~1 hour. A counsellor is around if you're stuck. Show the result before you leave.</p>
+<h3 id="option-a-doorbell-medium">Option A — "Doorbell" (medium)</h3>
+<p>Add a third button option: pressing button B when the LCD shows <strong>DOORBELL</strong> flashes the LED on <strong>all</strong> houses for 2 seconds.</p>
+<p>Hints:
+- Add <code>"doorbell"</code> to the <code>MENU</code> tuple in <code>app_sync.py</code>.
+- New endpoint <code>POST /api/ring_doorbell</code> that walks every house and sets <code>state.led.active = True</code> and <code>pending_state_update = True</code>.
+- A way to turn LEDs back off after 2 sec — easiest is a <code>threading.Timer</code> in <code>app.py</code>.
+- Press button B with menu on <code>doorbell</code> → <code>hub_client</code> POST to your new endpoint.</p>
+<h3 id="option-b-fan-party-easy">Option B — "Fan party" (easy)</h3>
+<p>Make the fan spin in the OPPOSITE direction every other time button B presses it. (The fan supports clockwise + counter-clockwise — see <code>devices/fan.py</code>.)</p>
+<p>Hints:
+- Track a <code>clockwise = True</code> variable in <code>app_sync.py</code>.
+- When toggling the fan ON, alternate the direction.
+- Optionally: add a dashboard column "spin direction" so you can see it remotely.</p>
+<h3 id="option-c-statistics-page-medium">Option C — "Statistics page" (medium)</h3>
+<p>Add a new web page at <code>/stats</code> that shows:
+- Total houses
+- How many active vs. lost
+- How many armed
+- Last alarm fired (timestamp)</p>
+<p>Hints:
+- New route in <code>app.py</code> returning <code>render_template("stats.html")</code>.
+- New template under <code>templates/</code>.
+- Track "last alarm" by adding a module-level variable in <code>houses.py</code> set inside <code>report_motion</code>.</p>
+<h3 id="option-d-soft-alarm-escalation-hard">Option D — "Soft alarm escalation" (hard)</h3>
+<p>Currently the buzzer either fires (alarm true) or doesn't. Make it escalate: first 5 seconds beep softly (lower duty cycle), next 5 seconds beep medium, after 10 seconds full blast.</p>
+<p>Hints:
+- <code>Buzzer</code> needs a <code>set_level(0..1023)</code> method.
+- Track when the alarm was triggered (timestamp) — easiest in <code>app_sync.py</code>.
+- Reset the level when alarm is cleared.</p>
+<h3 id="option-e-two-house-morse-chat-hard-two-teams">Option E — "Two-house Morse chat" (hard, two teams)</h3>
+<p>Pair with another team. Pressing your button A sends a "dot" (LED flash on partner's house, 100 ms). Holding it sends a "dash" (300 ms). Try sending HI (•••• ••).</p>
+<p>Hints:
+- New endpoint <code>POST /api/houses/&lt;uid&gt;/flash</code> with body <code>{"ms": 100}</code>.
+- Tell button A which target uid (hardcode in <code>secrets.py</code>).
+- Long-press detection: store the press start time, look at duration on release.</p>
+<h3 id="or-invent-your-own">Or invent your own</h3>
+<p>Run the idea past a counsellor first to make sure it fits the time.</p>
+<p>✅ <strong>Milestone 5.2</strong>: Your final project works end-to-end. Demo it.</p>
+<hr>
+<h2 id="part-5-wrap-up-10-min">Part 5 — Wrap-up (10 min)</h2>
+<h3 id="what-this-whole-project-taught-you">What this whole project taught you</h3>
+<p>You built and understood:</p>
+<ul>
+<li><strong>Server-side Python</strong>: HTTP, Flask, route handlers, JSON, threading + locks.</li>
+<li><strong>Browser-side JS</strong>: <code>fetch</code>, JSON, polling, dynamic table rendering.</li>
+<li><strong>Embedded Python</strong>: GPIO, PWM, I2C, interrupts, async/await.</li>
+<li><strong>Networking</strong>: WiFi setup, HTTP client, request/response cycles.</li>
+<li><strong>Architecture</strong>: separating data from routes, separating drivers from app logic, two implementations sharing one HTTP client.</li>
+</ul>
+<p>That's a real distributed system. Smaller than what you'd build at a job, but the same shape.</p>
+<h3 id="where-to-go-next">Where to go next</h3>
+<ul>
+<li><strong>Front-end</strong> — try rebuilding the dashboard with React or HTMX for fun.</li>
+<li><strong>Real protocol</strong> — replace polling with WebSockets or MQTT for instant push (no 1-second delay).</li>
+<li><strong>Persistence</strong> — add a SQLite database so houses don't disappear on hub restart.</li>
+<li><strong>Security</strong> — add API tokens (right now anyone on the WiFi can toggle anyone's LED).</li>
+<li><strong>Other boards</strong> — Raspberry Pi Pico W runs MicroPython too, with different sensors.</li>
+<li><strong>Other languages</strong> — try writing the firmware in Arduino C++ to feel the difference.</li>
+</ul>
+<h3 id="good-books-and-resources-offline-friendly">Good books and resources (offline-friendly)</h3>
+<ul>
+<li>The <a href="https://docs.micropython.org/" target="_blank" rel="noopener">MicroPython docs</a> — bundled in <code>docs/</code> if your camp pre-downloaded them.</li>
+<li>The <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener">Flask docs</a> — same.</li>
+<li>The original <code>SigmaHouse-master/</code> repo for ideas (RFID, OLED, more sensors).</li>
+</ul>
+<hr>
+<h2 id="final-milestone">Final milestone</h2>
+<p>✅ <strong>Milestone 5.3</strong>: Demo your project to the group. Explain in 2 minutes:
+- What you built.
+- One thing that surprised you.
+- One thing you'd do differently.</p>
+<p>That's the end. Good work — you wrote real code that runs on real hardware that talks to a real server. The next thing you build will be easier.</p>
+<p>← back to <a href="INDEX.html" target="_blank" rel="noopener">INDEX.md</a></p>
+</article>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the Internet Actually Works (optional deep-dive)</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.6em; }
+h3 { font-size: 1.25em; margin-top: 1.4em; }
+h4 { font-size: 1.05em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  border-left: 4px solid #d0d7de; margin: 1em 0; padding: .4em 1em;
+  color: #57606a; background: #f6f8fa; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: .4em 0; }
+details {
+  border: 1px solid #d0d7de; border-radius: 8px; padding: .6em 1em; margin: 1em 0;
+  background: #fbfcfd;
+}
+summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .6em; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2em 0; }
+img { max-width: 100%; }
+@media print {
+  .topbar { display: none; }
+  body { max-width: none; font-size: 12pt; }
+  details { page-break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }  /* print expands details */
+}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="../INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
+<article>
+<h1 id="how-the-internet-actually-works-optional-deep-dive">How the Internet Actually Works (optional deep-dive)</h1>
+<blockquote>
+<p><strong>Who's this for?</strong> Campers who finish early and want to know what's <em>really</em> happening when their ESP32 talks to the hub. Not required for the labs — but if you've ever wondered "what is the internet, physically?", read on. ~20 minutes.</p>
+</blockquote>
+<p>You can read this on Day 1 (before HTTP), or Day 3 (after you've seen WiFi work). Either order is fine.</p>
+<blockquote>
+<p>🔤 Every acronym below (HTTP, TCP, IP, DNS, NAT, …) is spelled out in the <strong><a href="../glossary.html" target="_blank" rel="noopener">glossary</a></strong> if you want the quick version.</p>
+</blockquote>
+<hr>
+<h2 id="part-1-a-very-short-history-so-the-acronyms-make-sense">Part 1 — A very short history (so the acronyms make sense)</h2>
+<p>Every weird name in networking is a fossil from some decade. Knowing the story makes them stop being scary.</p>
+<ul>
+<li><strong>1969 — ARPANET.</strong> The US military funded a network connecting four university computers so researchers could share machines. The first message ever sent was meant to be "LOGIN" — the system crashed after "LO". So the internet's first word was literally <em>"lo"</em>. 🎤</li>
+<li><strong>1974 — TCP/IP invented.</strong> Vint Cerf and Bob Kahn designed a set of rules for <em>any</em> network to talk to <em>any other</em> network — an "inter-network". That's where the word <strong>internet</strong> comes from. Their rules are still what your ESP32 uses today, 50 years later.</li>
+<li><strong>1983 — the switch.</strong> On 1 January 1983, ARPANET switched to TCP/IP overnight. People wore buttons that said "I survived the TCP/IP transition." (Peak nerd.)</li>
+<li><strong>1989-91 — the Web.</strong> Tim Berners-Lee, at CERN, invented <strong>HTTP</strong>, <strong>HTML</strong>, and the <strong>URL</strong> so physicists could link documents. The Web is <em>not</em> the same thing as the internet — the Web is one thing that runs <em>on top of</em> the internet (like your smart-house API is one thing running on top of the Web's plumbing).</li>
+<li><em><em>1990s-now — everything else.</em><a href="../glossary.html" target="_blank" rel="noopener">glossary.md</a></em> Email, video, games, your fridge. All of it rides on the same TCP/IP rules from 1974.</li>
+</ul>
+<p><strong>Key idea:</strong> the internet is not one machine or one company. It's an agreement — a set of rules (<em>protocols</em>) that millions of independent machines follow so they can pass messages to each other.</p>
+<hr>
+<h2 id="part-2-layers-envelopes-inside-envelopes">Part 2 — Layers: envelopes inside envelopes</h2>
+<p>The single most important idea in networking: <strong>you don't send one big thing, you wrap a small thing in bigger and bigger envelopes.</strong> Each layer only worries about its own job.</p>
+<p>When your ESP32 sends <code>POST /api/houses</code> to the hub, here's what's really wrapped around it:</p>
+<pre><code>┌─────────────────────────────────────────────┐
+│ ETHERNET / WiFi frame  (layer 1-2)            │  &quot;deliver to the machine
+│  ┌──────────────────────────────────────────┐│   at this WiFi address&quot;
+│  │ IP packet           (layer 3)             ││  &quot;deliver to IP 192.168.1.8&quot;
+│  │  ┌───────────────────────────────────────┐││
+│  │  │ TCP segment      (layer 4)            │││  &quot;to port 8080, in order,
+│  │  │  ┌────────────────────────────────────┐│││   nothing lost&quot;
+│  │  │  │ HTTP message  (layer 7)           ││││  &quot;POST /api/houses
+│  │  │  │  POST /api/houses                 ││││   {unique_id: ...}&quot;
+│  │  │  │  {&quot;unique_id&quot;: &quot;FAKE001&quot;}         ││││
+│  │  │  └────────────────────────────────────┘│││
+│  │  └───────────────────────────────────────┘││
+│  └──────────────────────────────────────────┘│
+└─────────────────────────────────────────────┘
+</code></pre>
+<p>Think of mailing a letter:
+- <strong>HTTP</strong> = the letter you wrote (the actual message).
+- <strong>TCP</strong> = putting it in an envelope, numbering the pages so they arrive in order, and demanding a delivery receipt.
+- <strong>IP</strong> = writing the street address on the envelope.
+- <strong>WiFi/Ethernet</strong> = the actual mail truck (radio waves, or a copper cable).</p>
+<p>Each layer is sealed: the mail truck doesn't read your letter, and your letter doesn't care whether it travels by truck or plane. This is why the same HTTP works over WiFi, fibre, or 5G — only the bottom layer changes.</p>
+<hr>
+<h2 id="part-3-ip-addresses-and-ports-buildings-and-apartments">Part 3 — IP addresses and ports (buildings and apartments)</h2>
+<ul>
+<li>An <strong>IP address</strong> identifies a <em>machine</em> on a network. Your laptop is <code>192.168.1.8</code>. Your ESP32 got something like <code>192.168.1.107</code>.</li>
+<li>A <strong>port</strong> identifies <em>which program</em> on that machine. Your hub listens on <strong>port 8080</strong>. A web browser usually talks to port 80 or 443. Email uses 25 / 587. Minecraft servers default to 25565.</li>
+</ul>
+<p>Analogy: the <strong>IP address is the building</strong>, the <strong>port is the apartment number</strong>. <code>192.168.1.8:8080</code> means "apartment 8080 in building 192.168.1.8." That's exactly why your <code>HUB_URL</code> has both: <code>http://192.168.1.8:8080</code>.</p>
+<h3 id="why-your-camp-addresses-all-start-with-192168">Why your camp addresses all start with 192.168</h3>
+<p><code>192.168.x.x</code> is a <strong>private</strong> address range — reserved for local networks. They're not reachable from the public internet; your router hands them out to everything on your WiFi. (Other private ranges: <code>10.x.x.x</code> and <code>172.16-31.x.x</code>.) That's perfect for camp: the whole smart-house network lives inside your router, no internet needed.</p>
+<p>The router itself has TWO addresses: a private one facing your devices (often <code>192.168.1.1</code>) and a public one facing the internet. It translates between them — a trick called <strong>NAT</strong> (Network Address Translation). At camp you only ever use the private side.</p>
+<hr>
+<h2 id="part-4-tcp-the-part-that-makes-it-reliable">Part 4 — TCP: the part that makes it reliable</h2>
+<p>WiFi and IP, by themselves, are <em>unreliable</em> — packets can arrive out of order, get duplicated, or vanish. <strong>TCP</strong> is the layer that fixes that. It:</p>
+<ol>
+<li><strong>Establishes a connection</strong> with a 3-step handshake (the famous "SYN / SYN-ACK / ACK" — like "Can you hear me?" / "Yes, can you hear me?" / "Yes!").</li>
+<li><strong>Numbers every chunk</strong> so the receiver can reassemble them in order.</li>
+<li><strong>Re-sends anything lost</strong>, waiting for an acknowledgement of each piece.</li>
+</ol>
+<p>You never write this code — <code>urequests</code> on the ESP32 and Flask on the laptop both sit on top of TCP and get all of it for free. But it's why your <code>urequests.get(...)</code> either returns the <em>whole</em> correct answer or raises an error — never half a JSON.</p>
+<blockquote>
+<p><strong>Nerd note:</strong> there's a sibling protocol, <strong>UDP</strong>, that skips all the reliability for speed. Video calls and games often use UDP — a dropped frame is better than a laggy one. HTTP uses TCP because for an API you'd rather be correct than fast.</p>
+</blockquote>
+<hr>
+<h2 id="part-5-dns-the-internets-phone-book">Part 5 — DNS: the internet's phone book</h2>
+<p>When you type <code>youtube.com</code>, your machine first asks a <strong>DNS</strong> server "what's the IP address for youtube.com?" and gets back something like <code>142.250.74.46</code>. DNS turns human names into machine addresses.</p>
+<p><strong>At camp you skip DNS entirely</strong> — you type the laptop's IP (<code>192.168.1.8</code>) directly, because there's no DNS server on your little offline network. That's also why the tutorial has you run <code>ipconfig</code> to find the raw IP: you're being your own phone book.</p>
+<hr>
+<h2 id="part-6-http-just-text-on-top-of-all-that">Part 6 — HTTP: just text, on top of all that</h2>
+<p>Here's the punchline that surprises people: <strong>HTTP is just text.</strong> The request your browser sends is literally these characters, sent over the TCP connection:</p>
+<pre><code>POST /api/houses HTTP/1.1
+Host: 192.168.1.8:8080
+Content-Type: application/json
+Content-Length: 48
+
+{&quot;unique_id&quot;: &quot;FAKE001&quot;, &quot;ip_address&quot;: &quot;...&quot;}
+</code></pre>
+<p>A blank line separates the <strong>headers</strong> from the <strong>body</strong>. The server reads this text, does its thing, and sends text back:</p>
+<pre><code>HTTP/1.1 201 Created
+Content-Type: application/json
+
+{&quot;ok&quot;: true, &quot;unique_id&quot;: &quot;FAKE001&quot;}
+</code></pre>
+<p>That's it. That's the Web. You could type these by hand into a raw TCP connection (with a tool like <code>telnet</code> or <code>nc</code>) and a server would answer. <code>curl</code>, your browser, and <code>urequests</code> are just conveniences that format the text for you.</p>
+<blockquote>
+<p><strong>Try it (needs internet):</strong> <code>curl -v http://example.com</code> and read the lines starting with <code>&gt;</code> (what you sent) and <code>&lt;</code> (what came back). Those are the raw HTTP headers.</p>
+</blockquote>
+<hr>
+<h2 id="part-7-the-whole-journey-for-one-button-click">Part 7 — The whole journey, for one button click</h2>
+<p>You click <strong>LED → off</strong> in the dashboard. Here's the full stack of what happens, end to end:</p>
+<ol>
+<li><strong>Browser</strong> builds an HTTP request: <code>POST /api/houses/&lt;uid&gt;/toggle/led</code>.</li>
+<li>It's wrapped in TCP (envelope + receipt), then IP (address <code>192.168.1.8</code>), then WiFi (radio waves).</li>
+<li>Radio waves hit your <strong>router</strong>, which forwards the IP packet to the laptop.</li>
+<li>The laptop's OS sees port <strong>8080</strong>, hands the bytes to <strong>Flask</strong>.</li>
+<li>Flask's loop (the one from diagram 03) <strong>matches the route</strong> and runs <code>toggle()</code>, which flips a value in the <code>HOUSES</code> dict.</li>
+<li>Flask sends back <code>200 OK</code> + JSON — same journey in reverse.</li>
+<li>Meanwhile your <strong>ESP32</strong> is doing its own <code>PUT /keepalive</code> every second. Its next keepalive gets <code>{"state_update": true}</code>.</li>
+<li>ESP32 sends <code>GET /state</code>, receives <code>{"led": {"active": false}}</code>, and calls <code>led.off()</code>.</li>
+<li>Photons stop coming out of the LED. 💡→⚫</li>
+</ol>
+<p>Every arrow in that list is HTTP-over-TCP-over-IP-over-WiFi. Same four envelopes, every time.</p>
+<hr>
+<h2 id="where-this-connects-to-the-rest-of-the-camp">Where this connects to the rest of the camp</h2>
+<ul>
+<li>The <strong>request/response + status codes</strong> here are drawn in <a href="../diagrams/03_http_and_server.drawio" target="_blank" rel="noopener">diagrams/03_http_and_server.drawio</a>.</li>
+<li>The <strong>hub's loop</strong> (listen → match → run → respond) is diagram 03's bottom section, and the real code is <code>implementation/iot_hub/app.py</code>.</li>
+<li>The <strong>ESP32's HTTP calls</strong> are all in <code>implementation/smart_house/hub_client.py</code>.</li>
+</ul>
+<h2 id="five-things-to-remember">Five things to remember</h2>
+<ol>
+<li>The internet is an <strong>agreement</strong> (protocols), not a machine.</li>
+<li>Messages are <strong>wrapped in layers</strong> — each layer has one job.</li>
+<li><strong>IP = building, port = apartment.</strong> <code>192.168.1.8:8080</code>.</li>
+<li><strong>TCP</strong> makes delivery reliable so you don't have to.</li>
+<li><strong>HTTP is just text</strong> riding on top of all of it.</li>
+</ol>
+<hr>
+<p><em>Want to go further? Look up: the OSI 7-layer model, the TCP 3-way handshake, what a MAC address is (hint: your ESP32's <code>unique_id</code> is one), and why HTTPS adds an 'S'.</em></p>
+</article>
+</body>
+</html>

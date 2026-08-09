@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PWM &amp; the duty count — how one pin fakes "in between"</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.5em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.8em; }
+h3 { font-size: 1.2em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+.diagram { text-align: center; margin: 1em 0; }
+.diagram img { max-width: 100%; border: 1px solid #e1e4e8; border-radius: 8px; background: #fff; }
+.key { border-left: 6px solid #4a90d9; background: #eef6ff; border-radius: 10px; padding: .6em 1.1em; margin: 1em 0; }
+.warn { border-left: 6px solid #e5534b; background: #fff2f1; border-radius: 10px; padding: .6em 1.1em; margin: 1em 0; }
+.tryit { border-left: 6px solid #f6ae2d; background: #fff8ec; border-radius: 10px; padding: .6em 1.1em; margin: 1em 0; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2.4em 0; }
+</style>
+</head>
+<body>
+<div class="topbar"><a href="INDEX.html">🏠 Tutorial home</a> &nbsp;·&nbsp; <a href="circuits.html">⚡ Circuits</a> &nbsp;·&nbsp; <strong>PWM &amp; the duty count</strong></div>
+
+<h1>🎛️ PWM: how one pin fakes "in between"</h1>
+<p>A GPIO pin only knows two states: <strong>HIGH</strong> (3.3&nbsp;V, "on") or <strong>LOW</strong> (0&nbsp;V, "off"). There's no "half on." So how do we get a <em>dim</em> LED, a <em>medium-speed</em> fan, or a <em>quiet</em> buzzer? The trick is <strong>PWM — Pulse-Width Modulation</strong>: flip the pin on and off <em>really fast</em>, and change <strong>how much of each flip is "on."</strong> That's the whole idea.</p>
+
+<div class="key">
+🔑 <strong>The one number: <code>duty</code>.</strong> PWM has two knobs — <code>freq()</code> (how fast it flips) and <code>duty()</code> (how much of each flip is on). This page is about <code>duty</code>.
+</div>
+
+<h2>What is 512? The duty <em>count</em></h2>
+<p>When you write <code>buzzer.duty(512)</code>, that <code>512</code> is <strong>not volts and not seconds</strong>. It's a <strong>raw duty count</strong> on MicroPython's scale: a whole number from <strong><code>0</code> to <code>1023</code></strong>. It just says "what fraction of each cycle is the pin ON," as a number out of 1023.</p>
+<ul>
+<li><code>duty(0)</code> → 0/1023 → <strong>0% on</strong> → the pin is fully OFF.</li>
+<li><code>duty(512)</code> → 512/1023 → <strong>≈ 50% on</strong> → on exactly half of each cycle.</li>
+<li><code>duty(1023)</code> → 1023/1023 → <strong>100% on</strong> → the pin is fully ON.</li>
+</ul>
+<p>To turn a duty count into a percentage: <code>percent = duty ÷ 1023 × 100</code>. So <code>512 ÷ 1023 × 100 ≈ 50%</code>.</p>
+
+<div class="diagram">
+  <img src="diagrams/14_pwm_duty_levels.svg" alt="Five square-wave rows at duty 0, 256, 512, 768, and 1023 (0, 25, 50, 75, 100 percent). Each shows the pin ON for a bigger slice of each cycle as the duty count rises. A dashed orange 'average' line rises with the duty; a note says slow devices feel the average while a buzzer follows the swing.">
+</div>
+
+<h2>Why 1023 and not 100?</h2>
+<p>The ESP32's PWM hardware here uses <strong>10 bits</strong> of resolution. Ten bits can count <code>2<sup>10</sup> = 1024</code> different values, and counting from zero that's <strong>0, 1, 2, … up to 1023</strong>. So instead of 100 brightness steps you get 1024 — a finer dimmer. It's the same reason a number could go 0–255 (8 bits) or 0–65535 (16 bits): the max is set by how many bits the counter has.</p>
+<div class="tryit">
+🧮 <strong>Quick conversions</strong> (duty count ⇄ percent):
+<table>
+<thead><tr><th>duty()</th><th>fraction</th><th>percent</th></tr></thead>
+<tbody>
+<tr><td><code>0</code></td><td>0 / 1023</td><td>0%</td></tr>
+<tr><td><code>256</code></td><td>256 / 1023</td><td>25%</td></tr>
+<tr><td><code>512</code></td><td>512 / 1023</td><td>≈ 50%</td></tr>
+<tr><td><code>768</code></td><td>768 / 1023</td><td>75%</td></tr>
+<tr><td><code>1023</code></td><td>1023 / 1023</td><td>100%</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Three things duty is <em>not</em></h2>
+<table>
+<thead><tr><th>Duty is NOT…</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>a <strong>voltage</strong></td><td>The pin is always either 0&nbsp;V or 3.3&nbsp;V. Duty changes the <em>fraction of time</em> at 3.3&nbsp;V, not the voltage itself.</td></tr>
+<tr><td>a <strong>duration</strong></td><td>Duty is the on/off split <em>inside one tiny cycle</em>. How long a note or blink <em>lasts</em> is a separate <code>sleep</code> in your code.</td></tr>
+<tr><td>the <strong>frequency</strong></td><td>How <em>fast</em> the cycles repeat is <code>freq()</code>. Duty is how much of each cycle is on. You can change one without the other.</td></tr>
+</tbody>
+</table>
+
+<h2>What duty <em>does</em> depends on the device</h2>
+<p>Here's the fun part: the exact same <code>duty()</code> number does a different job on each part, because each part reacts to the pulses differently.</p>
+<table>
+<thead><tr><th>Device</th><th>What it "feels"</th><th>So higher duty means…</th></tr></thead>
+<tbody>
+<tr><td>💡 LED</td><td>the <strong>average</strong> (your eye blurs the fast flicker)</td><td>brighter — straight up to 100%</td></tr>
+<tr><td>🌀 Fan / motor</td><td>the <strong>average</strong> (too heavy to follow each pulse)</td><td>faster — straight up to 100%</td></tr>
+<tr><td>🔊 Buzzer</td><td>the <strong>swing</strong> (it must move back and forth to make sound)</td><td>louder only up to <strong>50%</strong>, then quieter again</td></tr>
+</tbody>
+</table>
+<p>For the LED and motor, PWM works like a dimmer: the device is too slow to notice individual pulses, so it responds to the <em>average</em> level (the orange line in the diagram) — more on-time, more average, brighter/faster. The buzzer is the odd one out, because sound comes from <em>motion</em>, not average power:</p>
+<div class="diagram">
+  <img src="diagrams/13_duty_vs_volume.svg" alt="Loudness versus duty cycle: a hump that is silent at 0 percent, loudest at 50 percent (duty 512), and silent again at 100 percent.">
+</div>
+<p>The buzzer is loudest at <strong>50% duty</strong> and gets quieter toward either 0% or 100%. Full details in the <a href="circuits.html#buzzer">buzzer circuit section</a>.</p>
+
+<h2>In your code</h2>
+<pre><code>from machine import Pin, PWM
+
+led = PWM(Pin(12))       # LED on GPIO 12
+led.freq(1000)           # flip 1000 times a second (fast enough that the eye sees steady light)
+led.duty(1023)           # 100% -> full brightness
+led.duty(512)            # ~50% -> half brightness
+led.duty(0)              # 0%   -> off
+
+buzzer = PWM(Pin(4))
+buzzer.freq(440)         # 440 flips/sec = the note A  (freq = PITCH)
+buzzer.duty(512)         # ~50% = loudest for a buzzer (duty = VOLUME)
+</code></pre>
+<div class="warn">
+📎 <strong>Heads-up on other scales.</strong> Newer MicroPython also offers <code>duty_u16()</code>, which uses a <em>16-bit</em> scale (0–65535) — same idea, finer steps. This camp's code uses the ESP32's <code>duty()</code> with the <strong>0–1023</strong> scale everywhere, so stick with that.
+</div>
+
+<h2>✅ The takeaway</h2>
+<ul>
+<li><strong>PWM</strong> = flip a pin on/off fast to fake an "in-between."</li>
+<li><strong>duty()</strong> = a plain number <code>0–1023</code> (no unit) = how much of each cycle is ON. <code>512 ≈ 50%</code>.</li>
+<li><strong>freq()</strong> = how fast the cycles repeat (a separate knob).</li>
+<li>Same duty number → <strong>brightness</strong> (LED), <strong>speed</strong> (motor), or <strong>volume</strong> (buzzer), depending on the part.</li>
+</ul>
+
+<p style="margin-top:2em"><a href="INDEX.html">← Back to tutorial home</a> &nbsp;·&nbsp; <a href="circuits.html">⚡ Circuits &amp; the physics behind the parts →</a></p>
+</body>
+</html>

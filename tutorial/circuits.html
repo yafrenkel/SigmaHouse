@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Circuits — the physics behind the parts</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.8em; }
+h3 { font-size: 1.2em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+.diagram { text-align: center; margin: 1em 0; }
+.diagram img { max-width: 100%; border: 1px solid #e1e4e8; border-radius: 8px; background: #fff; }
+.physics { border-left: 6px solid #4a90d9; background: #eef6ff; border-radius: 10px; padding: .6em 1.1em; margin: 1em 0; }
+.tryit { border-left: 6px solid #f6ae2d; background: #fff8ec; border-radius: 10px; padding: .6em 1.1em; margin: 1em 0; }
+.safe { border-left: 6px solid #e5534b; background: #fff2f1; border-radius: 10px; padding: .6em 1.1em; margin: 1em 0; }
+pre { background:#0f2147; color:#e6ecf5; border-radius:8px; padding:12px 15px; overflow-x:auto; line-height:1.5; font-size:.92em; margin:.8em 0; }
+pre code { background:none; padding:0; color:inherit; font-size:1em; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2.4em 0; }
+</style>
+</head>
+<body>
+<div class="topbar"><a href="INDEX.html">🏠 Tutorial home</a> &nbsp;·&nbsp; <strong>Circuits &amp; the physics behind the parts</strong></div>
+
+<h1>⚡ Circuits: what's really happening in the wires</h1>
+<p>Your smart house is code <em>and</em> electricity. Each part — the light, the buttons, the buzzer, the fan — is a little <strong>circuit</strong>: a complete loop that electricity flows around. If the loop is broken anywhere, nothing happens. Here are the four circuits you'll build, each with the physics in plain words.</p>
+
+<div class="safe">
+🔌 <strong>Golden rule of a circuit:</strong> electricity only flows in a <strong>complete loop</strong> — out of the ESP32, through the part, and back to <code>GND</code> (ground, 0&nbsp;V). Voltage (measured in volts) is the "push"; current (amps) is the "flow"; a resistor (ohms, Ω) is a "narrow pipe" that limits the flow. That's Ohm's law: <code>current = voltage ÷ resistance</code>.
+</div>
+
+<hr>
+
+<h2 id="led">💡 1. The LED — the blinking light (GPIO 12)</h2>
+<div class="diagram">
+  <img src="diagrams/08_circuit_led.drawio.svg" alt="LED circuit: GPIO 12 connects through a 220-ohm resistor to the LED's positive leg; the LED's other leg returns to GND. Current flows only when the pin is HIGH.">
+</div>
+<div class="physics">
+<strong>Physics.</strong> A GPIO pin is a tiny switch the code controls. Set it <strong>HIGH</strong> and it puts <strong>3.3&nbsp;V</strong> across the loop; current flows <code>GPIO 12 → resistor → LED → GND</code> and the LED lights. Set it <strong>LOW</strong> (0&nbsp;V) and the flow stops — dark. "Blinking" is just the code flipping HIGH/LOW.
+</div>
+<p>An <strong>LED</strong> (Light-Emitting Diode) is a <em>diode</em>: it only lets current through <em>one way</em> (long leg = +, toward the pin), and it "spends" about 2&nbsp;V turning electricity into light. The <strong>220&nbsp;Ω resistor</strong> is the safety valve — without it the current would spike and burn the LED out in an instant. With it, the current is a safe ~6&nbsp;mA.</p>
+<div class="tryit">🛠 <strong>Feel it:</strong> put the LED in backwards — it won't light. Diodes are one-way streets. (No harm done; just flip it around.)</div>
+
+<hr>
+
+<h2 id="button">🔘 2. The buttons — a push switch (GPIO 26 &amp; 25)</h2>
+<div class="diagram">
+  <img src="diagrams/09_circuit_button.drawio.svg" alt="Button circuit: an internal pull-up resistor ties GPIO 26 to 3.3 V so it reads HIGH; pressing the button connects the pin to GND, so it reads LOW.">
+</div>
+<div class="physics">
+<strong>Physics.</strong> An input pin doesn't push electricity — it <em>measures voltage</em>. A bare, unconnected pin "floats" and picks up electrical noise, reading random 1s and 0s. To fix that we switch on the ESP32's built-in <strong>pull-up resistor</strong> (in code: <code>Pin.PULL_UP</code>), which gently ties the pin to 3.3&nbsp;V so it reads a steady <strong>HIGH (1)</strong>.
+</div>
+<p>Press the button and you connect that pin <em>straight to GND</em>. Ground wins, the pin drops to 0&nbsp;V, and it reads <strong>LOW (0)</strong>. That's why the button is <strong>active-low</strong>: pressed&nbsp;=&nbsp;0, not-pressed&nbsp;=&nbsp;1. A physical button also "bounces" (the metal contacts chatter for a few milliseconds), so the code <em>debounces</em> it — ignores repeats within ~250&nbsp;ms.</p>
+
+<hr>
+
+<h2 id="buzzer">🔊 3. The buzzer — making sound (GPIO 4, PWM)</h2>
+<div class="diagram">
+  <img src="diagrams/10_circuit_buzzer.drawio.svg" alt="Buzzer circuit: GPIO 4 sends a PWM square wave through the piezo buzzer to GND; the switching frequency sets the pitch.">
+</div>
+<div class="physics">
+<strong>Physics.</strong> Inside is a <em>piezo</em> disc — a material that physically flexes when you apply voltage. Flex it back and forth fast and it pushes the air; those air-pressure waves are what your ears hear as <strong>sound</strong>.
+</div>
+<p>We drive it with <strong>PWM</strong> (Pulse-Width Modulation): GPIO 4 switches on/off hundreds of times a second. The <strong>frequency</strong> of that switching is the <strong>pitch</strong> — 440 flips per second is the musical note A. <strong>Double the frequency and you go up one octave</strong> (that's the whole trick in <code>play_melody.py</code>).</p>
+
+<h3>Pitch vs. volume — what the sound wave looks like</h3>
+<p>Sound is a wave of air pressure hitting your ear. A wave can only change in <strong>two</strong> ways, and each one is a different thing you hear:</p>
+<div class="diagram">
+  <img src="diagrams/12_volume_vs_pitch.svg" alt="Three sine-wave plots. Top: a reference tone with its amplitude (height) and one cycle (width) marked. Middle: the same-height wave but with cycles packed twice as tightly — higher pitch, same volume. Bottom: the same spacing but taller waves — louder, same pitch. Pitch is horizontal (how often the wave repeats); volume is vertical (how tall the wave is).">
+</div>
+<ul>
+<li><strong>Pitch is horizontal.</strong> How <em>often</em> the wave repeats — its frequency. Squeeze the waves closer together (flip faster) and the note goes higher. This is <code>buzzer.freq()</code>.</li>
+<li><strong>Volume is vertical.</strong> How <em>tall</em> the wave is — its amplitude. Taller waves push the air harder, so the sound is louder. On the buzzer, the height is set by how far the piezo disc swings.</li>
+</ul>
+<p>They're independent: you can make a wave taller <em>or</em> tighter without touching the other. That's why pitch and volume are two separate controls.</p>
+
+<div class="tryit">
+🎛️ <strong>Three knobs, three timescales.</strong> These are easy to mix up because they all involve time — but they act on <em>completely different</em> stretches of it:
+<table>
+<thead><tr><th>Knob (in code)</th><th>Timescale</th><th>Controls</th></tr></thead>
+<tbody>
+<tr><td><code>buzzer.freq()</code></td><td>how many cycles per second</td><td><strong>pitch</strong> — which note</td></tr>
+<tr><td><code>buzzer.duty()</code></td><td><em>inside</em> one cycle (microseconds)</td><td><strong>volume &amp; tone</strong></td></tr>
+<tr><td><code>time.sleep_ms()</code></td><td>the whole note (a fraction of a second)</td><td><strong>duration</strong> — how long it plays</td></tr>
+</tbody>
+</table>
+<strong>Duty is not duration.</strong> Duration is the <code>sleep_ms()</code> that keeps the buzzer running before the next note. Duty is the on/off <em>shape of a single cycle</em> — and at 440&nbsp;Hz there are ~176 of those cycles packed into one 400&nbsp;ms note.
+</div>
+
+<h3>How duty affects volume</h3>
+<p>Loudness is how big the piezo's <strong>back-and-forth swing</strong> is. Only the <em>changing</em> part of the voltage moves the disc — a steady, unchanging voltage makes <strong>no sound at all</strong> (the disc flexes once and just holds still). Duty is the fraction of each cycle the pin is HIGH, and it decides how big that swing is:</p>
+<table>
+<thead><tr><th>Duty</th><th>What the disc does</th><th>Volume</th></tr></thead>
+<tbody>
+<tr><td>~0% (barely on)</td><td>tiny pulses, hardly moves</td><td>almost silent</td></tr>
+<tr><td>25%</td><td>uneven push/release</td><td>medium</td></tr>
+<tr><td><strong>50%</strong></td><td><strong>equal push &amp; release — biggest swing</strong></td><td><strong>loudest</strong> 🔊</td></tr>
+<tr><td>75%</td><td>uneven the other way</td><td>medium</td></tr>
+<tr><td>~100% (almost always on)</td><td>nearly steady voltage, hardly moves</td><td>almost silent</td></tr>
+</tbody>
+</table>
+<div class="diagram">
+  <img src="diagrams/13_duty_vs_volume.svg" alt="Graph of loudness (y-axis) versus duty cycle (x-axis, 0 to 100 percent). The curve is a hump that starts at silent at 0%, rises to loudest at 50%, and falls back to silent at 100%. The code parks the buzzer at duty(512), about 50%.">
+</div>
+<p>So it's <em>not</em> simply "more duty = louder." As the graph shows, volume <strong>peaks at 50%</strong> and drops off as you head toward either 0% or 100% (mathematically it follows <code>sin(π&nbsp;×&nbsp;duty)</code>). That's exactly why the code parks the buzzer at <code>duty(512)</code>. That <code>512</code> has <em>no physical unit</em> — it's a raw <strong><a href="PWM.html">PWM duty count</a></strong> on MicroPython's scale, a whole number from <code>0</code> to <code>1023</code> (a 10-bit value, not volts or seconds). So <code>512 ÷ 1023 ≈ 50%</code>, the loudest point. To make a rough <strong>volume knob</strong>, sweep duty <em>up toward 512</em> (louder) and back <em>down toward 0</em> (quieter); going past 512 toward 1023 actually gets quieter again.</p>
+<h3>How duty also changes the tone</h3>
+<p>Pitch (how high) and volume (how loud) still aren't the whole story. There's a third thing your ears pick up: <strong>tone</strong> — the <em>flavour</em> or <em>character</em> of a sound. It's what lets you tell a <strong>flute from a kazoo</strong> even when they play the <em>exact same note at the same loudness</em>. Singing "aaah" versus "eeee" on one pitch is the same idea: same note, different tone.</p>
+<div class="physics">
+<strong>Physics.</strong> The buzzer plays a <strong>square wave</strong> (hard on, hard off), and a square wave isn't one pure note — it's the main note <em>plus a stack of fainter higher notes mixed in</em> (its <strong>harmonics</strong>). That mix <em>is</em> the tone. <code>duty()</code> sets the <strong>shape</strong> of each on/off cycle, and a different shape means a different mix of harmonics — so the <em>same pitch</em> can sound fuller or thinner, rounder or buzzier.
+</div>
+<p>Both rows below flip at the same frequency, so they're the <strong>same note</strong> — only the shape (and therefore the tone) changes:</p>
+<table>
+<thead><tr><th>Shape of one cycle</th><th>Harmonic mix</th><th>Tone you hear</th></tr></thead>
+<tbody>
+<tr><td>50% — even&nbsp; <code>██▁▁██▁▁</code></td><td>fewer, gentler highs</td><td>fuller, rounder</td></tr>
+<tr><td>10% — thin spikes&nbsp; <code>█▁▁▁▁▁▁▁█▁</code></td><td>more &amp; stronger highs</td><td>thinner, brighter, buzzier</td></tr>
+</tbody>
+</table>
+<div class="tryit">
+🔊 <strong>Hear it yourself.</strong> Hold the pitch fixed and step the duty across its whole range. You'll hear the <em>volume</em> rise then fall (loudest near 512), and near the extremes a shift in <em>character</em> — that's the tone:
+<pre><code>from machine import Pin, PWM
+import time
+
+buzzer = PWM(Pin(4))
+buzzer.freq(440)          # fixed pitch (the note A) — only the shape changes below
+
+for duty in (50, 200, 512, 900, 1000):
+    buzzer.duty(duty)     # same note, different on/off shape
+    print("duty", duty)
+    time.sleep(1)
+
+buzzer.duty(0)            # silence</code></pre>
+</div>
+<p>On a cheap piezo the <strong>volume</strong> swing is the big, obvious effect; the <strong>tone</strong> shift is subtler — the buzzer's own resonance hides some of it — but it's real, and it's why the same note can come out "rounder" or "buzzier."</p>
+
+<p>⚠️ This all assumes a <strong>passive</strong> piezo buzzer (you set the pitch yourself with <code>freq()</code>), which is what this kit uses. An <em>active</em> buzzer has its own oscillator inside, so duty barely does anything — it's basically just on/off.</p>
+
+<hr>
+
+<h2 id="fan">🌀 4. The fan — spinning a motor (GPIO 18 &amp; 19 → driver)</h2>
+<div class="diagram">
+  <img src="diagrams/11_circuit_fan.drawio.svg" alt="Fan circuit: GPIO 18 and 19 send small control signals to an H-bridge motor driver, which uses its own power supply to drive the motor; swapping the signals reverses the spin.">
+</div>
+<div class="physics">
+<strong>Physics.</strong> A motor is a coil of wire that becomes an <strong>electromagnet</strong> and spins by pushing against permanent magnets. Two problems: (1) it needs <em>far</em> more current than a GPIO pin can safely give — a pin gives a whisper, a motor wants a shout; and (2) as it spins it acts like a generator and kicks voltage <em>backward</em> ("back-EMF") that could fry the ESP32.
+</div>
+<p>So the pin never powers the motor directly. Instead, <strong>GPIO 18 and 19 send tiny control signals</strong> to a <strong>motor driver (an "H-bridge")</strong> — a little switch-board that uses its <em>own</em> power supply to shove the big current through the motor. This is the same "small signal controls big power" idea as a light switch on the wall controlling a whole room's lights.</p>
+<table>
+<thead><tr><th>GPIO 18 (A)</th><th>GPIO 19 (B)</th><th>Motor does</th></tr></thead>
+<tbody>
+<tr><td>HIGH</td><td>LOW</td><td>spins clockwise</td></tr>
+<tr><td>LOW</td><td>HIGH</td><td>spins counter-clockwise</td></tr>
+<tr><td>LOW</td><td>LOW</td><td>stopped</td></tr>
+</tbody>
+</table>
+<p>Sending PWM (instead of steady HIGH) to the driver sets the motor's <strong>speed</strong> — same knob as the buzzer, different job.</p>
+
+<hr>
+
+<h2>🧩 The one pattern behind all four</h2>
+<p>Every part is the same loop: <strong>the ESP32 sets a pin's voltage → current flows through a component → back to GND.</strong> The differences are just <em>what the component does with that current</em>:</p>
+<table>
+<thead><tr><th>Part</th><th>Pin(s)</th><th>Turns electricity into…</th><th>Needs a helper?</th></tr></thead>
+<tbody>
+<tr><td>💡 LED</td><td>GPIO 12 (output)</td><td>light</td><td>a resistor (to limit current)</td></tr>
+<tr><td>🔘 Button</td><td>GPIO 26 / 25 (input)</td><td>a voltage the pin reads</td><td>a pull-up resistor (built-in)</td></tr>
+<tr><td>🔊 Buzzer</td><td>GPIO 4 (PWM out)</td><td>sound (air waves)</td><td>none</td></tr>
+<tr><td>🌀 Fan</td><td>GPIO 18 / 19 (out)</td><td>motion (spinning)</td><td>a motor driver + its own power</td></tr>
+</tbody>
+</table>
+
+<p style="margin-top:2em"><a href="INDEX.html">← Back to tutorial home</a></p>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ice-Breaker — "You Are the Internet"</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.6em; }
+h3 { font-size: 1.25em; margin-top: 1.4em; }
+h4 { font-size: 1.05em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  border-left: 4px solid #d0d7de; margin: 1em 0; padding: .4em 1em;
+  color: #57606a; background: #f6f8fa; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: .4em 0; }
+details {
+  border: 1px solid #d0d7de; border-radius: 8px; padding: .6em 1em; margin: 1em 0;
+  background: #fbfcfd;
+}
+summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .6em; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2em 0; }
+img { max-width: 100%; }
+@media print {
+  .topbar { display: none; }
+  body { max-width: none; font-size: 12pt; }
+  details { page-break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }  /* print expands details */
+}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
+<article>
+<h1 id="ice-breaker-you-are-the-internet">Ice-Breaker — "You Are the Internet"</h1>
+<p>A no-computer, get-up-and-move game for the very start of camp (Day 1, before any code). Campers physically <em>become</em> the browser, the server, the network, and the smart houses — so by the time they open PyCharm, the whole request/response idea already lives in their bodies.</p>
+<ul>
+<li><strong>Time:</strong> 20-25 min total (5 min warm-up + 15-20 min main game)</li>
+<li><strong>Group size:</strong> 6-30. Scales by adding more "houses".</li>
+<li><strong>Materials (all offline):</strong> index cards or sticky notes, 1 pen per camper, 1 clipboard (or just a big sheet) for the "server", optional colored cards for LED states. That's it.</li>
+<li><strong>Energy:</strong> loud and silly on purpose. The alarm round gets chaotic — that's the point.</li>
+</ul>
+<hr>
+<h2 id="warm-up-5-min-pick-your-unique_id">Warm-up (5 min) — "Pick your unique_id"</h2>
+<p>Real devices identify themselves by a <strong>MAC address</strong> — a unique code burned into the chip. Campers do the same.</p>
+<p>🛠 <strong>Run it:</strong>
+1. Each camper writes on a card: a made-up 6-character <strong>hacker handle / unique_id</strong> (letters + numbers, e.g. <code>R2D2X9</code>, <code>K1TT3N</code>) and <strong>one true thing about themselves</strong> ("I have 3 cats").
+2. Go around: each person says <em>"I'm house <code>R2D2X9</code> and I have 3 cats."</em>
+3. They keep this card — it's their identity for the whole game (and a fun callback when they see their ESP32's real <code>unique_id</code> on Day 3).</p>
+<p>💡 <strong>Bridge:</strong> "That code is exactly what your ESP32 will send to register itself. Yours is random; the board's is its MAC address."</p>
+<hr>
+<h2 id="main-game-15-20-min-you-are-the-internet">Main game (15-20 min) — "You Are the Internet"</h2>
+<h3 id="roles-assign-out-loud">Roles (assign out loud)</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>How many</th>
+<th>Holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🖥 <strong>Dashboard</strong> (client)</td>
+<td>1-2</td>
+<td>A "remote control" card</td>
+</tr>
+<tr>
+<td>📡 <strong>Router</strong></td>
+<td>1</td>
+<td>Nothing — just relays messages</td>
+</tr>
+<tr>
+<td>🐍 <strong>Server</strong> (the hub)</td>
+<td>1 (a counsellor is great here for round 1)</td>
+<td>The clipboard = the <strong>HOUSES</strong> list</td>
+</tr>
+<tr>
+<td>🏠 <strong>Smart Houses</strong></td>
+<td>everyone else</td>
+<td>Their unique_id card + an "LED: off" card</td>
+</tr>
+</tbody>
+</table>
+<p>Set the room up so the <strong>Houses</strong> are spread out, the <strong>Server</strong> sits at a desk with the clipboard, the <strong>Router</strong> stands between the Houses and the Server, and the <strong>Dashboard</strong> stands near the Router. Messages must physically travel: House → Router → Server, and back.</p>
+<blockquote>
+<p><strong>The rule:</strong> you may only <em>speak the message out loud</em> and <em>walk it through the Router</em>. No shortcuts. The Router is the only path — just like real packets going through your camp router.</p>
+</blockquote>
+<h3 id="round-1-registration-post">Round 1 — Registration (POST)</h3>
+<p>Each House walks their card to the Router, who walks it to the Server, saying:</p>
+<blockquote>
+<p><strong>"POST! Register me — house <code>R2D2X9</code>!"</strong></p>
+</blockquote>
+<p>The Server writes the unique_id on the clipboard. Now they're "Active".</p>
+<p>💡 <em>This is exactly <code>POST /api/houses</code>.</em></p>
+<h3 id="round-2-keepalive-the-watchdog-put">Round 2 — Keepalive + the Watchdog (PUT)</h3>
+<p>Counsellor calls <strong>"TICK!"</strong> every ~10 seconds. On each tick, every House must shout <strong>"PUT keepalive!"</strong> and wave at the Server.</p>
+<ul>
+<li>Miss <strong>two ticks in a row</strong> (sat down, distracted, talking) → the Server crosses you off as <strong>"Lost"</strong>. To get back in, you must <code>POST</code> register again.</li>
+</ul>
+<p>💡 <em>This is the <code>/keepalive</code> heartbeat and the watchdog that marks silent houses "Lost" after 60s. Now they'll never forget why their board "disappeared" if it stops phoning home.</em></p>
+<h3 id="round-3-toggle-the-led-post-response">Round 3 — Toggle the LED (POST + response)</h3>
+<p>The <strong>Dashboard</strong> picks a house and announces:</p>
+<blockquote>
+<p><strong>"POST! Toggle the LED on house <code>R2D2X9</code>!"</strong></p>
+</blockquote>
+<p>The message travels Dashboard → Router → Server. The Server writes "LED = ON" next to that house. On the <strong>next TICK</strong>, when that house sends its keepalive, the Server replies:</p>
+<blockquote>
+<p><strong>"state_update! Go look at your state."</strong></p>
+</blockquote>
+<p>The house then flips its card to <strong>"LED: on"</strong> and strikes a pose / raises both hands (they "light up" 💡).</p>
+<p>💡 <em>This is the real round-trip you'll see on Day 3: dashboard click → hub stores it → next keepalive says "state_update" → device pulls new state → LED changes. There's a deliberate delay (you wait for the next tick) — exactly like the ~1-second lag on real hardware.</em></p>
+<h3 id="round-4-global-alarm-the-chaotic-finale">Round 4 — GLOBAL ALARM (the chaotic finale)</h3>
+<ol>
+<li>Pick a few houses to "arm" their alarm — they hold their card up high.</li>
+<li>Counsellor secretly taps ONE armed house on the shoulder: <strong>"You saw motion!"</strong></li>
+<li>That house sprints (walks fast!) to the Server: <strong>"POST report_motion!"</strong></li>
+<li>The Server announces to every <strong>armed</strong> house: "alarm!"</li>
+<li>On the next <strong>TICK</strong>, every armed house yells <strong>"BZZZZZZ!"</strong> at the top of their lungs. 📢</li>
+<li>To stop it: the Dashboard sends <strong>"POST disarm!"</strong> for each house.</li>
+</ol>
+<p>💡 <em>This is the global alarm: motion in one armed house fires the buzzer in ALL armed houses. The kids literally run the protocol — and it's the loudest, most memorable 60 seconds of Day 1.</em></p>
+<hr>
+<h2 id="tailored-for-this-semilab-7-campers-1-ta-you">🎯 Tailored for THIS semilab: 7 campers + 1 TA + you</h2>
+<p>You don't have enough people to waste anyone on a passive role, so here's the exact casting:</p>
+<table>
+<thead>
+<tr>
+<th>Who</th>
+<th>Role</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>You (instructor)</strong></td>
+<td>🐍 <strong>Server + Narrator</strong></td>
+<td>The teaching seat. You hold the clipboard (the HOUSES list), you call <strong>"TICK!"</strong>, you decide who's "Lost", you announce the alarm, and you can freeze the action any time to explain. With only 7 kids you can comfortably do Server <em>and</em> tempo-caller at once.</td>
+</tr>
+<tr>
+<td><strong>TA</strong></td>
+<td>📡 <strong>Router + Packet Gremlin</strong></td>
+<td>Relays every message House↔Server, and runs the "drop a packet" twist below. Also your second pair of eyes for spotting houses that miss a TICK.</td>
+</tr>
+<tr>
+<td><strong>All 7 campers</strong></td>
+<td>🏠 <strong>Smart Houses</strong> (rounds 1-2)</td>
+<td>Everyone registers, everyone keepalives. Maximum participation.</td>
+</tr>
+<tr>
+<td><strong>1 camper, rotating</strong></td>
+<td>🖥 <strong>Dashboard</strong> (rounds 3-4)</td>
+<td>For the toggle and alarm rounds, promote one House to Dashboard. <strong>Rotate it each round</strong> so different kids get the "boss" seat. Over the rounds (and a couple of repeats) everyone gets a turn.</td>
+</tr>
+</tbody>
+</table>
+<p>So: nobody sits out, you stay in control of pace, and the TA gets the fun chaos job. If you'd rather roam and teach hands-free, swap — <strong>TA = Server</strong>, <strong>you = Narrator/"Internet Weather"</strong> injecting events ("storm! packets drop!", "power flicker!"). Either works.</p>
+<h3 id="a-7-house-tip">A 7-house tip</h3>
+<p>With 7 houses the alarm round is loud but manageable. Arm <strong>4-5</strong> of them (leave 2-3 disarmed so the contrast is visible — disarmed houses stay silent while the armed ones scream). That visibly proves "only <em>armed</em> houses buzz."</p>
+<hr>
+<h2 id="optional-twist-the-router-drops-packets-teaches-tcp">Optional twist — "The Router drops packets" (teaches TCP)</h2>
+<p>Give the Router a secret power: once per round, they may <strong>crumple a message and drop it on the floor</strong> instead of delivering it.</p>
+<p>When a House's keepalive vanishes and they almost get marked "Lost", ask: <em>"How could we make sure a message always gets through?"</em></p>
+<p>💡 <em>Answer: you'd re-send until you get a confirmation. That's </em><em>TCP</em><em> — the layer that re-sends lost packets so HTTP never has to worry. Real <code>urequests</code> gets this for free.</em></p>
+<hr>
+<h2 id="debrief-3-min-connect-it-to-the-code">Debrief (3 min) — connect it to the code</h2>
+<p>Stand everyone in a circle and map the game to what they're about to build:</p>
+<table>
+<thead>
+<tr>
+<th>In the game you…</th>
+<th>In the code it's…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Walked a card to the Server</td>
+<td>An <strong>HTTP request</strong></td>
+</tr>
+<tr>
+<td>Got an answer back</td>
+<td>An <strong>HTTP response</strong></td>
+</tr>
+<tr>
+<td>Shouted "POST / PUT"</td>
+<td>The <strong>HTTP verb</strong></td>
+</tr>
+<tr>
+<td>The Server's clipboard</td>
+<td>The <strong>HOUSES dict</strong> in <code>houses.py</code></td>
+</tr>
+<tr>
+<td>The Router</td>
+<td>Your camp <strong>router</strong> (and TCP/IP underneath)</td>
+</tr>
+<tr>
+<td>"Lost" after missing ticks</td>
+<td>The <strong>watchdog</strong> in <code>app.py</code></td>
+</tr>
+<tr>
+<td>The whole alarm chaos</td>
+<td><code>report_motion</code> → keepalive → buzzer</td>
+</tr>
+</tbody>
+</table>
+<p>Closing line: <em>"Everything you just did with your bodies, you'll now make computers do — about a thousand times per second. Let's open PyCharm."</em></p>
+<hr>
+<h2 id="do-we-need-prizes">Do we need prizes?</h2>
+<p><strong>Short answer: no — and competitive prizes would actually work against you here.</strong> This game is <em>cooperative</em>, not a contest. The whole neighborhood wins or loses together (did the alarm fire and get disarmed in time?). A "winner takes the candy" twist would break that.</p>
+<p>For 14-year-olds, <strong>status and humor beat stuff</strong>. What lands:</p>
+<ul>
+<li><strong>Silly fake-serious titles</strong> awarded at the debrief (free, and they remember them all week):</li>
+<li>🏆 <em>Most Reliable House</em> — the one camper who never missed a keepalive.</li>
+<li>🦠 <em>Patient Zero</em> — whoever triggered the alarm.</li>
+<li>👹 <em>Packet Gremlin</em> — the TA, for dropping packets.</li>
+<li>🎖 <em>"I Survived the TCP/IP Transition"</em> — everyone (a callback to the <a href="background/how_the_internet_works.html" target="_blank" rel="noopener">internet history doc</a> — real engineers wore these buttons in 1983).</li>
+<li><strong>A shared treat</strong> <em>after</em> the alarm round (a bowl of candy passed around) — fits the cooperative framing because everyone gets it, not just a "winner".</li>
+</ul>
+<p><strong>Skip:</strong> medals, points leaderboards, "first team to finish" races. They turn an ice-breaker (whose job is to make kids comfortable <em>together</em>) into a competition that leaves someone feeling slow on day one.</p>
+<hr>
+<h2 id="what-does-success-look-like">What does "success" look like?</h2>
+<p>Success is <strong>not</strong> a score. The game worked if, by the end, you can tick these:</p>
+<p><strong>Social (the real point of an ice-breaker):</strong>
+- ✅ Every camper spoke out loud at least once (the unique_id intro guarantees this).
+- ✅ Kids learned a few names and laughed together.
+- ✅ The shy ones were <em>carried by the activity</em> — they had a clear thing to do (keepalive, buzz) without being put on the spot.</p>
+<p><strong>Conceptual (bonus — it pre-teaches Day 1):</strong>
+- ✅ A camper can answer "what's a request? what's a response?" in their own words.
+- ✅ They can explain why a house got marked <strong>Lost</strong> (it stopped sending keepalives).
+- ✅ They remember the alarm chain: <em>one armed house sees motion → tells the hub → hub tells all armed houses → everyone buzzes.</em></p>
+<p><strong>Energy:</strong>
+- ✅ The room is louder and looser than when you started.
+- ✅ When you say "now let's make the computers do this", they're curious, not groaning.</p>
+<p><strong>Quick 30-second check</strong> at the debrief — ask the room (not individuals):
+1. "If your house stops waving at me every TICK, what happens?" → <em>"You mark us Lost!"</em>
+2. "When I clicked toggle, why didn't your LED change instantly?" → <em>"We had to wait for the next keepalive."</em>
+3. "Who buzzes when one armed house sees motion?" → <em>"All the armed houses!"</em></p>
+<p>If those three answers come back fast, the game did its job — the protocol is already in their heads before they write a line of code.</p>
+<blockquote>
+<p><strong>You don't pass or fail this game.</strong> If it was loud, everyone moved, and those three questions land — it's a win. If a round flops, just narrate louder and move to the alarm; the alarm round saves everything.</p>
+</blockquote>
+<hr>
+<h2 id="counsellor-notes">Counsellor notes</h2>
+<ul>
+<li><strong>Prep:</strong> 2 minutes — just cards and pens. Pre-write role labels if you like.</li>
+<li><strong>Small group (&lt;8):</strong> drop the Router (Houses talk straight to the Server) and skip the TCP twist.</li>
+<li><strong>Big group (&gt;20):</strong> add a second Router and a second Server desk; split into two "neighborhoods" that share one alarm — when one neighborhood's alarm fires, both go off (shows the hub is shared).</li>
+<li><strong>Low-energy group:</strong> keep it seated — messages get passed hand-to-hand down a row instead of walking. Still works.</li>
+<li><strong>The TICK is your tempo control.</strong> Speed it up to raise energy, slow it down to explain.</li>
+<li><strong>Let the alarm round be loud.</strong> Then immediately channel that energy into "now let's make the machines do it" — straight into <a href="day1.html" target="_blank" rel="noopener">day1.md</a>.</li>
+</ul>
+<blockquote>
+<p>Tie-in: the diagrams in <a href="diagrams/README.html" target="_blank" rel="noopener">diagrams/</a> are the <em>picture</em> of what they just <em>acted out</em>. Project <a href="diagrams/03_http_and_server.drawio" target="_blank" rel="noopener">03_http_and_server.drawio</a> right after the debrief and say "see — you were the arrows."</p>
+</blockquote>
+</article>
+</body>
+</html>

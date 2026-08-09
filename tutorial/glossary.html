@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary — every acronym in this camp, spelled out</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px; line-height: 1.65; color: #1f2328;
+  max-width: 980px; margin: 0 auto; padding: 0 24px 80px;
+  background: #ffffff;
+}
+.topbar {
+  position: sticky; top: 0; background: #ffffffee; backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e1e4e8; padding: 10px 0; margin-bottom: 24px;
+  font-size: 0.85em;
+}
+.topbar a { color: #0969da; text-decoration: none; font-weight: 600; }
+.topbar a:hover { text-decoration: underline; }
+h1 { font-size: 2.1em; border-bottom: 2px solid #e1e4e8; padding-bottom: .3em; margin-top: 1.2em; }
+h2 { font-size: 1.55em; border-bottom: 1px solid #e1e4e8; padding-bottom: .25em; margin-top: 1.6em; }
+h3 { font-size: 1.25em; margin-top: 1.4em; }
+h4 { font-size: 1.05em; margin-top: 1.2em; }
+a { color: #0969da; }
+p, li { font-size: 1em; }
+code {
+  font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: #f0f1f2; padding: .15em .4em; border-radius: 4px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 0.92em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f0f1f2; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  border-left: 4px solid #d0d7de; margin: 1em 0; padding: .4em 1em;
+  color: #57606a; background: #f6f8fa; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: .4em 0; }
+details {
+  border: 1px solid #d0d7de; border-radius: 8px; padding: .6em 1em; margin: 1em 0;
+  background: #fbfcfd;
+}
+summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .6em; }
+hr { border: none; border-top: 1px solid #e1e4e8; margin: 2em 0; }
+img { max-width: 100%; }
+@media print {
+  .topbar { display: none; }
+  body { max-width: none; font-size: 12pt; }
+  details { page-break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }  /* print expands details */
+}
+</style>
+</head>
+<body>
+<div class="topbar"><a href="INDEX.html" target="_blank" rel="noopener">⌂ Tutorial Index</a></div>
+<article>
+<h1 id="glossary-every-acronym-in-this-camp-spelled-out">Glossary — every acronym in this camp, spelled out</h1>
+<p>Lost in alphabet soup? Every short form used anywhere in this tutorial is here, with what the letters stand for and a one-line plain-English meaning. Grouped by topic; skim the section you need.</p>
+<hr>
+<h2 id="how-to-say-them-out-loud">🗣️ How to say them out loud</h2>
+<p>Acronyms fall into three speaking habits: <strong>spell it out</strong> (say each letter), <strong>say it as a word</strong>, or a <strong>blend</strong> of the two. Here are the ones campers most often trip over. The big one:</p>
+<blockquote>
+<p><strong>GPIO</strong> → say <strong>“GEE-pie-oh.”</strong> As in: <em>“Plug the LED into a gee-pie-oh pin.”</em> The <code>IO</code> is "input/output" (said "eye-oh"), which blends into "pie-oh". Some people just spell it: <em>G-P-I-O</em>. Either is fine.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Short form</th>
+<th>Say it like</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><strong>GPIO</strong></td><td>“GEE-pie-oh” (or spell it: G-P-I-O)</td><td>blend</td></tr>
+<tr><td><strong>ESP32</strong></td><td>“E-S-P thirty-two”</td><td>spell + number</td></tr>
+<tr><td><strong>I2C</strong></td><td>“eye-squared-see” or “eye-two-see”</td><td>special</td></tr>
+<tr><td><strong>SCL / SDA</strong></td><td>“S-C-L” / “S-D-A”</td><td>spell out</td></tr>
+<tr><td><strong>PWM</strong></td><td>“P-W-M”</td><td>spell out</td></tr>
+<tr><td><strong>LED</strong></td><td>“L-E-D” (a few say “led”)</td><td>spell out</td></tr>
+<tr><td><strong>PIR</strong></td><td>“P-I-R”</td><td>spell out</td></tr>
+<tr><td><strong>LCD</strong></td><td>“L-C-D”</td><td>spell out</td></tr>
+<tr><td><strong>IRQ</strong></td><td>“I-R-Q” (some say “irk”)</td><td>spell out</td></tr>
+<tr><td><strong>JSON</strong></td><td>“JAY-sun” (like the name Jason)</td><td>word</td></tr>
+<tr><td><strong>WiFi</strong></td><td>“WHY-fy”</td><td>word</td></tr>
+<tr><td><strong>REST</strong></td><td>“rest”</td><td>word</td></tr>
+<tr><td><strong>MAC</strong> (address)</td><td>“mack”</td><td>word</td></tr>
+<tr><td><strong>NAT</strong></td><td>“nat”</td><td>word</td></tr>
+<tr><td><strong>REPL</strong></td><td>“REP-ul” (rhymes with “pebble”)</td><td>word</td></tr>
+<tr><td><strong>SQL</strong>-style ones: <strong>API, URL, HTTP, SSID, USB, CSS, HTML, DNS, IDE, CLI</strong></td><td>just spell each letter (“A-P-I”, “U-R-L”, “H-T-T-P”…)</td><td>spell out</td></tr>
+</tbody>
+</table>
+<hr>
+<h2 id="networking-the-internet">Networking &amp; the internet</h2>
+<table>
+<thead>
+<tr>
+<th>Short form</th>
+<th>Stands for</th>
+<th>What it means (plainly)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HTTP</strong></td>
+<td>HyperText Transfer Protocol</td>
+<td>The rules for asking a server for something and getting an answer. Our whole hub speaks HTTP.</td>
+</tr>
+<tr>
+<td><strong>HTTPS</strong></td>
+<td>HTTP Secure</td>
+<td>HTTP with encryption (the padlock in your browser). We use plain HTTP at camp — it's a private offline network.</td>
+</tr>
+<tr>
+<td><strong>TCP</strong></td>
+<td>Transmission Control Protocol</td>
+<td>The layer that makes delivery reliable — nothing lost, everything in order. HTTP rides on top of it.</td>
+</tr>
+<tr>
+<td><strong>IP</strong></td>
+<td>Internet Protocol</td>
+<td>The addressing layer. Every device gets an <strong>IP address</strong> like <code>192.168.1.8</code>.</td>
+</tr>
+<tr>
+<td><strong>TCP/IP</strong></td>
+<td>TCP + IP together</td>
+<td>The combined rule-set that the entire internet runs on, designed in 1974.</td>
+</tr>
+<tr>
+<td><strong>UDP</strong></td>
+<td>User Datagram Protocol</td>
+<td>TCP's fast-but-unreliable sibling. Used by games and video calls, not by us.</td>
+</tr>
+<tr>
+<td><strong>WiFi</strong></td>
+<td>Wireless Fidelity*</td>
+<td>Wireless networking over radio. How the ESP32 reaches the hub. (*Really just a brand name that stuck; treat it as "wireless networking".)</td>
+</tr>
+<tr>
+<td><strong>LAN</strong></td>
+<td>Local Area Network</td>
+<td>A small network in one place — your camp router and everything on it.</td>
+</tr>
+<tr>
+<td><strong>IP address</strong></td>
+<td>(see IP)</td>
+<td>A device's "phone number" on the network. <code>192.168.1.8</code>.</td>
+</tr>
+<tr>
+<td><strong>port</strong></td>
+<td>(not an acronym)</td>
+<td>A number that picks <em>which program</em> on a machine. Our hub uses port <strong>8080</strong>. IP = building, port = apartment.</td>
+</tr>
+<tr>
+<td><strong>DNS</strong></td>
+<td>Domain Name System</td>
+<td>The internet's phone book — turns <code>youtube.com</code> into an IP address. We skip it at camp and type raw IPs.</td>
+</tr>
+<tr>
+<td><strong>DHCP</strong></td>
+<td>Dynamic Host Configuration Protocol</td>
+<td>How your router automatically hands out IP addresses to devices that join the WiFi.</td>
+</tr>
+<tr>
+<td><strong>NAT</strong></td>
+<td>Network Address Translation</td>
+<td>The router's trick for sharing one public internet address among many private devices.</td>
+</tr>
+<tr>
+<td><strong>SSID</strong></td>
+<td>Service Set IDentifier</td>
+<td>The <em>name</em> of a WiFi network — the thing you pick from the WiFi list.</td>
+</tr>
+<tr>
+<td><strong>MAC address</strong></td>
+<td>Media Access Control address</td>
+<td>A permanent hardware ID burned into every network chip. Your ESP32's <code>unique_id</code> is its MAC.</td>
+</tr>
+<tr>
+<td><strong>OSI</strong></td>
+<td>Open Systems Interconnection</td>
+<td>A 7-layer textbook model of networking. We use the simpler 4-layer TCP/IP view.</td>
+</tr>
+<tr>
+<td><strong>SYN / ACK</strong></td>
+<td>Synchronize / Acknowledge</td>
+<td>The "hello / hello back" messages that open a TCP connection (the "3-way handshake").</td>
+</tr>
+<tr>
+<td><strong>CDN</strong></td>
+<td>Content Delivery Network</td>
+<td>Servers spread worldwide that deliver files fast. Mentioned as why draw.io's HTML export needs internet.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="the-web-data-formats">The Web &amp; data formats</h2>
+<table>
+<thead>
+<tr>
+<th>Short form</th>
+<th>Stands for</th>
+<th>What it means (plainly)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>URL</strong></td>
+<td>Uniform Resource Locator</td>
+<td>A web address, like <code>http://192.168.1.8:8080/api/houses</code>.</td>
+</tr>
+<tr>
+<td><strong>HTML</strong></td>
+<td>HyperText Markup Language</td>
+<td>The language web pages are written in. Our dashboard page is HTML.</td>
+</tr>
+<tr>
+<td><strong>CSS</strong></td>
+<td>Cascading Style Sheets</td>
+<td>The language that styles a web page (colors, layout). Our <code>style.css</code>.</td>
+</tr>
+<tr>
+<td><strong>JS</strong></td>
+<td>JavaScript</td>
+<td>The programming language that runs <em>inside</em> the browser. Our <code>dashboard.js</code> polls the hub.</td>
+</tr>
+<tr>
+<td><strong>JSON</strong></td>
+<td>JavaScript Object Notation</td>
+<td>A text way to write data that looks like a Python dict: <code>{"led": {"active": true}}</code>. How the hub and ESP32 swap data.</td>
+</tr>
+<tr>
+<td><strong>API</strong></td>
+<td>Application Programming Interface</td>
+<td>The set of "doors" (routes) a program offers for others to use. Our hub's API is its 9 routes.</td>
+</tr>
+<tr>
+<td><strong>REST</strong></td>
+<td>REpresentational State Transfer</td>
+<td>A popular style of API using HTTP verbs (GET/POST/PUT/DELETE) on "resources" like <code>/houses</code>. Ours is RESTish.</td>
+</tr>
+<tr>
+<td><strong>UID</strong></td>
+<td>Unique IDentifier</td>
+<td>A value that's different for every house. We use the ESP32's MAC address.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="hardware-electronics">Hardware &amp; electronics</h2>
+<table>
+<thead>
+<tr>
+<th>Short form</th>
+<th>Stands for</th>
+<th>What it means (plainly)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ESP32</strong></td>
+<td>(Espressif chip family)</td>
+<td>The little WiFi-enabled microcontroller board that is each "smart house".</td>
+</tr>
+<tr>
+<td><strong>MCU</strong></td>
+<td>MicroController Unit</td>
+<td>A tiny computer-on-a-chip (the ESP32 is one). Runs your code directly, no operating system needed.</td>
+</tr>
+<tr>
+<td><strong>GPIO</strong></td>
+<td>General-Purpose Input/Output</td>
+<td>A pin you can control in code — read a button, or switch an LED. "GPIO 12" = pin number 12.</td>
+</tr>
+<tr>
+<td><strong>PWM</strong></td>
+<td>Pulse-Width Modulation</td>
+<td>Switching a pin on/off very fast to fake "in-between" levels — used to set fan speed and buzzer tone.</td>
+</tr>
+<tr>
+<td><strong>I2C</strong></td>
+<td>Inter-Integrated Circuit</td>
+<td>A 2-wire system for talking to chips like the LCD. Uses pins SCL (clock) + SDA (data). Say it "I-squared-C" or "I-two-C".</td>
+</tr>
+<tr>
+<td><strong>IRQ</strong></td>
+<td>Interrupt ReQuest</td>
+<td>The hardware shouting "this pin just changed!" so your code reacts instantly instead of constantly checking.</td>
+</tr>
+<tr>
+<td><strong>LED</strong></td>
+<td>Light-Emitting Diode</td>
+<td>The little light on GPIO 12.</td>
+</tr>
+<tr>
+<td><strong>PIR</strong></td>
+<td>Passive InfraRed (sensor)</td>
+<td>The motion sensor — it sees body heat moving. On GPIO 13.</td>
+</tr>
+<tr>
+<td><strong>LCD</strong></td>
+<td>Liquid Crystal Display</td>
+<td>The 2-line text screen. Talks over I2C.</td>
+</tr>
+<tr>
+<td><strong>RFID</strong></td>
+<td>Radio-Frequency IDentification</td>
+<td>Tap-card tech (like a bus pass). In the original project but <strong>removed</strong> from ours to keep it simple.</td>
+</tr>
+<tr>
+<td><strong>USB</strong></td>
+<td>Universal Serial Bus</td>
+<td>The cable connecting the ESP32 to your laptop (power + data).</td>
+</tr>
+<tr>
+<td><strong>COM port</strong></td>
+<td>Communication port</td>
+<td>Windows' name for the USB serial connection, like <code>COM3</code>. Thonny needs to know which one.</td>
+</tr>
+<tr>
+<td><strong>SCL / SDA</strong></td>
+<td>Serial CLock / Serial DAta</td>
+<td>The two I2C wires. On our board SCL=GPIO 22, SDA=GPIO 21.</td>
+</tr>
+<tr>
+<td><strong>RAM</strong></td>
+<td>Random Access Memory</td>
+<td>Short-term memory. The ESP32 has very little (~520 KB), which is why we always <code>close()</code> HTTP responses.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="software-tools">Software &amp; tools</h2>
+<table>
+<thead>
+<tr>
+<th>Short form</th>
+<th>Stands for</th>
+<th>What it means (plainly)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>REPL</strong></td>
+<td>Read-Eval-Print Loop</td>
+<td>The interactive <code>&gt;&gt;&gt;</code> prompt where you type one line and see the result instantly. Thonny's Shell is a REPL on the ESP32.</td>
+</tr>
+<tr>
+<td><strong>IDE</strong></td>
+<td>Integrated Development Environment</td>
+<td>An app for writing/running code. PyCharm and Thonny are IDEs.</td>
+</tr>
+<tr>
+<td><strong>CLI</strong></td>
+<td>Command-Line Interface</td>
+<td>Typing commands in a terminal (like <code>curl ...</code>) instead of clicking buttons.</td>
+</tr>
+<tr>
+<td><strong>OS</strong></td>
+<td>Operating System</td>
+<td>The software running your computer (Windows, macOS). The ESP32 has <em>no</em> OS — your code is in charge.</td>
+</tr>
+<tr>
+<td><strong>pip</strong></td>
+<td>Pip Installs Packages</td>
+<td>Python's tool for installing libraries, like Flask. (Yes, the name is a joke that refers to itself.)</td>
+</tr>
+<tr>
+<td><strong>venv</strong></td>
+<td>Virtual ENVironment</td>
+<td>A private, isolated set of Python libraries for one project, so projects don't clash.</td>
+</tr>
+<tr>
+<td><strong>PDF / PNG / SVG</strong></td>
+<td>Portable Document Format / Portable Network Graphics / Scalable Vector Graphics</td>
+<td>File types for the diagrams. PDF = print, PNG = pixel image, SVG = scalable image.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="history-from-the-internet-deep-dive">History (from the internet deep-dive)</h2>
+<table>
+<thead>
+<tr>
+<th>Short form</th>
+<th>Stands for</th>
+<th>What it means (plainly)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ARPANET</strong></td>
+<td>Advanced Research Projects Agency NETwork</td>
+<td>The 1969 US military research network — the internet's grandparent.</td>
+</tr>
+<tr>
+<td><strong>CERN</strong></td>
+<td>Conseil Européen pour la Recherche Nucléaire</td>
+<td>The European physics lab where Tim Berners-Lee invented the Web in 1989-91. (French acronym — the English is "European Council for Nuclear Research".)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="the-four-http-verbs-not-acronyms-but-always-worth-repeating">The four HTTP verbs (not acronyms, but always worth repeating)</h2>
+<table>
+<thead>
+<tr>
+<th>Verb</th>
+<th>Means</th>
+<th>Example in our project</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GET</strong></td>
+<td>"give me"</td>
+<td><code>GET /api/houses</code> — list all houses</td>
+</tr>
+<tr>
+<td><strong>POST</strong></td>
+<td>"make a new thing"</td>
+<td><code>POST /api/houses</code> — register a house</td>
+</tr>
+<tr>
+<td><strong>PUT</strong></td>
+<td>"replace / update this"</td>
+<td><code>PUT .../keepalive</code> — heartbeat</td>
+</tr>
+<tr>
+<td><strong>DELETE</strong></td>
+<td>"remove this"</td>
+<td><code>DELETE /api/houses/&lt;uid&gt;</code> — unregister</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Idempotent</strong> = doing it once or ten times leaves the same result. <code>GET</code>, <code>PUT</code>, <code>DELETE</code> are idempotent (safe to retry on flaky WiFi); <code>POST</code> is <strong>not</strong> (a retried <code>POST /toggle</code> flips the LED back). That's why the safe-to-repeat <em>keepalive</em> is a <code>PUT</code> and the action-with-side-effects <em>toggle</em> is a <code>POST</code>. (Full explanation: <code>day1.md</code>, Part 2.)</p>
+</blockquote>
+<hr>
+<h2 id="common-status-codes-the-number-the-server-replies-with">Common status codes (the number the server replies with)</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>200 OK</strong></td>
+<td>It worked.</td>
+</tr>
+<tr>
+<td><strong>201 Created</strong></td>
+<td>Made a new thing (a house registered).</td>
+</tr>
+<tr>
+<td><strong>400 Bad Request</strong></td>
+<td>You sent something malformed (missing data).</td>
+</tr>
+<tr>
+<td><strong>404 Not Found</strong></td>
+<td>That thing doesn't exist (unknown house).</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><em>Still see a short form that isn't here? Tell a counsellor — it should get added. A good glossary is never quite finished.</em></p>
+</article>
+</body>
+</html>

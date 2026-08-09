@@ -9,8 +9,3 @@ WIFI_PASS = "your-wifi-password"
 # IP of the laptop running iot_hub/app.py, plus port 8080.
 # Find the laptop IP with `ipconfig` (Windows) or `ifconfig` (mac/linux).
 HUB_URL = "http://192.168.1.10:8080"
-
-
-WIFI_SSID = "Verizon_F3FJV3"
-WIFI_PASS = "envy-fog3-guess"
-HUB_URL   = "http://192.168.1.9:8080"
