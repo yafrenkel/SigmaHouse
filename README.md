@@ -36,9 +36,7 @@ armed house reports motion, the hub raises the alarm on **every** armed house.
 
 ---
 
-## Set it up at home (with internet)
-
-Do this on your own computer to try the whole thing yourself.
+## Set it up at home
 
 **You need:** Python 3.10+ , an ESP32 (Keyestudio Smart Home kit), a USB data
 cable, and WiFi. Your computer and the board must be on the **same WiFi**, and it
@@ -53,34 +51,6 @@ git checkout 2026
 ```
 
 ### 2. Run the hub (the web server + dashboard)
-
-```bash
-cd implementation/iot_hub
-python -m venv .venv
-# Windows (PowerShell):   .venv\Scripts\Activate.ps1
-# Windows (cmd):          .venv\Scripts\activate
-# Mac / Linux:            source .venv/bin/activate
-pip install -r requirements.txt
-python app.py
-```
-
-Open <http://localhost:8080/> — you should see **"Waiting for houses to
-register…"**. Leave it running.
-
-Now find your computer's address on the WiFi, so the board can reach it:
-
-- **Windows:** `ipconfig` → look for "IPv4 Address" (e.g. `192.168.1.42`)
-- **Mac/Linux:** `ipconfig getifaddr en0` or `ip addr`
-
-Your board's hub URL will be `http://<that-ip>:8080` (e.g. `http://192.168.1.42:8080`).
-If your firewall asks, **allow** incoming connections on port 8080.
-
-### 2b. Prefer PyCharm? Run the hub in the IDE instead
-
-Same result as step 2, but in an IDE many campers find friendlier — and no
-terminal commands. **You have internet at home, so PyCharm installs Flask for
-you** (ignore any offline `--no-index` / `wheels` steps you might see elsewhere —
-those are only for camp).
 
 1. **Install PyCharm** — the free **Community Edition** from
    <https://www.jetbrains.com/pycharm/download/> (scroll down to *Community*).
@@ -97,9 +67,6 @@ those are only for camp).
    The Run panel prints `Running on http://127.0.0.1:8080`.
 5. Open <http://localhost:8080/> — the empty dashboard. Stop the hub with the red
    **■** in the Run panel.
-
-Then find your computer's IP exactly as in step 2 (for the board's `HUB_URL`), and
-allow port 8080 through the firewall if asked.
 
 ### 3. Set up the ESP32 board (Thonny + MicroPython)
 
