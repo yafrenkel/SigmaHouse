@@ -42,7 +42,7 @@ Do this on your own computer to try the whole thing yourself.
 
 **You need:** Python 3.10+ , an ESP32 (Keyestudio Smart Home kit), a USB data
 cable, and WiFi. Your computer and the board must be on the **same WiFi**, and it
-must be **2.4 GHz** — an ESP32 cannot see 5 GHz networks.
+must be **2.4 GHz (3G)**  — an ESP32 cannot see 5 GHz networks.
 
 ### 1. Get the code
 
