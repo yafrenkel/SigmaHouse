@@ -67,6 +67,10 @@ git checkout 2026
    The Run panel prints `Running on http://127.0.0.1:8080`.
 5. Open <http://localhost:8080/> — the empty dashboard. Stop the hub with the red
    **■** in the Run panel.
+6. **Note your computer's WiFi IP** — the board needs it. **Windows:** run
+   `ipconfig` → "IPv4 Address" (e.g. `192.168.1.42`). **Mac/Linux:**
+   `ipconfig getifaddr en0` or `ip addr`. That address is the `HUB_URL` you'll set
+   on the board below. If your firewall asks, **allow** connections on port 8080.
 
 ### 3. Set up the ESP32 board (Thonny + MicroPython)
 
